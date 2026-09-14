@@ -124,7 +124,9 @@ type ScoreboardExpandedEntity struct {
 
 type ScoreboardMobileDevice struct {
 	ID          string `json:"id"`
+	DeviceID    string `json:"device_id"`
 	Name        string `json:"name"`
+	RunnerName  string `json:"runner_name"`
 	Description string `json:"description,omitempty"`
 	Type        string `json:"type,omitempty"`
 }
@@ -1287,9 +1289,19 @@ func scoreboardExpandedDevices(app core.App, ids []string) ([]ScoreboardMobileDe
 		if err != nil {
 			return nil, fmt.Errorf("find mobile device %s: %w", id, err)
 		}
+		deviceID, err := mobileDeviceIdentifier(app, record)
+		if err != nil {
+			return nil, fmt.Errorf("build mobile device %s identifier: %w", id, err)
+		}
+		runner, err := app.FindRecordById("mobile_runners", record.GetString("runner"))
+		if err != nil {
+			return nil, fmt.Errorf("find mobile device %s runner: %w", id, err)
+		}
 		devices = append(devices, ScoreboardMobileDevice{
 			ID:          record.Id,
+			DeviceID:    deviceID,
 			Name:        record.GetString("name"),
+			RunnerName:  runner.GetString("name"),
 			Description: record.GetString("description"),
 			Type:        record.GetString("type"),
 		})

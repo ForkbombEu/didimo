@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		fn: (row) => row.expanded_data?.mobile_devices ?? [],
 		id: 'runners',
 		header: renderComponent(EntityHeader, {
-			label: m.Runners()
+			label: m.Devices()
 		})
 	});
 </script>

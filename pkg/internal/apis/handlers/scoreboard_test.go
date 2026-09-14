@@ -1177,6 +1177,12 @@ func TestSaveScoreboardResults(t *testing.T) {
 		require.Equal(t, pipeline.Id, expandedData.Pipeline.ID)
 		require.Len(t, expandedData.MobileDevices, 1)
 		require.Equal(t, deviceIDs[0], expandedData.MobileDevices[0].ID)
+		require.Equal(
+			t,
+			"usera-s-organization/test-runner/test-device",
+			expandedData.MobileDevices[0].DeviceID,
+		)
+		require.Equal(t, "test-runner", expandedData.MobileDevices[0].RunnerName)
 		require.NotNil(t, expandedData.LatestExecution)
 
 		latestExecutionID := record.GetString("latest_execution")

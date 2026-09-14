@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		{ id: wallets.column.id, label: m.Wallets() },
 		{ id: verifiers.column.id, label: m.Presentations() },
 		{ id: conformanceChecks.column.id, label: m.Conformance_Checks() },
-		{ id: runners.column.id, label: m.Runners() },
+		{ id: runners.column.id, label: m.Devices() },
 		{ id: lastExecution.column.id, label: m.scoreboard_last_run() }
 	];
 

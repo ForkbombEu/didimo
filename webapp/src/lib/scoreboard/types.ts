@@ -25,7 +25,14 @@ export type ScoreboardExpandedEntity = {
 
 export type ScoreboardExpandedData = {
 	pipeline?: ScoreboardExpandedEntity;
-	mobile_devices: Array<{ id: string; name: string; description?: string; type?: string }>;
+	mobile_devices: Array<{
+		id: string;
+		device_id: string;
+		name: string;
+		runner_name: string;
+		description?: string;
+		type?: string;
+	}>;
 	wallets: ScoreboardExpandedEntity[];
 	wallet_versions: ScoreboardExpandedEntity[];
 	issuers: ScoreboardExpandedEntity[];
