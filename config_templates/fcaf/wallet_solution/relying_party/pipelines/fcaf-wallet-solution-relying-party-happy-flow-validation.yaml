@@ -1733,35 +1733,37 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-request-object-by-value
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-request-object-by-value
             request_delivery: by_value
-            type: vp_token
-        expected_status: 200
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: request-object-by-value-f1c94061-submit-request-object-by-value
       use: mobile-automation
       with:
         action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-submit-request-object-by-value
         parameters:
-            CLIENT_ID: ${{ request-object-by-value-f1c94061-create-presentation.outputs.body.client_id }}
-            REQUEST_OBJECT: ${{ request-object-by-value-f1c94061-create-presentation.outputs.body.request }}
+            deeplink: ${{ request-object-by-value-f1c94061-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: request-object-by-value-f1c94061-get-presentation-result
@@ -1769,7 +1771,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ request-object-by-value-f1c94061-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ request-object-by-value-f1c94061-create-presentation.outputs.body.session_id }}
     - id: run-complete-fcaf-validation
       use: fcaf-validation
       with:

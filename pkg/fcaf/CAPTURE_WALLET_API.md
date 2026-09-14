@@ -113,7 +113,7 @@ general-purpose identity provider.
 | Field | Published values / shape | Status |
 | --- | --- | --- |
 | `scheme` | URL-scheme prefix matching `scheme://`; defaults to `openid4vp://`. | Supported |
-| `request_uri_method` | `get` or `post`; defaults to `get`. | Supported |
+| `request_uri_method` | Any string; OpenID4VP defines the case-sensitive values `get` and `post`; defaults to `get`. | Supported by beta, including deliberate malformed values for Wallet negative tests. |
 | `client_id_scheme` | `x509_hash`, `x509_san_dns`, `decentralized_identifier`, or `redirect_uri`; defaults to `x509_hash`. | Supported, subject to delivery constraints. |
 | `request_delivery` | `by_reference`, `by_value`, or `plain`; defaults to `by_reference`. | Supported |
 | `response_type` | `vp_token`, `vp_token id_token`, or `code`; default `vp_token`. | Supported |
@@ -127,6 +127,11 @@ general-purpose identity provider.
 | `redirect_uri` | Absolute URI for the Wallet after a successful presentation. | Supported; the service appends a fresh `response_code`. |
 
 `request_uri_method` is valid only with `request_delivery: "by_reference"`.
+The verifier preserves a supplied value other than `get` or `post` in the
+deeplink for Wallet negative tests. A beta probe on 14/09/2026 accepted
+`DELETE`, created session `697125c6-1c20-4e98-81b9-c3b9356a857c`, and returned
+the value in the deeplink. Production still returned
+`400 {"error":"unsupported_request_uri_method"}` at that time.
 `by_value` delivers a signed Request Object in `request`; `plain` delivers
 URL-encoded Authorization Request parameters in the deeplink and omits
 `request`, `request_uri`, and `request_uri_method`. `client_id_scheme:
@@ -176,14 +181,14 @@ session `13aa1df4-e5b8-432f-b208-5454d71bbea0`).
 | --- | --- | --- |
 | `GET /openid4vp/sessions/{sessionId}` | Current presentation capture with `authorization_request`, `observed`, `checks`, and `events`. | Supported |
 | `GET /openid4vp/sessions/{sessionId}/deeplink` | Returned deeplink and decoded `authorization_request`. | Supported |
-| `GET /openid4vp/sessions/{sessionId}/request` | Retrieves the signed request object as `application/oauth-authz-req+jwt`. | Supported |
+| `GET /openid4vp/sessions/{sessionId}/request` | Retrieves the signed request object as `application/oauth-authz-req+jwt` and marks it as retrieved. | Supported |
 | `POST /openid4vp/sessions/{sessionId}/request` | Retrieves the signed request when `request_uri_method: post`; accepts form `wallet_nonce` and additional fields. | Supported |
 | `POST /openid4vp/sessions/{sessionId}/response` | Captures a form-encoded Wallet response for that session. | Supported |
 | `POST /openid4vp/response` | Alternative form-encoded direct-post endpoint; required `state` identifies the session. | Supported |
 | `GET /openid4vp/sessions/{sessionId}/events` | Chronological protocol capture events. | Supported |
 | `GET /openid4vp/did.json` | Verifier `did:web` Document used by `client_id_scheme: "decentralized_identifier"`. | Supported |
 
-The direct-post endpoints return `200` only when the presentation was captured and verified. A failed verifier check and a Wallet's decision to send no response are distinct outcomes. The session's `raw.presentation_response_http` and `raw.presentation_response_verifier_http` provide machine-readable, sensitive-value-redacted HTTP evidence for valid and invalid responses. Inspect the session record and events; never substitute a screenshot for the missing callback.
+The direct-post endpoints return `200` only when the presentation was captured and verified. A failed verifier check and a Wallet's decision to send no response are distinct outcomes. The session's `raw.presentation_response_http` and `raw.presentation_response_verifier_http` provide machine-readable, sensitive-value-redacted HTTP evidence for valid and invalid responses; the former retains the exact received body. Inspect the session record and events; never substitute a screenshot for the missing callback.
 
 ## Known local limitations
 
@@ -191,6 +196,7 @@ The direct-post endpoints return `200` only when the presentation was captured a
 | --- | --- | --- |
 | Empty `credential_sets[].options` | The reference Android wallet displayed an error but did not POST `error=invalid_request`; the beta session captured only request retrieval. | Blocked for the required protocol assertion. [RI-WALLET-001](REFERENCE-WALLET-ISSUES.md) |
 | Positive PID verification | The beta verifier received a `vp_token` but rejected it because the PID issuer URI did not match the issuer certificate SAN. | Verifier-blocked acceptance, not a Wallet failure. [MOCK-VERIFIER-001](REFERENCE-WALLET-ISSUES.md) |
+| Invalid `request_uri_method` | Beta preserves arbitrary values in the Wallet-facing deeplink; production still rejects `DELETE` at session creation. | Supported for `WS_RP_MS_ProtocolMessages__152` on beta; production deployment lag remains. |
 
 `pkg/fcaf/MEMORY.md` additionally lists test-specific cases blocked because the public verifier validates malformed DCQL before it can create a signed request, or because it cannot expose the raw request/response feature required by the test. Treat that as coordination state and re-probe it when the service changes.
 

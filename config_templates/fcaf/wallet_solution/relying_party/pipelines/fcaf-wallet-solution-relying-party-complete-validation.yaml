@@ -19,31 +19,35 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-given-name
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-given-name-copy
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-117
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-given-name
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-given-name-copy
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-117
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-all-credentials-without-credent-5818b47e-present-all-credentials
       use: mobile-automation
@@ -60,8 +64,7 @@ steps:
                   - inputText: "123456"
                   - tapOn: { point: "50%,10%" }
             - extendedWaitUntil: { visible: "Home|Documents|Welcome, .*", timeout: 30000 }
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when: { visible: "EUDI Wallet" }
                 commands:
@@ -103,8 +106,7 @@ steps:
             - takeScreenshot: fcaf-117-all-credentials-shared
             - tapOn: "Close"
         parameters:
-            CLIENT_ID: ${{ dcql-all-credentials-without-credent-5818b47e-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-all-credentials-without-credent-5818b47e-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-all-credentials-without-credent-5818b47e-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-all-credentials-without-credent-5818b47e-fetch-result
@@ -112,7 +114,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-all-credentials-without-credent-5818b47e-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-all-credentials-without-credent-5818b47e-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-allowed-claim-path-components-ade09609-evidence-request
       use: json-parse
@@ -124,32 +126,36 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - id: given-name
-                          path:
-                            - given_name
-                        - id: all-nationalities
-                          path:
-                            - nationality
-                            - null
-                        - id: first-nationality
-                          path:
-                            - nationality
-                            - 0
-                      format: dc+sd-jwt
-                      id: pid-path-components
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-118
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - id: given-name
+                              path:
+                                - given_name
+                            - id: all-nationalities
+                              path:
+                                - nationality
+                                - null
+                            - id: first-nationality
+                              path:
+                                - nationality
+                                - 0
+                          format: dc+sd-jwt
+                          id: pid-path-components
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-118
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-allowed-claim-path-components-ade09609-present-allowed-path-components
       use: mobile-automation
@@ -166,8 +172,7 @@ steps:
                   - inputText: "123456"
                   - tapOn: { point: "50%,10%" }
             - extendedWaitUntil: { visible: "Home|Documents|Welcome, .*", timeout: 30000 }
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when: { visible: "EUDI Wallet" }
                 commands:
@@ -215,8 +220,7 @@ steps:
             - assertVisible: "Nationality"
             - tapOn: "Close"
         parameters:
-            CLIENT_ID: ${{ dcql-allowed-claim-path-components-ade09609-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-allowed-claim-path-components-ade09609-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-allowed-claim-path-components-ade09609-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-allowed-claim-path-components-ade09609-fetch-result
@@ -224,7 +228,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-allowed-claim-path-components-ade09609-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-allowed-claim-path-components-ade09609-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claim-id-missing-with-claim-set-6de0c1eb-create-capture-session
       use: http-request
@@ -726,31 +730,35 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-name
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-                    - claims:
-                        - path:
-                            - address
-                      format: dc+sd-jwt
-                      id: pid-address
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-014-claims-union
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-name
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                        - claims:
+                            - path:
+                                - address
+                          format: dc+sd-jwt
+                          id: pid-address
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-014-claims-union
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claims-union-b689aff5-present-union
       use: mobile-automation
@@ -767,8 +775,7 @@ steps:
                   - inputText: "123456"
                   - tapOn: { point: "50%,10%" }
             - extendedWaitUntil: { visible: "Home|Documents|Welcome, .*", timeout: 30000 }
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when: { visible: "EUDI Wallet" }
                 commands: [{ tapOn: { text: "EUDI Wallet", optional: true } }]
@@ -798,8 +805,7 @@ steps:
             - takeScreenshot: fcaf-014-claims-union-shared
             - tapOn: "Close"
         parameters:
-            CLIENT_ID: ${{ dcql-claims-union-b689aff5-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-claims-union-b689aff5-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-claims-union-b689aff5-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-claims-union-b689aff5-fetch-result
@@ -807,7 +813,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-claims-union-b689aff5-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-union-b689aff5-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claims-values-no-match-9e05fa90-create
       use: http-request
@@ -2112,11 +2118,11 @@ steps:
                             - urn:eu.europa.ec.eudi:pid:1
             nonce: fcaf-104
             type: vp_token
-        expected_status: 200
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-required-false-88748634-present-optional-set-with-valid-set
       use: mobile-automation
@@ -2125,14 +2131,12 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - launchApp: { stopApp: false, clearState: false }
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd: { timeout: 5000 }
             - tapOn: { text: "(?i)(continue|accept|authorize|share|present)", optional: true }
             - takeScreenshot: fcaf-104
         parameters:
-            CLIENT_ID: ${{ dcql-credential-sets-required-false-88748634-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-credential-sets-required-false-88748634-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-credential-sets-required-false-88748634-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-credential-sets-required-false-88748634-fetch-result
@@ -2140,7 +2144,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-credential-sets-required-false-88748634-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-required-false-88748634-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-required-omitte-7e234cc1-create-presentation
       use: http-request
@@ -2161,11 +2165,11 @@ steps:
                             - urn:eu.europa.ec.eudi:pid:1
             nonce: fcaf-103
             type: vp_token
-        expected_status: 200
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-required-omitte-7e234cc1-present-default-required-set
       use: mobile-automation
@@ -2174,14 +2178,12 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - launchApp: { stopApp: false, clearState: false }
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd: { timeout: 5000 }
             - tapOn: { text: "(?i)(continue|accept|authorize|share|present)", optional: true }
             - takeScreenshot: fcaf-103
         parameters:
-            CLIENT_ID: ${{ dcql-credential-sets-required-omitte-7e234cc1-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-credential-sets-required-omitte-7e234cc1-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-credential-sets-required-omitte-7e234cc1-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-credential-sets-required-omitte-7e234cc1-fetch-result
@@ -2189,7 +2191,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-credential-sets-required-omitte-7e234cc1-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-required-omitte-7e234cc1-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-required-true-m-c6f43473-onboard-reference-wallet
       use: mobile-automation
@@ -3151,26 +3153,30 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-dcql-format-mso-mdoc
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-dcql-format-mso-mdoc
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-format-mso-mdoc-fe537db0-present-with-reference-implementation
       use: mobile-automation
@@ -3185,11 +3191,7 @@ steps:
                   camera: allow
                   notifications: allow
                   all: unset
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -3204,8 +3206,7 @@ steps:
                 timeout: 5000
             - takeScreenshot: fcaf-dcql-format-mso-mdoc
         parameters:
-            CLIENT_ID: ${{ dcql-format-mso-mdoc-fe537db0-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-format-mso-mdoc-fe537db0-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-format-mso-mdoc-fe537db0-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-format-mso-mdoc-fe537db0-get-presentation-result
@@ -3213,57 +3214,65 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-format-mso-mdoc-fe537db0-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-format-mso-mdoc-fe537db0-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-holder-binding-type-boundary-3ff3e611-create-valid-true
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - family_name
-                      format: dc+sd-jwt
-                      id: pididentity01
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-                      require_cryptographic_holder_binding: true
-            nonce: fcaf-081-valid-true
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - family_name
+                          format: dc+sd-jwt
+                          id: pididentity01
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                          require_cryptographic_holder_binding: true
+                nonce: fcaf-081-valid-true
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-holder-binding-type-boundary-3ff3e611-create-valid-false
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - family_name
-                      format: dc+sd-jwt
-                      id: pididentity01
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-                      require_cryptographic_holder_binding: false
-            nonce: fcaf-081-valid-false
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - family_name
+                          format: dc+sd-jwt
+                          id: pididentity01
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                          require_cryptographic_holder_binding: false
+                nonce: fcaf-081-valid-false
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-holder-binding-type-boundary-3ff3e611-evidence-number-zero
       use: json-parse
@@ -3358,11 +3367,7 @@ steps:
             - extendedWaitUntil:
                 visible: "Home|Documents|Welcome, .*"
                 timeout: 30000
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID_VALID_TRUE) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI_VALID_TRUE)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+            - openLink: { link: ${env.DEEPLINK_VALID_TRUE}, autoVerify: false, browser: false }
             - extendedWaitUntil:
                 visible: "DATA SHARING REQUEST"
                 timeout: 100000
@@ -3379,11 +3384,7 @@ steps:
                 timeout: 30000
             - takeScreenshot: fcaf-081-valid-true
             - tapOn: "Close"
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID_VALID_FALSE) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI_VALID_FALSE)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+            - openLink: { link: ${env.DEEPLINK_VALID_FALSE}, autoVerify: false, browser: false }
             - extendedWaitUntil:
                 visible: "DATA SHARING REQUEST"
                 timeout: 100000
@@ -3555,10 +3556,8 @@ steps:
             - waitForAnimationToEnd:
                 timeout: 2000
         parameters:
-            CLIENT_ID_VALID_FALSE: ${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-false.outputs.body.client_id }}
-            CLIENT_ID_VALID_TRUE: ${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-true.outputs.body.client_id }}
-            REQUEST_URI_VALID_FALSE: ${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-false.outputs.body.request_uri }}
-            REQUEST_URI_VALID_TRUE: ${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-true.outputs.body.request_uri }}
+            DEEPLINK_VALID_FALSE: ${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-false.outputs.body.deeplink }}
+            DEEPLINK_VALID_TRUE: ${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-true.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-holder-binding-type-boundary-3ff3e611-get-valid-true
@@ -3566,14 +3565,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-true.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-true.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-holder-binding-type-boundary-3ff3e611-get-valid-false
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-false.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-holder-binding-type-boundary-3ff3e611-create-valid-false.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-interaction-engagement-d1f27e9f-create-capture-session
       use: http-request
@@ -5150,25 +5149,29 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - family_name
-                      format: dc+sd-jwt
-                      id: pididentity01
-                      meta:
-                        vct_values:
-                            - urn:credimi:fcaf:not-the-wallet-pid
-            nonce: fcaf-dcql-meta-vct-mismatch
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - family_name
+                          format: dc+sd-jwt
+                          id: pididentity01
+                          meta:
+                            vct_values:
+                                - urn:credimi:fcaf:not-the-wallet-pid
+                nonce: fcaf-dcql-meta-vct-mismatch
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-meta-vct-mismatch-1d861c4c-present-with-reference-implementation
       use: mobile-automation
@@ -5183,11 +5186,7 @@ steps:
                   camera: allow
                   notifications: allow
                   all: unset
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - takeScreenshot: fcaf-dcql-meta-vct-mismatch
@@ -5197,8 +5196,7 @@ steps:
             - waitForAnimationToEnd:
                 timeout: 5000
         parameters:
-            CLIENT_ID: ${{ dcql-meta-vct-mismatch-1d861c4c-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-meta-vct-mismatch-1d861c4c-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-meta-vct-mismatch-1d861c4c-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-meta-vct-mismatch-1d861c4c-get-presentation-result
@@ -5206,7 +5204,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-meta-vct-mismatch-1d861c4c-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-vct-mismatch-1d861c4c-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-metadata-b66a6319-create-capture-session
       use: http-request
@@ -5423,26 +5421,30 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - family_name
-                      format: dc+sd-jwt
-                      id: pid_sdjwt
-                      meta:
-                        vct_values:
-                            - urn:eu.europa.ec.eudi:pid:1
-                      multiple: true
-            nonce: fcaf-dcql-multiple-true
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - family_name
+                          format: dc+sd-jwt
+                          id: pid_sdjwt
+                          meta:
+                            vct_values:
+                                - urn:eu.europa.ec.eudi:pid:1
+                          multiple: true
+                nonce: fcaf-dcql-multiple-true
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-multiple-true-ad438f05-present-with-reference-implementation
       use: mobile-automation
@@ -5457,11 +5459,7 @@ steps:
                   camera: allow
                   notifications: allow
                   all: unset
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - takeScreenshot: fcaf-dcql-multiple-true-selection
@@ -5477,8 +5475,7 @@ steps:
                 timeout: 5000
             - takeScreenshot: fcaf-dcql-multiple-true-submitted
         parameters:
-            CLIENT_ID: ${{ dcql-multiple-true-ad438f05-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-multiple-true-ad438f05-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-multiple-true-ad438f05-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-multiple-true-ad438f05-get-presentation-result
@@ -5486,29 +5483,33 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-multiple-true-ad438f05-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-multiple-true-ad438f05-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-no-matching-credentials-e35fd34a-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - not_available_in_reference_wallet
-                      format: dc+sd-jwt
-                      id: unavailable_pid
-                      meta:
-                        vct_values:
-                            - urn:credimi:fcaf:no-matching-test-credential
-            nonce: fcaf-dcql-no-matching-credentials
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - not_available_in_reference_wallet
+                          format: dc+sd-jwt
+                          id: unavailable_pid
+                          meta:
+                            vct_values:
+                                - urn:credimi:fcaf:no-matching-test-credential
+                nonce: fcaf-dcql-no-matching-credentials
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-no-matching-credentials-e35fd34a-present-with-reference-implementation
       use: mobile-automation
@@ -5538,11 +5539,7 @@ steps:
             - extendedWaitUntil:
                 visible: "Home|Documents|Add document|Welcome, .*"
                 timeout: 30000
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when:
                   visible: "EUDI Wallet"
@@ -5580,8 +5577,7 @@ steps:
             - takeScreenshot: fcaf-147-no-matching-credential-access-denied
             - tapOn: "Go Back"
         parameters:
-            CLIENT_ID: ${{ dcql-no-matching-credentials-e35fd34a-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-no-matching-credentials-e35fd34a-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-no-matching-credentials-e35fd34a-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-no-matching-credentials-e35fd34a-fetch-capture-session
@@ -5589,7 +5585,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-no-matching-credentials-e35fd34a-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-no-matching-credentials-e35fd34a-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-non-array-claim-path-c23ef0aa-create-capture-session
       use: http-request
@@ -10372,31 +10368,35 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-query-one
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-query-two
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-087-same-credential-multiple-queries
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-query-one
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-query-two
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-087-same-credential-multiple-queries
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-same-credential-multiple-querie-28308591-present-and-share
       use: mobile-automation
@@ -10405,11 +10405,7 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - extendedWaitUntil: { visible: "Home|Documents|Welcome, .*", timeout: 30000 }
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - extendedWaitUntil: { visible: "DATA SHARING REQUEST", timeout: 100000 }
             - assertVisible: { id: eu.europa.ec.euidi:id/request_screen_requested_document_0 }
             - assertVisible: { id: eu.europa.ec.euidi:id/request_screen_requested_document_1 }
@@ -10422,8 +10418,7 @@ steps:
             - takeScreenshot: fcaf-087-same-credential-multiple-queries
             - tapOn: "Close"
         parameters:
-            CLIENT_ID: ${{ dcql-same-credential-multiple-querie-28308591-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-same-credential-multiple-querie-28308591-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-same-credential-multiple-querie-28308591-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-same-credential-multiple-querie-28308591-get-presentation-result
@@ -10431,7 +10426,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-same-credential-multiple-querie-28308591-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-same-credential-multiple-querie-28308591-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-session-binding-a642defc-create-capture-session
       use: http-request
@@ -10926,29 +10921,33 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - family_name
-                      format: dc+sd-jwt
-                      id: pid_identity
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-                      trusted_authorities:
-                        - type: aki
-                          values:
-                            - QlBQvhC4EPCdRFyNv6sQCO4n3Ek
-            nonce: fcaf-dcql-trusted-authorities-match
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - family_name
+                          format: dc+sd-jwt
+                          id: pid_identity
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                          trusted_authorities:
+                            - type: aki
+                              values:
+                                - QlBQvhC4EPCdRFyNv6sQCO4n3Ek
+                nonce: fcaf-dcql-trusted-authorities-match
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trusted-authorities-match-a95b9bcc-present-with-reference-implementation
       use: mobile-automation
@@ -10978,11 +10977,7 @@ steps:
             - extendedWaitUntil:
                 visible: "Home|Documents|Add document|Welcome, .*"
                 timeout: 30000
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when:
                   visible: "EUDI Wallet"
@@ -11018,8 +11013,7 @@ steps:
             - takeScreenshot: fcaf-dcql-trusted-authorities-match
             - tapOn: "Close"
         parameters:
-            CLIENT_ID: ${{ dcql-trusted-authorities-match-a95b9bcc-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-trusted-authorities-match-a95b9bcc-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-trusted-authorities-match-a95b9bcc-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-trusted-authorities-match-a95b9bcc-fetch-capture-session
@@ -11027,7 +11021,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-trusted-authorities-match-a95b9bcc-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-match-a95b9bcc-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-missing-typ-64de56cc-create
       use: http-request
@@ -11857,25 +11851,29 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - address
-                      format: dc+sd-jwt
-                      id: pid
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-013-unchecked-claim
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - address
+                          format: dc+sd-jwt
+                          id: pid
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-013-unchecked-claim
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-unchecked-claim-0efe5303-present-with-unchecked-address
       use: mobile-automation
@@ -11892,8 +11890,7 @@ steps:
                   - inputText: "123456"
                   - tapOn: { point: "50%,10%" }
             - extendedWaitUntil: { visible: "Home|Documents|Welcome, .*", timeout: 30000 }
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when: { visible: "EUDI Wallet" }
                 commands: [{ tapOn: { text: "EUDI Wallet", optional: true } }]
@@ -11922,8 +11919,7 @@ steps:
             - takeScreenshot: fcaf-013-unchecked-address-shared
             - tapOn: "Close"
         parameters:
-            CLIENT_ID: ${{ dcql-unchecked-claim-0efe5303-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-unchecked-claim-0efe5303-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-unchecked-claim-0efe5303-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-unchecked-claim-0efe5303-fetch-result
@@ -11931,7 +11927,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-unchecked-claim-0efe5303-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-unchecked-claim-0efe5303-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-unsupported-claim-path-componen-39ccebe1-create
       use: http-request
@@ -11978,23 +11974,27 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-authentication-failed
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-149-user-authentication-failed
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-authentication-failed
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-149-user-authentication-failed
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-user-authentication-failed-9c3ae613-fail-user-authentication
       use: mobile-automation
@@ -12018,8 +12018,7 @@ steps:
             - extendedWaitUntil:
                 visible: "Home|Documents|Add document|Welcome, .*"
                 timeout: 30000
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when:
                   visible: "EUDI Wallet"
@@ -12063,8 +12062,7 @@ steps:
             - tapOn: "Go Back"
             - extendedWaitUntil: { visible: "Home|Welcome, .*", timeout: 30000 }
         parameters:
-            CLIENT_ID: ${{ dcql-user-authentication-failed-9c3ae613-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-user-authentication-failed-9c3ae613-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-user-authentication-failed-9c3ae613-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-user-authentication-failed-9c3ae613-fetch-result
@@ -12072,29 +12070,33 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-user-authentication-failed-9c3ae613-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-user-authentication-failed-9c3ae613-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-user-denied-consent-ee29c457-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-consent-denied
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-148-user-denied-consent
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-consent-denied
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-148-user-denied-consent
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-user-denied-consent-ee29c457-deny-consent
       use: mobile-automation
@@ -12118,8 +12120,7 @@ steps:
             - extendedWaitUntil:
                 visible: "Home|Documents|Add document|Welcome, .*"
                 timeout: 30000
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when:
                   visible: "EUDI Wallet"
@@ -12159,8 +12160,7 @@ steps:
             - extendedWaitUntil: { visible: "Home|Welcome, .*|Oups! Something went wrong", timeout: 30000 }
             - takeScreenshot: fcaf-148-after-consent-denial
         parameters:
-            CLIENT_ID: ${{ dcql-user-denied-consent-ee29c457-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-user-denied-consent-ee29c457-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-user-denied-consent-ee29c457-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-user-denied-consent-ee29c457-fetch-result
@@ -12168,31 +12168,35 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-user-denied-consent-ee29c457-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-user-denied-consent-ee29c457-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-valid-id-alphanumeric-0dd94705-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - family_name
-                      format: dc+sd-jwt
-                      id: pididentity01
-                      meta:
-                        vct_values:
-                            - urn:eu.europa.ec.eudi:pid:1
-            nonce: fcaf-dcql-valid-id-alphanumeric
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - family_name
+                          format: dc+sd-jwt
+                          id: pididentity01
+                          meta:
+                            vct_values:
+                                - urn:eu.europa.ec.eudi:pid:1
+                nonce: fcaf-dcql-valid-id-alphanumeric
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-valid-id-alphanumeric-0dd94705-present-with-reference-implementation
       use: mobile-automation
@@ -12207,11 +12211,7 @@ steps:
                   camera: allow
                   notifications: allow
                   all: unset
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -12226,8 +12226,7 @@ steps:
                 timeout: 5000
             - takeScreenshot: fcaf-dcql-valid-id-alphanumeric
         parameters:
-            CLIENT_ID: ${{ dcql-valid-id-alphanumeric-0dd94705-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-valid-id-alphanumeric-0dd94705-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-valid-id-alphanumeric-0dd94705-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-valid-id-alphanumeric-0dd94705-get-presentation-result
@@ -12235,31 +12234,35 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-valid-id-alphanumeric-0dd94705-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-valid-id-alphanumeric-0dd94705-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-valid-id-special-4b48cc60-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                        - path:
-                            - family_name
-                      format: dc+sd-jwt
-                      id: pid_birth-02
-                      meta:
-                        vct_values:
-                            - urn:eu.europa.ec.eudi:pid:1
-            nonce: fcaf-dcql-valid-id-special
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                            - path:
+                                - family_name
+                          format: dc+sd-jwt
+                          id: pid_birth-02
+                          meta:
+                            vct_values:
+                                - urn:eu.europa.ec.eudi:pid:1
+                nonce: fcaf-dcql-valid-id-special
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-valid-id-special-4b48cc60-present-with-reference-implementation
       use: mobile-automation
@@ -12274,11 +12277,7 @@ steps:
                   camera: allow
                   notifications: allow
                   all: unset
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -12293,8 +12292,7 @@ steps:
                 timeout: 5000
             - takeScreenshot: fcaf-dcql-valid-id-special
         parameters:
-            CLIENT_ID: ${{ dcql-valid-id-special-4b48cc60-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ dcql-valid-id-special-4b48cc60-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ dcql-valid-id-special-4b48cc60-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: dcql-valid-id-special-4b48cc60-get-presentation-result
@@ -12302,7 +12300,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ dcql-valid-id-special-4b48cc60-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-valid-id-special-4b48cc60-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: engagement-haip-vp-4bb0f83a-create-pid-sdjwt-offer
       use: credential-offer
@@ -12418,23 +12416,28 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - given_name
-                      format: dc+sd-jwt
-                      id: pid-invalid-request-uri-method
-                      meta:
-                        vct_values:
-                            - urn:eudi:pid:1
-            nonce: fcaf-152-invalid-request-uri-method
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - given_name
+                          format: dc+sd-jwt
+                          id: pid-invalid-request-uri-method
+                          meta:
+                            vct_values:
+                                - urn:eudi:pid:1
+                nonce: fcaf-152-invalid-request-uri-method
+            request_delivery: by_reference
+            request_uri_method: DELETE
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: invalid-request-uri-method-f8c49ad9-reject-invalid-request-uri-method
       use: mobile-automation
@@ -12458,8 +12461,7 @@ steps:
             - extendedWaitUntil:
                 visible: "Home|Documents|Add document|Welcome, .*"
                 timeout: 30000
-            - evalScript: ${output.authorizationRequest = 'eudi-openid4vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI) + '&request_uri_method=DELETE'}
-            - openLink: { link: ${output.authorizationRequest}, autoVerify: false, browser: false }
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - runFlow:
                 when:
                   visible: "EUDI Wallet"
@@ -12493,8 +12495,7 @@ steps:
             - tapOn: "Close"
             - extendedWaitUntil: { visible: "Home|Welcome, .*", timeout: 30000 }
         parameters:
-            CLIENT_ID: ${{ invalid-request-uri-method-f8c49ad9-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ invalid-request-uri-method-f8c49ad9-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ invalid-request-uri-method-f8c49ad9-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: invalid-request-uri-method-f8c49ad9-fetch-result
@@ -12502,7 +12503,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ invalid-request-uri-method-f8c49ad9-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ invalid-request-uri-method-f8c49ad9-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: malformed-dcql-1e84df7a-create
       use: http-request
@@ -12610,27 +12611,30 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-metadata-direct-post-jwt
-            responseMode: direct_post.jwt
-            type: vp_token
-        expected_status: 200
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-metadata-direct-post-jwt
+            request_delivery: by_reference
+            response_mode: direct_post.jwt
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: metadata-direct-post-jwt-bf077ae9-submit-direct-post-jwt
       use: mobile-automation
@@ -12639,11 +12643,7 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - stopApp
-            - evalScript: ${output.authorizationRequest = 'haip-vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI) + '&request_uri_method=get'}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -12678,8 +12678,7 @@ steps:
             - assertVisible: "Close"
             - takeScreenshot: fcaf-metadata-direct-post-jwt-submitted
         parameters:
-            CLIENT_ID: ${{ metadata-direct-post-jwt-bf077ae9-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ metadata-direct-post-jwt-bf077ae9-create-presentation.outputs.body.request_uri }}
+            DEEPLINK: ${{ metadata-direct-post-jwt-bf077ae9-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: metadata-direct-post-jwt-bf077ae9-get-presentation-result
@@ -12687,7 +12686,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ metadata-direct-post-jwt-bf077ae9-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ metadata-direct-post-jwt-bf077ae9-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: pid-mdoc-data-model-8f915369-onboard-reference-wallet
       use: mobile-automation
@@ -12826,35 +12825,37 @@ steps:
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-request-object-by-value
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-request-object-by-value
             request_delivery: by_value
-            type: vp_token
-        expected_status: 200
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: request-object-by-value-f1c94061-submit-request-object-by-value
       use: mobile-automation
       with:
         action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-submit-request-object-by-value
         parameters:
-            CLIENT_ID: ${{ request-object-by-value-f1c94061-create-presentation.outputs.body.client_id }}
-            REQUEST_OBJECT: ${{ request-object-by-value-f1c94061-create-presentation.outputs.body.request }}
+            deeplink: ${{ request-object-by-value-f1c94061-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: request-object-by-value-f1c94061-get-presentation-result
@@ -12862,33 +12863,37 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ request-object-by-value-f1c94061-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ request-object-by-value-f1c94061-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: request-uri-method-get-91ef716c-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-request-uri-method-get
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-request-uri-method-get
+            request_delivery: by_reference
             request_uri_method: get
-            type: vp_token
-        expected_status: 200
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: request-uri-method-get-91ef716c-submit-request-uri-method-get
       use: mobile-automation
@@ -12897,11 +12902,7 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - stopApp
-            - evalScript: ${output.authorizationRequest = 'haip-vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI) + '&request_uri_method=' + encodeURIComponent(env.REQUEST_URI_METHOD)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -12936,9 +12937,7 @@ steps:
             - assertVisible: "Close"
             - takeScreenshot: fcaf-request-uri-method-get-submitted
         parameters:
-            CLIENT_ID: ${{ request-uri-method-get-91ef716c-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ request-uri-method-get-91ef716c-create-presentation.outputs.body.request_uri }}
-            REQUEST_URI_METHOD: ${{ request-uri-method-get-91ef716c-create-presentation.outputs.body.request_uri_method }}
+            DEEPLINK: ${{ request-uri-method-get-91ef716c-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: request-uri-method-get-91ef716c-get-presentation-result
@@ -12946,33 +12945,37 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ request-uri-method-get-91ef716c-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ request-uri-method-get-91ef716c-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: request-uri-method-post-11b1acd0-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-request-uri-method-post
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-request-uri-method-post
+            request_delivery: by_reference
             request_uri_method: post
-            type: vp_token
-        expected_status: 200
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: request-uri-method-post-11b1acd0-submit-request-uri-method-post
       use: mobile-automation
@@ -12981,11 +12984,7 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - stopApp
-            - evalScript: ${output.authorizationRequest = 'haip-vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI) + '&request_uri_method=' + encodeURIComponent(env.REQUEST_URI_METHOD)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -13020,9 +13019,7 @@ steps:
             - assertVisible: "Close"
             - takeScreenshot: fcaf-request-uri-method-post-submitted
         parameters:
-            CLIENT_ID: ${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body.request_uri }}
-            REQUEST_URI_METHOD: ${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body.request_uri_method }}
+            DEEPLINK: ${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: request-uri-method-post-11b1acd0-get-presentation-result
@@ -13030,33 +13027,37 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: session-binding-valid-nonce-aa3a1f9c-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-session-binding-valid-nonce-2026-07-14
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-session-binding-valid-nonce-2026-07-14
+            request_delivery: by_reference
             request_uri_method: post
-            type: vp_token
-        expected_status: 200
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: session-binding-valid-nonce-aa3a1f9c-submit-valid-nonce-presentation
       use: mobile-automation
@@ -13065,11 +13066,7 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - stopApp
-            - evalScript: ${output.authorizationRequest = 'haip-vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI) + '&request_uri_method=' + encodeURIComponent(env.REQUEST_URI_METHOD)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -13104,9 +13101,7 @@ steps:
             - assertVisible: "Close"
             - takeScreenshot: fcaf-session-binding-valid-nonce-accepted
         parameters:
-            CLIENT_ID: ${{ session-binding-valid-nonce-aa3a1f9c-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ session-binding-valid-nonce-aa3a1f9c-create-presentation.outputs.body.request_uri }}
-            REQUEST_URI_METHOD: ${{ session-binding-valid-nonce-aa3a1f9c-create-presentation.outputs.body.request_uri_method }}
+            DEEPLINK: ${{ session-binding-valid-nonce-aa3a1f9c-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: session-binding-valid-nonce-aa3a1f9c-get-presentation-result
@@ -13114,35 +13109,38 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ session-binding-valid-nonce-aa3a1f9c-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ session-binding-valid-nonce-aa3a1f9c-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: supportive-redirect-uri-9f399357-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - family_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-supportive-redirect-uri
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-supportive-redirect-uri
+            redirect_uri: https://verifier.eudiw.dev/
+            request_delivery: by_reference
             request_uri_method: post
-            responseMode: direct_post
-            type: vp_token
-            wallet_response_redirect_uri_template: https://verifier.eudiw.dev/?response_code={RESPONSE_CODE}
-        expected_status: 200
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: supportive-redirect-uri-9f399357-submit-and-follow-redirect
       use: mobile-automation
@@ -13151,11 +13149,7 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - stopApp
-            - evalScript: ${output.authorizationRequest = 'haip-vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request_uri=' + encodeURIComponent(env.REQUEST_URI) + '&request_uri_method=' + encodeURIComponent(env.REQUEST_URI_METHOD)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -13194,9 +13188,7 @@ steps:
             - assertVisible: "Define your presentation request"
             - takeScreenshot: fcaf-supportive-redirect-uri-opened
         parameters:
-            CLIENT_ID: ${{ supportive-redirect-uri-9f399357-create-presentation.outputs.body.client_id }}
-            REQUEST_URI: ${{ supportive-redirect-uri-9f399357-create-presentation.outputs.body.request_uri }}
-            REQUEST_URI_METHOD: ${{ supportive-redirect-uri-9f399357-create-presentation.outputs.body.request_uri_method }}
+            DEEPLINK: ${{ supportive-redirect-uri-9f399357-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: supportive-redirect-uri-9f399357-get-presentation-result
@@ -13204,30 +13196,33 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ supportive-redirect-uri-9f399357-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ supportive-redirect-uri-9f399357-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: supportive-signed-request-without-re-042dcbe8-create-presentation
       use: http-request
       with:
         body:
-            dcql_query:
-                credentials:
-                    - claims:
-                        - path:
-                            - eu.europa.ec.eudi.pid.1
-                            - given_name
-                      format: mso_mdoc
-                      id: pid_mdoc
-                      meta:
-                        doctype_value: eu.europa.ec.eudi.pid.1
-            nonce: fcaf-supportive-signed-request-without-request-uri
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-supportive-signed-request-without-request-uri
             request_delivery: by_value
-            type: vp_token
-        expected_status: 200
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: haip-vp://
+        expected_status: 201
         headers:
             Content-Type: application/json
         method: POST
-        url: ${fixture.verifier_url}/ui/presentations
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: supportive-signed-request-without-re-042dcbe8-submit-haip-by-value-request
       use: mobile-automation
@@ -13236,11 +13231,7 @@ steps:
             appId: eu.europa.ec.euidi
             ---
             - stopApp
-            - evalScript: ${output.authorizationRequest = 'haip-vp://?client_id=' + encodeURIComponent(env.CLIENT_ID) + '&request=' + encodeURIComponent(env.REQUEST_OBJECT)}
-            - openLink:
-                link: ${output.authorizationRequest}
-                autoVerify: false
-                browser: false
+                    - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
             - waitForAnimationToEnd:
                 timeout: 5000
             - tapOn:
@@ -13254,8 +13245,7 @@ steps:
                 timeout: 30000
             - takeScreenshot: fcaf-supportive-signed-request-without-request-uri-rejected
         parameters:
-            CLIENT_ID: ${{ supportive-signed-request-without-re-042dcbe8-create-presentation.outputs.body.client_id }}
-            REQUEST_OBJECT: ${{ supportive-signed-request-without-re-042dcbe8-create-presentation.outputs.body.request }}
+            DEEPLINK: ${{ supportive-signed-request-without-re-042dcbe8-create-presentation.outputs.body.deeplink }}
         version_id: installed_from_external_source
     - continue_on_error: true
       id: supportive-signed-request-without-re-042dcbe8-get-presentation-result
@@ -13263,7 +13253,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: ${fixture.verifier_url}/ui/presentations/${{ supportive-signed-request-without-re-042dcbe8-create-presentation.outputs.body.transaction_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ supportive-signed-request-without-re-042dcbe8-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: transaction-data-matching-credential-09aba950-create-capture-session
       use: http-request
