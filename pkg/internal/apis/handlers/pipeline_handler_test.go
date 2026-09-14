@@ -38,7 +38,6 @@ func setupPipelineApp(t testing.TB) *tests.TestApp {
 	app, err := tests.NewTestApp(testDataDir)
 	require.NoError(t, err)
 	ensureScoreboardExpandedDataField(t, app)
-
 	canonify.RegisterCanonifyHooks(app)
 	PipelineTemporalInternalRoutes.Add(app)
 	seedInternalAdminKey(t, app)
@@ -1006,9 +1005,9 @@ func TestHandleListPipelineExecutionHistoryQueuedOnly(t *testing.T) {
 				TicketID:           "ticket-1",
 				PipelineIdentifier: "usera-s-organization/pipeline123",
 				EnqueuedAt:         time.Now().Add(-1 * time.Minute),
-				LeaderRunnerID:     "runner-1",
-				RequiredRunnerIDs:  []string{"runner-1"},
-				RunnerIDs:          []string{"runner-1"},
+				LeaderDeviceID:     "runner-1",
+				RequiredDeviceIDs:  []string{"runner-1"},
+				DeviceIDs:          []string{"runner-1"},
 			},
 		}, nil
 	}
@@ -1089,9 +1088,9 @@ func TestHandleListPipelineExecutionHistoryIncludesQueuedInPagination(t *testing
 				TicketID:           "ticket-1",
 				PipelineIdentifier: "usera-s-organization/pipeline123",
 				EnqueuedAt:         time.Now().Add(-1 * time.Minute),
-				LeaderRunnerID:     "runner-1",
-				RequiredRunnerIDs:  []string{"runner-1"},
-				RunnerIDs:          []string{"runner-1"},
+				LeaderDeviceID:     "runner-1",
+				RequiredDeviceIDs:  []string{"runner-1"},
+				DeviceIDs:          []string{"runner-1"},
 			},
 		}, nil
 	}

@@ -30,6 +30,17 @@ Do not treat an entry here as approved policy until a human maintainer resolves 
 
 ## Open Questions
 
+### 2026-08-28 - FCAF runner-to-device identifier mapping
+
+- status: resolved
+- owner: human maintainer
+- context: Merging the FCAF implementation from main into the multi-device refactor exposes bundled pipeline values such as `forkbomb-bv-andrea/usb` under `runtime.global_runner_id`. The multi-device contract requires `runtime.global_device_id` using a concrete `<organization>/<runner>/<device>` identifier, but the repository contains no mapping from the legacy runner identifier to a device child.
+- question: Which concrete mobile device identifier should replace each bundled FCAF runner identifier, especially `forkbomb-bv-andrea/usb`?
+- options considered: (1) provide the intended concrete device path; (2) replace defaults with empty device identifiers and require `credimi fcaf --device-id`; (3) infer a child name from the runner identifier.
+- default risk: Inferring a child name can silently target a non-existent or wrong physical device; preserving the runner path violates the device-scoped pipeline contract.
+- decision: Replace every bundled runner path `<organization>/<runner>` with `<organization>/<runner>/device`; specifically, `forkbomb-bv-andrea/usb` becomes `forkbomb-bv-andrea/usb/device` and `forkbomb-bv-andrea/fcaf` becomes `forkbomb-bv-andrea/fcaf/device`.
+- follow-up: Convert FCAF CLI flags, queue status query parameters, runtime keys, and bundled templates.
+
 ### 2026-07-22 - Login Turnstile gating scope
 
 - status: resolved
@@ -96,3 +107,37 @@ Do not treat an entry here as approved policy until a human maintainer resolves 
 - decision: Temporary implementation files may live beside the FCAF test YAML for now, under the test catalog folder, and must be deleted during implementation once consumed.
 - follow-up: Implementation agents must keep the temporary folder clearly named and remove it before finalizing production-ready FCAF catalog work unless the maintainer explicitly keeps it.
 
+
+## 2026-08-30 — Scoreboard success-rate sparkline
+
+- **Question:** Should the public scoreboard success-rate column show a sparkline of execution trends?
+- **Context:** `pipeline_scoreboard_cache` holds only aggregate stats (total_runs, total_successes, success_rate, first_execution); no per-run time series is exposed to the scoreboard API. A real sparkline needs a new data source (e.g. per-pipeline execution history endpoint or cached trend buckets) — cross-cutting API/schema change.
+- **Options considered:** (a) honest band-colored progress bar + score pill (implemented now); (b) sparkline fed by pipeline_results history (needs new backend query, N+1 risk on 20-row pages); (c) cached trend column in pipeline_scoreboard_cache populated by the scoreboard cache hook (schema + hook change).
+- **Default risk:** Current bar shows only the aggregate ratio, not direction/trend over time.
+- **Owner:** puria — **Status:** open
+
+## 2026-09-10 — PocketBase v0.40.3 upgrade follow-ups
+
+- **Question:** Accept the validation-tooling and generated-output changes that came with the PocketBase v0.26.4 → v0.40.3 upgrade?
+- **Context:** PB v0.40 requires Go 1.27, whose `encoding/json` v2 retrofit changed `omitempty`/`UnmarshalTypeError` behavior, and its `apis.NewRouter` now binds UI routes per call. Tooling fallout: `golangci-lint v2.12.1` panics on Go 1.27 AST (bumped to `v2.13.2`, which also bumped `gofumpt`/`golines` formatting); `make lint` runs with `fix: true` and reformatted files with long lines. The regenerated `schemas/pipeline/pipeline_schema.json` (via `invopop/jsonschema v0.14`) drops `"required": ["IPv4Address", "IPv6Address"]` on the mdoc namespace object. PB v0.40's heavier per-app migration bootstrap makes the `-race` handlers suite ~8x slower (~11.5m), exceeding go test's default 10m timeout; `-timeout 30m` added to `scripts/test-summary.sh`.
+- **Options considered:** Keep new formatter versions and regenerated schema (repo-owned entrypoints produce them); pin old formatters/suppress deprecations; hand-revert schema JSON.
+- **Default risk:** Formatting churn touches files outside the upgrade scope; the schema JSON change relaxes pipeline-schema validation for mdoc namespace objects; full `-race` suite now needs >10m.
+- **Owner:** puria — **Status:** open
+### 2026-09-10 — Temporal callbacks behind Cloudflare WAF
+
+- status: resolved
+- owner: human maintainer
+- context: Temporal activities used the persisted public `app_url`, causing Cloudflare WAF/browser challenges to block server-to-server callbacks. Public links must remain on `app_url`, while callbacks need an origin-reachable URL.
+- question: How should deployments provide a callback URL without making persisted workflow links private?
+- options considered: Replace `app_url` globally with a compose hostname; add a separate optional internal URL with public fallback; add Cloudflare allow rules for every worker egress IP.
+- default risk: A private hostname in `app_url` breaks browsers, external runners, schedules, and cross-instance workers; WAF allowlists are operationally brittle.
+- decision: Use `CREDIMI_INTERNAL_APP_URL`, injected as separate workflow config `internal_app_url`; callback consumers prefer it and fall back to public `app_url`. Production deployments must provision all required credentials explicitly; Docker Compose does not add development host aliases.
+- follow-up: Non-Compose deployments must set `CREDIMI_INTERNAL_APP_URL` to a DNS name reachable from every Temporal worker that executes these workflows.
+
+## 2026-09-10 — Test app lifecycle: per-test `tests.NewTestApp` retained
+
+- **Question:** Should handler/API test suites share a single suite-level PocketBase test app (TestMain + `DisableTestAppCleanup`) instead of creating one per test?
+- **Context:** Unit tests were slow (~100s for `pkg/internal/apis/handlers`). Profiling showed the dominant cost was NOT the per-test pattern but a stale `test_pb_data/data.db`: after the PocketBase v0.40.3 upgrade, two new core migrations re-ran on every `tests.NewTestApp` bootstrap (~175ms per app × 287 apps). Refreshing the fixture dropped per-app cost to ~10ms and the handlers suite from 100.5s to ~23s. Sharing one app across scenarios would additionally break isolation: scenarios mutate `Settings().Meta.AppURL`, collection schema fields (`ensure*Field` helpers), and seed records, so a shared DB would introduce test-order dependence.
+- **Options considered:** (a) keep per-test apps + refreshed test data (chosen); (b) full suite-level shared app conversion; (c) hybrid shared app for read-only suites.
+- **Default risk:** Per-test apps re-create a fresh isolated DB per scenario (~10ms each); any future PocketBase upgrade with new core migrations re-introduces the ~10x per-app cost unless `make testdata.refresh` is run and `test_pb_data/data.db` recommitted.
+- **Owner:** puria — **Status:** resolved (decision: keep per-test apps; run `make testdata.refresh` after PocketBase or pb_migrations changes)

@@ -152,10 +152,10 @@ var PipelineInternalRegistry = map[string]TaskFactory{
 		Kind:    TaskWorkflow,
 		NewFunc: func() any { return workflows.NewScheduledPipelineEnqueueWorkflow() },
 	},
-	"mobile-runner-semaphore-done": {
+	"mobile-device-semaphore-done": {
 		Kind:        TaskActivity,
-		NewFunc:     func() any { return activities.NewReportMobileRunnerSemaphoreDoneActivity() },
-		PayloadType: reflect.TypeOf(activities.ReportMobileRunnerSemaphoreDoneInput{}),
+		NewFunc:     func() any { return activities.NewReportMobileDeviceSemaphoreDoneActivity() },
+		PayloadType: reflect.TypeOf(activities.ReportMobileDeviceSemaphoreDoneInput{}),
 		OutputKind:  workflowengine.OutputAny,
 	},
 	"pipeline-run-ticket-enqueue": {
@@ -181,5 +181,11 @@ var PipelineInternalRegistry = map[string]TaskFactory{
 		NewFunc:     func() any { return activities.NewPipelineReportGenerationActivity() },
 		PayloadType: reflect.TypeOf(activities.PipelineReportGenerationInput{}),
 		OutputKind:  workflowengine.OutputMap,
+	},
+	"pipeline-completion-notification": {
+		Kind:        TaskActivity,
+		NewFunc:     func() any { return activities.NewSendPipelineCompletionNotificationActivity() },
+		PayloadType: reflect.TypeOf(activities.SendPipelineCompletionNotificationInput{}),
+		OutputKind:  workflowengine.OutputAny,
 	},
 }

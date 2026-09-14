@@ -325,7 +325,7 @@ func (w *StartCheckWorkflow) ExecuteWorkflow(
 	var childID string
 	switch payload.Suite {
 	case OpenIDConformanceSuite:
-		rid := openIDConformanceRunnerID(setupResult.Captures)
+		rid := openIDConformanceDeviceID(setupResult.Captures)
 		if rid == "" {
 			return workflowengine.WorkflowResult{}, workflowengine.NewStepCIOutputError(
 				"rid",
@@ -338,7 +338,7 @@ func (w *StartCheckWorkflow) ExecuteWorkflow(
 			return pollOpenIDConformanceLogs(
 				ctx,
 				rid,
-				appURL,
+				workflowengine.InternalAppURLFromConfig(input.Config),
 				utils.GetEnvironmentVariable("OPENIDNET_TOKEN"),
 				false,
 				input.RunMetadata,
@@ -371,7 +371,7 @@ func (w *StartCheckWorkflow) ExecuteWorkflow(
 					Token: utils.GetEnvironmentVariable("OPENIDNET_TOKEN"),
 				},
 				Config: workflowengine.MergeTelemetryConfig(ctx, map[string]any{
-					"app_url":  appURL,
+					"app_url":  workflowengine.InternalAppURLFromConfig(input.Config),
 					"interval": time.Second,
 				}),
 			}).GetChildWorkflowExecution().Get(ctx, nil)
@@ -458,7 +458,7 @@ func (w *StartCheckWorkflow) ExecuteWorkflow(
 				SessionID: ewcSessionID,
 			},
 			Config: workflowengine.MergeTelemetryConfig(ctx, map[string]any{
-				"app_url":        appURL,
+				"app_url":        workflowengine.InternalAppURLFromConfig(input.Config),
 				"interval":       time.Second * 5,
 				"check_endpoint": checkEndpoint,
 				"logs_endpoint":  logsEndpoint,

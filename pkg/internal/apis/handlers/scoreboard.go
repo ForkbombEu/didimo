@@ -35,6 +35,9 @@ const scoreboardPipelineRecordBatchSize = 250
 
 var errScoreboardRelationSkipped = errors.New("scoreboard relation skipped")
 
+// errPipelineNotPublished marks pipelines excluded from the public scoreboard.
+var errPipelineNotPublished = errors.New("pipeline not published")
+
 var aggregateScoreboardWorkflowStart = func(
 	namespace string,
 	input workflowengine.WorkflowInput,
@@ -51,24 +54,24 @@ type StartAggregateScoreboardResponse struct {
 }
 
 type PipelineStatsResponse struct {
-	PipelineID          string             `json:"pipeline_id"`
-	PipelineName        string             `json:"pipeline_name"`
-	PipelineIdentifier  string             `json:"pipeline_identifier"`
-	RunnerTypes         []string           `json:"runner_types"`
-	Runners             []string           `json:"runners"`
-	TotalRuns           int                `json:"total_runs"`
-	TotalSuccesses      int                `json:"total_successes"`
-	SuccessRate         float64            `json:"success_rate"`
-	ManualExecutions    int                `json:"manual_executions"`
-	ScheduledExecutions int                `json:"scheduled_executions"`
-	CIExecutions        int                `json:"ci_executions"`
-	MinExecutionTime    string             `json:"min_execution_time"`
-	FirstExecutionDate  string             `json:"first_execution_date"`
-	LastExecutionDate   string             `json:"last_execution_date"`
-	LastSuccessfulRun   *LastSuccessfulRun `json:"last_successful_run,omitempty"`
+	PipelineID          string   `json:"pipeline_id"`
+	PipelineName        string   `json:"pipeline_name"`
+	PipelineIdentifier  string   `json:"pipeline_identifier"`
+	DeviceTypes         []string `json:"device_types"`
+	DeviceIDs           []string `json:"device_ids"`
+	TotalRuns           int      `json:"total_runs"`
+	TotalSuccesses      int      `json:"total_successes"`
+	SuccessRate         float64  `json:"success_rate"`
+	ManualExecutions    int      `json:"manual_executions"`
+	ScheduledExecutions int      `json:"scheduled_executions"`
+	CIExecutions        int      `json:"ci_executions"`
+	MinExecutionTime    string   `json:"min_execution_time"`
+	FirstExecutionDate  string   `json:"first_execution_date"`
+	LastExecutionDate   string   `json:"last_execution_date"`
+	LastRun             *LastRun `json:"last_run,omitempty"`
 }
 
-type LastSuccessfulRun struct {
+type LastRun struct {
 	WorkflowID string `json:"workflow_id"`
 	RunID      string `json:"run_id"`
 	StartTime  string `json:"start_time"`
@@ -76,8 +79,8 @@ type LastSuccessfulRun struct {
 
 type PipelineStats struct {
 	PipelineName        string
-	Runners             []string
-	RunnerTypes         []string
+	DeviceIDs           []string
+	DeviceTypes         []string
 	TotalRuns           int
 	TotalSuccesses      int
 	SuccessRate         float64
@@ -93,16 +96,16 @@ type PipelineStats struct {
 // public scoreboard. Keep this deliberately narrower than PocketBase exports:
 // the cache is public and must not embed relation fields such as secrets or YAML.
 type ScoreboardExpandedData struct {
-	Pipeline                  *ScoreboardExpandedEntity         `json:"pipeline,omitempty"`
-	MobileRunners             []ScoreboardMobileRunner          `json:"mobile_runners"`
-	Wallets                   []ScoreboardExpandedEntity        `json:"wallets"`
-	WalletVersions            []ScoreboardExpandedEntity        `json:"wallet_versions"`
-	Issuers                   []ScoreboardExpandedEntity        `json:"issuers"`
-	Verifiers                 []ScoreboardExpandedEntity        `json:"verifiers"`
-	Credentials               []ScoreboardExpandedEntity        `json:"credentials"`
-	UseCaseVerifications      []ScoreboardExpandedEntity        `json:"use_case_verifications"`
-	CustomIntegrations        []ScoreboardExpandedEntity        `json:"custom_integrations"`
-	LatestSuccessfulExecution *ScoreboardExpandedPipelineResult `json:"latest_successful_execution,omitempty"`
+	Pipeline             *ScoreboardExpandedEntity         `json:"pipeline,omitempty"`
+	MobileDevices        []ScoreboardMobileDevice          `json:"mobile_devices"`
+	Wallets              []ScoreboardExpandedEntity        `json:"wallets"`
+	WalletVersions       []ScoreboardExpandedEntity        `json:"wallet_versions"`
+	Issuers              []ScoreboardExpandedEntity        `json:"issuers"`
+	Verifiers            []ScoreboardExpandedEntity        `json:"verifiers"`
+	Credentials          []ScoreboardExpandedEntity        `json:"credentials"`
+	UseCaseVerifications []ScoreboardExpandedEntity        `json:"use_case_verifications"`
+	CustomIntegrations   []ScoreboardExpandedEntity        `json:"custom_integrations"`
+	LatestExecution      *ScoreboardExpandedPipelineResult `json:"latest_execution,omitempty"`
 }
 
 type ScoreboardExpandedEntity struct {
@@ -119,10 +122,11 @@ type ScoreboardExpandedEntity struct {
 	Tag              string `json:"tag,omitempty"`
 }
 
-type ScoreboardMobileRunner struct {
+type ScoreboardMobileDevice struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
+	Type        string `json:"type,omitempty"`
 }
 
 type ScoreboardExpandedPipelineResult struct {
@@ -290,9 +294,9 @@ func HandleStartAggregateScoreboard() func(*core.RequestEvent) error {
 					TaskQueue: workflows.AggregateScoreboardTaskQueue,
 					Args: []interface{}{
 						workflowengine.WorkflowInput{
-							Config: map[string]any{
+							Config: workflowengine.WithInternalAppURL(map[string]any{
 								"app_url": appURL,
-							},
+							}),
 						},
 					},
 				},
@@ -318,9 +322,9 @@ func HandleStartAggregateScoreboard() func(*core.RequestEvent) error {
 		workflowResult, err := aggregateScoreboardWorkflowStart(
 			aggregateScoreboardNamespace,
 			workflowengine.WorkflowInput{
-				Config: map[string]any{
+				Config: workflowengine.WithInternalAppURL(map[string]any{
 					"app_url": e.App.Settings().Meta.AppURL,
-				},
+				}),
 			},
 		)
 		if err != nil {
@@ -485,7 +489,7 @@ func HandleGetPipelineScoreboard() func(*core.RequestEvent) error {
 			if pipelineRecord == nil {
 				continue
 			}
-			if !workflowExecutionVisibleOnScoreboard(exec, pipelineRecord) {
+			if !pipelineRecord.GetBool("published") {
 				continue
 			}
 			executionsByPipelineID[pipelineRecord.Id] = append(
@@ -504,7 +508,7 @@ func HandleGetPipelineScoreboard() func(*core.RequestEvent) error {
 			pipelineName := pipelineRecord.GetString("name")
 
 			runnerCache := make(map[string]map[string]any)
-			stats, lastSuccessfulRun := calculateStatsFromExecutions(
+			stats, lastRun := calculateStatsFromExecutions(
 				pipelineExecutions,
 				e.App,
 				runTypes,
@@ -519,8 +523,8 @@ func HandleGetPipelineScoreboard() func(*core.RequestEvent) error {
 					namespace,
 					pipelineRecord.GetString("canonified_name"),
 				),
-				RunnerTypes:         stats.RunnerTypes,
-				Runners:             stats.Runners,
+				DeviceTypes:         stats.DeviceTypes,
+				DeviceIDs:           stats.DeviceIDs,
 				TotalRuns:           stats.TotalRuns,
 				TotalSuccesses:      stats.TotalSuccesses,
 				SuccessRate:         stats.SuccessRate,
@@ -530,37 +534,11 @@ func HandleGetPipelineScoreboard() func(*core.RequestEvent) error {
 				MinExecutionTime:    stats.MinExecutionTime,
 				FirstExecutionDate:  stats.FirstExecutionDate,
 				LastExecutionDate:   stats.LastExecutionDate,
-				LastSuccessfulRun:   lastSuccessfulRun,
+				LastRun:             lastRun,
 			})
 		}
 		return e.JSON(http.StatusOK, response)
 	}
-}
-
-func workflowExecutionVisibleOnScoreboard(
-	exec *WorkflowExecution,
-	pipelineRecord *core.Record,
-) bool {
-	published, ok := workflowExecutionPublishedMemo(exec)
-	if ok {
-		return published
-	}
-	return pipelineRecord != nil && pipelineRecord.GetBool(pipelineinternal.PublishedMemoKey)
-}
-
-func workflowExecutionPublishedMemo(exec *WorkflowExecution) (bool, bool) {
-	if exec == nil || exec.Memo == nil {
-		return false, false
-	}
-	field, ok := exec.Memo.Fields[pipelineinternal.PublishedMemoKey]
-	if !ok || field == nil || field.Data == nil {
-		return false, false
-	}
-	published, err := strconv.ParseBool(DecodeFromTemporalPayload(*field.Data))
-	if err != nil {
-		return false, false
-	}
-	return published, true
 }
 
 func HandleGetExecutionDetails() func(*core.RequestEvent) error {
@@ -674,22 +652,22 @@ func calculateStatsFromExecutions(
 	app core.App,
 	runTypes map[workflowExecutionRef]string,
 	runnerCache map[string]map[string]any,
-) (*PipelineStats, *LastSuccessfulRun) {
+) (*PipelineStats, *LastRun) {
 	stats := &PipelineStats{
-		Runners:     []string{},
-		RunnerTypes: []string{},
+		DeviceIDs:   []string{},
+		DeviceTypes: []string{},
 	}
 
 	if len(executions) == 0 {
 		return stats, nil
 	}
 
-	runnerSet := make(map[string]struct{})
+	deviceSet := make(map[string]struct{})
 	var minDuration time.Duration
 	var firstTime, lastTime string
 	minDurationSet := false
 
-	var lastSuccessfulExec *WorkflowExecution
+	var lastExec *WorkflowExecution
 
 	for _, exec := range executions {
 		if exec == nil || exec.SearchAttributes == nil {
@@ -703,11 +681,11 @@ func calculateStatsFromExecutions(
 		isCompleted := extractCompletionStatus(exec)
 		if isCompleted {
 			stats.TotalSuccesses++
-
-			if lastSuccessfulExec == nil ||
-				utils.TimeStringAfter(exec.StartTime, lastSuccessfulExec.StartTime) {
-				lastSuccessfulExec = exec
-			}
+		}
+		// The scoreboard shows evidence for the latest run, failed runs included:
+		// a broken pipeline must expose why it is broken.
+		if lastExec == nil || utils.TimeStringAfter(exec.StartTime, lastExec.StartTime) {
+			lastExec = exec
 		}
 
 		switch pipelineRunTypeFromMap(runTypes, exec) {
@@ -719,9 +697,9 @@ func calculateStatsFromExecutions(
 			stats.ManualExecutions++
 		}
 
-		runnerIDs := extractRunnerIDsFromExec(exec)
-		for _, id := range runnerIDs {
-			runnerSet[id] = struct{}{}
+		deviceIDs := extractDeviceIDsFromExec(exec)
+		for _, id := range deviceIDs {
+			deviceSet[id] = struct{}{}
 		}
 
 		updateDateRange(exec.StartTime, &firstTime, &lastTime)
@@ -731,8 +709,8 @@ func calculateStatsFromExecutions(
 		}
 	}
 
-	stats.Runners = mapKeysToSlice(runnerSet)
-	stats.RunnerTypes = resolveRunnerTypes(app, stats.Runners, runnerCache)
+	stats.DeviceIDs = mapKeysToSlice(deviceSet)
+	stats.DeviceTypes = resolveDeviceTypes(app, stats.DeviceIDs, runnerCache)
 
 	if stats.TotalRuns > 0 {
 		stats.SuccessRate = math.Round(
@@ -744,16 +722,16 @@ func calculateStatsFromExecutions(
 	stats.LastExecutionDate = lastTime
 	stats.MinExecutionTime = formatDurationString(minDuration, minDurationSet)
 
-	var lastSuccessfulRun *LastSuccessfulRun
-	if lastSuccessfulExec != nil {
-		lastSuccessfulRun = &LastSuccessfulRun{
-			WorkflowID: lastSuccessfulExec.Execution.WorkflowID,
-			RunID:      lastSuccessfulExec.Execution.RunID,
-			StartTime:  lastSuccessfulExec.StartTime,
+	var lastRun *LastRun
+	if lastExec != nil {
+		lastRun = &LastRun{
+			WorkflowID: lastExec.Execution.WorkflowID,
+			RunID:      lastExec.Execution.RunID,
+			StartTime:  lastExec.StartTime,
 		}
 	}
 
-	return stats, lastSuccessfulRun
+	return stats, lastRun
 }
 
 func workflowExecutionExcludedFromScoreboardStats(exec *WorkflowExecution) bool {
@@ -850,19 +828,19 @@ func extractCompletionStatus(exec *WorkflowExecution) bool {
 	return normalizeTemporalStatus(exec.Status) == string(WorkflowStatusCompleted)
 }
 
-func extractRunnerIDsFromExec(exec *WorkflowExecution) []string {
-	if runnerVal, ok := (*exec.SearchAttributes)[workflowengine.RunnerIdentifiersSearchAttribute]; ok {
+func extractDeviceIDsFromExec(exec *WorkflowExecution) []string {
+	if runnerVal, ok := (*exec.SearchAttributes)[workflowengine.DeviceIdentifiersSearchAttribute]; ok {
 		switch v := runnerVal.(type) {
 		case []string:
 			return v
 		case []interface{}:
-			runnerIDs := make([]string, 0, len(v))
+			deviceIDs := make([]string, 0, len(v))
 			for _, item := range v {
 				if s, ok := item.(string); ok {
-					runnerIDs = append(runnerIDs, s)
+					deviceIDs = append(deviceIDs, s)
 				}
 			}
-			return runnerIDs
+			return deviceIDs
 		}
 	}
 	return nil
@@ -905,15 +883,15 @@ func mapKeysToSlice(m map[string]struct{}) []string {
 	return keys
 }
 
-func resolveRunnerTypes(
+func resolveDeviceTypes(
 	app core.App,
-	runnerIDs []string,
+	deviceIDs []string,
 	runnerCache map[string]map[string]any,
 ) []string {
-	if len(runnerIDs) == 0 || app == nil {
+	if len(deviceIDs) == 0 || app == nil {
 		return []string{}
 	}
-	runnerRecords := pipeline.ResolveRunnerRecords(app, runnerIDs, runnerCache)
+	runnerRecords := pipeline.ResolveDeviceRecords(app, deviceIDs, runnerCache)
 	types := make([]string, 0, len(runnerRecords))
 	for _, record := range runnerRecords {
 		if runnerType, ok := record["type"].(string); ok && runnerType != "" {
@@ -1128,14 +1106,21 @@ func insertAggregatedResults(
 		record := core.NewRecord(collection)
 		setBasicFields(record, stats)
 		if err := setPipelineRelation(record, app, stats.PipelineID); err != nil {
+			if errors.Is(err, errPipelineNotPublished) {
+				app.Logger().Debug(
+					"skipping unpublished pipeline for scoreboard",
+					"pipeline_id", stats.PipelineID,
+				)
+				continue
+			}
 			saveErrors = append(saveErrors, fmt.Errorf("pipeline %s: %w", stats.PipelineID, err))
 			continue
 		}
-		if err := setMobileRunnersRelation(record, app, stats.Runners); err != nil {
+		if err := setMobileDevicesRelation(record, app, stats.DeviceIDs); err != nil {
 			saveErrors = append(
 				saveErrors,
 				fmt.Errorf(
-					"%w: runners for pipeline %s: %w",
+					"%w: devices for pipeline %s: %w",
 					errScoreboardRelationSkipped,
 					stats.PipelineID,
 					err,
@@ -1182,7 +1167,7 @@ func buildScoreboardExpandedData(
 	record *core.Record,
 ) (ScoreboardExpandedData, error) {
 	data := ScoreboardExpandedData{
-		MobileRunners:        []ScoreboardMobileRunner{},
+		MobileDevices:        []ScoreboardMobileDevice{},
 		Wallets:              []ScoreboardExpandedEntity{},
 		WalletVersions:       []ScoreboardExpandedEntity{},
 		Issuers:              []ScoreboardExpandedEntity{},
@@ -1200,9 +1185,9 @@ func buildScoreboardExpandedData(
 	); err != nil {
 		return data, err
 	}
-	if data.MobileRunners, err = scoreboardExpandedRunners(
+	if data.MobileDevices, err = scoreboardExpandedDevices(
 		app,
-		record.GetStringSlice("mobile_runners"),
+		record.GetStringSlice("mobile_devices"),
 	); err != nil {
 		return data, err
 	}
@@ -1228,16 +1213,14 @@ func buildScoreboardExpandedData(
 		}
 	}
 
-	latestID := record.GetString("latest_successful_execution")
+	latestID := record.GetString("latest_execution")
 	if latestID != "" {
 		latest, err := app.FindRecordById("pipeline_results", latestID)
 		if err != nil {
-			return data, fmt.Errorf("find latest successful execution: %w", err)
+			return data, fmt.Errorf("find latest execution: %w", err)
 		}
-		data.LatestSuccessfulExecution = &ScoreboardExpandedPipelineResult{
-			Created: latest.GetString(
-				"created",
-			),
+		data.LatestExecution = &ScoreboardExpandedPipelineResult{
+			Created:   latest.GetString("created"),
 			Artifacts: pipelineresults.BuildPipelineExecutionArtifacts(app, latest),
 		}
 	}
@@ -1283,13 +1266,11 @@ func scoreboardExpandedRecord(
 		return nil, fmt.Errorf("build %s path: %w", collection, err)
 	}
 	return &ScoreboardExpandedEntity{
-		ID:             record.Id,
-		CollectionName: collection,
-		Name:           record.GetString("name"),
-		Logo:           record.GetString("logo"),
-		LogoURL: record.GetString(
-			"logo_url",
-		),
+		ID:               record.Id,
+		CollectionName:   collection,
+		Name:             record.GetString("name"),
+		Logo:             record.GetString("logo"),
+		LogoURL:          record.GetString("logo_url"),
 		Published:        record.GetBool("published"),
 		CanonifiedPath:   path,
 		Wallet:           record.GetString("wallet"),
@@ -1299,23 +1280,21 @@ func scoreboardExpandedRecord(
 	}, nil
 }
 
-func scoreboardExpandedRunners(app core.App, ids []string) ([]ScoreboardMobileRunner, error) {
-	runners := make([]ScoreboardMobileRunner, 0, len(ids))
+func scoreboardExpandedDevices(app core.App, ids []string) ([]ScoreboardMobileDevice, error) {
+	devices := make([]ScoreboardMobileDevice, 0, len(ids))
 	for _, id := range ids {
-		record, err := app.FindRecordById("mobile_runners", id)
+		record, err := app.FindRecordById("mobile_devices", id)
 		if err != nil {
-			return nil, fmt.Errorf("find mobile runner %s: %w", id, err)
+			return nil, fmt.Errorf("find mobile device %s: %w", id, err)
 		}
-		runners = append(
-			runners,
-			ScoreboardMobileRunner{
-				ID:          record.Id,
-				Name:        record.GetString("name"),
-				Description: record.GetString("description"),
-			},
-		)
+		devices = append(devices, ScoreboardMobileDevice{
+			ID:          record.Id,
+			Name:        record.GetString("name"),
+			Description: record.GetString("description"),
+			Type:        record.GetString("type"),
+		})
 	}
-	return runners, nil
+	return devices, nil
 }
 
 func hasFatalScoreboardSaveErrors(saveErrors []error) bool {
@@ -1344,21 +1323,24 @@ func setPipelineRelation(record *core.Record, app core.App, pipelineID string) e
 	if err != nil {
 		return fmt.Errorf("failed to find pipeline record for ID %s: %w", pipelineID, err)
 	}
+	if !pipelineRecord.GetBool("published") {
+		return errPipelineNotPublished
+	}
 	record.Set("pipeline", pipelineRecord.Id)
 	return nil
 }
 
-func setMobileRunnersRelation(record *core.Record, app core.App, runners []string) error {
-	if len(runners) == 0 {
+func setMobileDevicesRelation(record *core.Record, app core.App, deviceIdentifiers []string) error {
+	if len(deviceIdentifiers) == 0 {
 		return nil
 	}
 
-	runnerIDs, skipped := findExistingRecords(app, runners)
-	if len(runnerIDs) > 0 {
-		record.Set("mobile_runners", runnerIDs)
+	deviceIDs, skipped := findExistingRecords(app, deviceIdentifiers)
+	if len(deviceIDs) > 0 {
+		record.Set("mobile_devices", deviceIDs)
 	}
 	if len(skipped) > 0 {
-		return fmt.Errorf("skipped missing runners: %s", strings.Join(skipped, ", "))
+		return fmt.Errorf("skipped missing devices: %s", strings.Join(skipped, ", "))
 	}
 	return nil
 }
@@ -1427,14 +1409,14 @@ func setLastExecutionFields(
 		skipped = append(
 			skipped,
 			fmt.Sprintf(
-				"latest_successful_execution for workflow %s and run %s: %v",
+				"latest_execution for workflow %s and run %s: %v",
 				lastExecution.WorkflowID,
 				lastExecution.RunID,
 				err,
 			),
 		)
 	} else if pipelineResultId != "" {
-		record.Set("latest_successful_execution", pipelineResultId)
+		record.Set("latest_execution", pipelineResultId)
 	}
 
 	setOptionalRelationField(

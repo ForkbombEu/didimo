@@ -31,7 +31,7 @@ var PipelineExecuteTimeout = 2 * time.Minute
 type PipelineExecuteResponse struct {
 	WorkflowID string `json:"workflow_id,omitempty"`
 	RunID      string `json:"run_id,omitempty"`
-	Result     any    `json:"result,omitempty"`
+	Result     any    `json:"result,omitzero"`
 	Deeplink   string `json:"deeplink,omitempty"`
 }
 

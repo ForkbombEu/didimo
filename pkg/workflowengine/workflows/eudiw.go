@@ -369,7 +369,7 @@ func (w *EudiwWorkflow) ExecuteWorkflow(
 			Payload: activities.HTTPActivityPayload{
 				Method: http.MethodPost,
 				URL: utils.JoinURL(
-					input.Config["app_url"].(string),
+					workflowengine.InternalAppURLFromConfig(input.Config),
 					"api", "compliance", "send-eudiw-log-update",
 				),
 				Headers: map[string]string{

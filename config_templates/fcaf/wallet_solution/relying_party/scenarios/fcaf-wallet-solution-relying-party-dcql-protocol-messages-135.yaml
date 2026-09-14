@@ -1,6 +1,6 @@
 name: 'FCAF ProtocolMessages 135: Unsupported transaction_data type rejected by wallet'
 runtime:
-  global_runner_id: forkbomb-bv-andrea/usb
+  global_device_id: forkbomb-bv-andrea/usb/device
   temporal:
     activity_options:
       schedule_to_close_timeout: 50m
@@ -67,6 +67,7 @@ steps:
   use: fcaf-validation
   with:
     test_ids:
+      - WS_RP_MS_ProtocolMessages__024
       - WS_RP_MS_ProtocolMessages__135
     suite: wallet_solution/relying_party
     pipeline_outputs:

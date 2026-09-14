@@ -5,7 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <script lang="ts">
-	import type { Record } from '$lib/pipeline/runner';
+	import type { Record } from '$lib/pipeline/device';
 
 	import { CalendarIcon } from '@lucide/svelte';
 	import { Pipeline } from '$lib';
@@ -39,17 +39,17 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 	let isOpen = $state(false);
 
-	const type = Pipeline.Runner.Binding.getType(pipeline);
-	const isGlobalRunner = type === 'global';
+	const type = Pipeline.Device.Binding.getType(pipeline);
+	const isGlobalDevice = type === 'global';
 
 	let schema = z.object({
 		pipeline_id: z.string(),
 		schedule_mode: scheduleModeSchema
 	});
 
-	if (isGlobalRunner) {
+	if (isGlobalDevice) {
 		schema.extend({
-			global_runner_id: z.string()
+			global_device_id: z.string()
 		});
 	}
 
@@ -74,15 +74,19 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 	const formData = form.form;
 
-	function onRunnerSelect(runner: Record) {
+	function onDeviceSelect(device: Record) {
 		formData.update((v) => ({
 			...v,
-			global_runner_id: runner.path
+			global_device_id: device.path
 		}));
 	}
 </script>
 
-<Dialog bind:open={isOpen} title={m.Schedule_pipeline()}>
+<Dialog
+	bind:open={isOpen}
+	title={m.Schedule_pipeline()}
+	contentClass="max-h-[calc(100dvh-2rem)] overflow-y-auto"
+>
 	{#snippet trigger({ props })}
 		<IconButton {...props} icon={CalendarIcon} tooltip={m.Schedule_pipeline()} />
 	{/snippet}
@@ -123,11 +127,12 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 				/>
 			{/if}
 
-			{#if isGlobalRunner}
-				<Pipeline.Runner.SelectInput
-					onSelect={onRunnerSelect}
-					selectedRunner={($formData as { global_runner_id?: string }).global_runner_id}
+			{#if isGlobalDevice}
+				<Pipeline.Device.SelectInput
+					onSelect={onDeviceSelect}
+					selectedDevice={($formData as { global_device_id?: string }).global_device_id}
 					required
+					scrollable
 				/>
 			{/if}
 

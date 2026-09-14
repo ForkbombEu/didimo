@@ -4,6 +4,18 @@
 
 import type { EntityData } from '$lib/global';
 
+import type {
+	CredentialIssuersResponse,
+	CredentialsResponse,
+	CustomChecksResponse,
+	PipelinesResponse,
+	UseCasesVerificationsResponse,
+	VerifiersResponse,
+	WalletsResponse
+} from '@/pocketbase/types';
+
+import type { ScoreboardExpandedEntity } from '../types';
+
 //
 
 export type AvatarData = {
@@ -28,15 +40,16 @@ export type Item = {
 	children?: ChildLink[];
 };
 
-export type Layout = 'avatar-only' | 'links-only' | 'compact' | 'full';
+export type Layout = 'avatar-only' | 'links-only' | 'compact' | 'full' | 'logos';
 
 export type Align = 'start' | 'end';
 
-export type PocketbaseEntity = {
-	id: string;
-	collectionName: string;
-	name?: string;
-	logo?: string;
-	logo_url?: string;
-	__canonified_path__?: string;
-};
+export type PocketbaseEntity =
+	| WalletsResponse
+	| CredentialIssuersResponse
+	| VerifiersResponse
+	| UseCasesVerificationsResponse
+	| CredentialsResponse
+	| CustomChecksResponse
+	| ScoreboardExpandedEntity
+	| PipelinesResponse;

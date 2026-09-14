@@ -11,18 +11,25 @@ applicability:
   presentation_flow: redirects
 normative_references:
 - title: OpenID for Verifiable Presentations 1.0
-  section: '6.1'
+  section: '7.2.1, 7.4'
   url: https://openid.net/specs/openid-4-verifiable-presentations-1_0.html
-- ref: pipeline.dcql.encoding
+- ref: pipeline.mdoc.absent-namespace
 evidence:
   dcql_exchange:
-    from: pipeline.dcql.encoding.outputs.dcql_exchange
+    from: pipeline.mdoc.absent-namespace.outputs.dcql_exchange
   visual_evidence:
-    from: pipeline.dcql.encoding.outputs.visual_evidence
+    from: pipeline.mdoc.absent-namespace.outputs.visual_evidence
 assertions:
-- id: ws_rp_sh_encoding_textualencoding_016_encoding_verified
-  validator: sdjwt.claim_utf8_string
+- id: ws_rp_sh_encoding_textualencoding_016_absent_namespace_is_requested
+  validator: dcql.response_satisfies_constraints
   input: evidence.dcql_exchange
+  params:
+    mode: mdoc_claim_path_no_match
+    expected_claim_path: [org.iso.18013.5.1, first_name]
+- id: ws_rp_sh_encoding_textualencoding_016_wallet_returns_an_error_without_a_presentation
+  validator: dcql.response_satisfies_constraints
+  input: evidence.dcql_exchange
+  params: { mode: wallet_error_required }
 - id: ws_rp_sh_encoding_textualencoding_016_visual_evidence
   validator: evidence.non_empty
   input: evidence.visual_evidence

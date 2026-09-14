@@ -14,6 +14,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	import LanguageSelect from '@/i18n/languageSelect.svelte';
 	import { currentUser } from '@/pocketbase';
 
+	import { extras } from './topbar-links';
+
+	//	 NOTE: docs.credimi.io uses lowercase slugs (e.g. /manual/compliance-checks).
+	//	 Do not use old MkDocs-style paths like /Manual/compliance-checks.html (404).
 	const footer_data = [
 		{
 			label: m.Platform(),
@@ -21,16 +25,16 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 				{ label: m.Overview(), url: 'https://docs.credimi.io/' },
 				{
 					label: m.Conformance_automation(),
-					url: 'https://docs.credimi.io/Manual/compliance-checks.html'
+					url: 'https://docs.credimi.io/manual/compliance-checks'
 				},
 				{ label: m.api_documentation(), url: 'https://docs.credimi.io/API/index.html' },
 				{
 					label: m.platform_architecture(),
-					url: 'https://docs.credimi.io/Software_Architecture/1_start.html'
+					url: 'https://docs.credimi.io/software-architecture'
 				},
 				{
 					label: m.deployment_options(),
-					url: 'https://docs.credimi.io/Software_Architecture/7_dev_setup.html'
+					url: 'https://docs.credimi.io/software-architecture/developer-setup'
 				}
 
 				//			,{ label: m.compliance_standards(), url: '/platform/compliance' }
@@ -60,11 +64,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 				},
 				{
 					label: m.conformance_compliance_tools(),
-					url: 'https://docs.credimi.io/Software_Architecture/Workflow_YAML.html'
+					url: 'https://docs.credimi.io/software-architecture/workflow-yaml'
 				},
 				{
 					label: m.ecosystem_governance(),
-					url: 'https://docs.credimi.io/Manual/browse-hub.html'
+					url: 'https://docs.credimi.io/manual/browse-hub'
 				}
 			]
 		},
@@ -76,11 +80,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 				//			{ label: m.sandbox_environment(), url: '/developers/sandbox' },
 				{
 					label: m.test_suites_runs(),
-					url: 'https://docs.credimi.io/Manual/compliance-checks.html'
+					url: 'https://docs.credimi.io/manual/compliance-checks'
 				},
 				{
 					label: m.developer_tools(),
-					url: 'https://docs.credimi.io/Software_Architecture/Workflow_YAML.html'
+					url: 'https://docs.credimi.io/software-architecture/workflow-yaml'
 				}
 				//			{ label: m.Changelog(), url: '/developers/changelog' }
 			]
@@ -105,7 +109,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 			links: [
 				{ label: m.join_our_slack(), url: 'mailto:credimi@forkbomb.eu' },
 				{ label: 'GitHub', url: 'https://github.com/forkbombeu/credimi' },
-				{ label: m.events_webinars(), url: '/pages/community/events' },
+				{ label: m.events_webinars(), url: 'https://forkbomb.solutions/webinars/' },
 				{
 					label: m.conformance_community_forum(),
 					url: 'https://github.com/forkbombeu/credimi/discussions'
@@ -123,13 +127,17 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 				{ label: m.contact_us(), url: 'mailto:credimi@forkbomb.eu' },
 				{
 					label: m.legal_privacy(),
-					url: 'https://docs.credimi.io/Legal/privacy-policy.html'
+					url: 'https://docs.credimi.io/legal/privacy-policy'
 				},
 				{
 					label: m.terms_and_conditions(),
-					url: 'https://docs.credimi.io/Legal/terms-and-conditions.html'
+					url: 'https://docs.credimi.io/legal/terms-and-conditions'
 				}
 			]
+		},
+		{
+			label: m.Extras(),
+			links: extras.map(({ title, href }) => ({ label: title, url: href }))
 		}
 	];
 </script>

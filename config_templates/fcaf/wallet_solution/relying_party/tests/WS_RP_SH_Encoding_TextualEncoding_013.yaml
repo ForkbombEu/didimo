@@ -13,16 +13,23 @@ normative_references:
 - title: OpenID for Verifiable Presentations 1.0
   section: '6.1'
   url: https://openid.net/specs/openid-4-verifiable-presentations-1_0.html
-- ref: pipeline.dcql.encoding
+- ref: pipeline.dcql.empty-claim-path-selection
 evidence:
   dcql_exchange:
-    from: pipeline.dcql.encoding.outputs.dcql_exchange
+    from: pipeline.dcql.empty-claim-path-selection.outputs.dcql_exchange
   visual_evidence:
-    from: pipeline.dcql.encoding.outputs.visual_evidence
+    from: pipeline.dcql.empty-claim-path-selection.outputs.visual_evidence
 assertions:
-- id: ws_rp_sh_encoding_textualencoding_013_encoding_verified
-  validator: sdjwt.claim_utf8_string
+- id: ws_rp_sh_encoding_textualencoding_013_path_resolves_to_an_empty_selection
+  validator: dcql.response_satisfies_constraints
   input: evidence.dcql_exchange
+  params:
+    mode: claims_path_no_match
+    expected_claim_path: [address, unavailable_address_member]
+- id: ws_rp_sh_encoding_textualencoding_013_wallet_returns_an_error_without_a_presentation
+  validator: dcql.response_satisfies_constraints
+  input: evidence.dcql_exchange
+  params: { mode: wallet_error_required }
 - id: ws_rp_sh_encoding_textualencoding_013_visual_evidence
   validator: evidence.non_empty
   input: evidence.visual_evidence

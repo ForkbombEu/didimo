@@ -4,16 +4,18 @@
 
 import { entities } from '$lib/global';
 
+import type { WalletsResponse, WalletVersionsResponse } from '@/pocketbase/types';
+
+import type { ScoreboardExpandedEntity } from '../types';
 import type { Item } from './types';
-import type { PocketbaseEntity } from './types';
 
 import { fromPocketbaseEntity } from './from-pocketbase';
 
 //
 
 export type WalletRow = {
-	wallet: PocketbaseEntity;
-	version?: { wallet?: string; tag?: string };
+	wallet: WalletsResponse | ScoreboardExpandedEntity;
+	version?: WalletVersionsResponse | ScoreboardExpandedEntity;
 };
 
 export function fromWalletRows(rows: WalletRow[]): Item[] {

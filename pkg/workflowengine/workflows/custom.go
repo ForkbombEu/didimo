@@ -87,7 +87,7 @@ func (w *CustomCheckWorkflow) ExecuteWorkflow(
 			Payload: activities.HTTPActivityPayload{
 				Method: http.MethodPost,
 				URL: utils.JoinURL(
-					input.Config["app_url"].(string),
+					workflowengine.InternalAppURLFromConfig(input.Config),
 					"api", "canonify", "identifier", "validate",
 				),
 				Body: map[string]any{

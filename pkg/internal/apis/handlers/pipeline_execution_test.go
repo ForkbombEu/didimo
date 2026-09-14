@@ -304,6 +304,33 @@ func TestHandlePipelineExecute_WorkflowGetFails(t *testing.T) {
 	scenario.Test(t)
 }
 
+// Regression test: PipelineExecuteResponse.Result uses omitzero so a nil
+// workflow output is omitted from the JSON body instead of rendering
+// as `"result": null`.
+func TestHandlePipelineExecute_NilOutputOmitsResult(t *testing.T) {
+	mockTemporalClient(t, workflowengine.WorkflowResult{
+		WorkflowID:    "wf-test-123",
+		WorkflowRunID: "run-test-456",
+	}, nil)
+
+	scenario := tests.ApiScenario{
+		Name:           "nil workflow output omits result key",
+		Method:         http.MethodPost,
+		URL:            "/api/pipeline/execute",
+		Body:           rawBody(validPipelineYAML),
+		ExpectedStatus: http.StatusOK,
+		ExpectedContent: []string{
+			`"workflow_id"`,
+			`"run_id"`,
+		},
+		NotExpectedContent: []string{
+			`"result"`,
+		},
+		TestAppFactory: setupPipelineExecuteApp,
+	}
+	scenario.Test(t)
+}
+
 // --- Deeplink tests ---
 
 func TestHandlePipelineExecute_DeeplinkPresent(t *testing.T) {

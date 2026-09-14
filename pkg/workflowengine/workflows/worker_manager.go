@@ -97,6 +97,7 @@ func (w *WorkerManagerWorkflow) ExecuteWorkflow(
 			runMetadata,
 		)
 	}
+	appURL = workflowengine.InternalAppURLFromConfig(input.Config)
 
 	internalHTTPActivity := activities.NewInternalHTTPActivity()
 	runnerURLs := normalizeWorkerManagerRunnerURLs(payload.RunnerURLs)

@@ -134,12 +134,12 @@ func HandleGetConformanceCheckDeeplink() func(*core.RequestEvent) error {
 				CheckID:    id,
 				Parameters: map[string]any{"session_id": uuid.NewString()},
 			},
-			Config: map[string]any{
+			Config: workflowengine.WithInternalAppURL(map[string]any{
 				"memo":      memo,
 				"app_url":   appURL,
 				"template":  string(templateData),
 				"namespace": "default",
-			},
+			}),
 			ActivityOptions: ao,
 		}
 

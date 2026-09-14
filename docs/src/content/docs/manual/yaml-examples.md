@@ -3,16 +3,15 @@ title: "YAML: Dynamic generation QR codes and Wallet Actions"
 description: ""
 ---
 
-The Credimi Hub dynamically generates QR codes for both Credential Offers (OpenID4VCI) and Presentation Requests (OpenID4VP). 
+The Credimi Hub dynamically generates QR codes for both Credential Offers (OpenID4VCI) and Presentation Requests (OpenID4VP).
 
 These QR codes are powered by StepCI recipes and exposed in the Hub under Credentials and Use Case Verifications, so end users and developers can try manual interoperability flows. The same StepCI code is used to set up end-to-end Wallet-to-Issuer/Verifier automated checks.
 
 ### Use cases
 
-* **OpenID4VCI**: some issuers don’t publish a static `.well-known`. They generate a unique session ID for each credential offer, or show the offer only as a **QR PNG**. These recipes show how to handle both cases.
+- **OpenID4VCI**: some issuers don’t publish a static `.well-known`. They generate a unique session ID for each credential offer, or show the offer only as a **QR PNG**. These recipes show how to handle both cases.
 
-* **OpenID4VP**: verifier flows always use a session ID to generate a **presentation request**. The recipes show how to capture and reuse those.
-
+- **OpenID4VP**: verifier flows always use a session ID to generate a **presentation request**. The recipes show how to capture and reuse those.
 
 ### What is StepCI?
 
@@ -20,25 +19,24 @@ These QR codes are powered by StepCI recipes and exposed in the Hub under Creden
 
 In Credimi we use StepCI to:
 
-* Generate and capture **Credential Offers** and **Presentation Requests**
-* Build **deeplinks** from those responses
-* Pass the deeplinks to **Maestro** for mobile wallet automation
-* Publish the same flows as **QR codes in the Hub** for **manual interoperability testing**
+- Generate and capture **Credential Offers** and **Presentation Requests**
+- Build **deeplinks** from those responses
+- Pass the deeplinks to **Maestro** for mobile wallet automation
+- Publish the same flows as **QR codes in the Hub** for **manual interoperability testing**
 
 :::note
 Always use:
 
-	env:  
-		host:  (url | mandatory )
-		body:  (request body | optional )
- 
+    env:
+    	host:  (url | mandatory )
+    	body:  (request body | optional )
+
 as the examples below in the StepCI configuration, to setup the base url (and the body, if needed) of the service you're calling. This will help further automation at a later point.
 :::
 
-
 ---
-## OpenID4VCI examples
 
+## OpenID4VCI examples
 
 ### OpenID4VCI — Get Credential Offer (POST)
 
@@ -51,56 +49,54 @@ version: "1.0"
 name: "VID Identity – issuance-pre-auth"
 
 env:
-  host: https://labs-openid-interop.vididentity.net/api/issuance-pre-auth
+    host: https://labs-openid-interop.vididentity.net/api/issuance-pre-auth
 
 tests:
-  VID-Identity: 
-    steps:
-      - name: "Create pre-auth issuance"
-        http:
-          method: POST
-          url: ${{ env.host }}
-          headers:
-            accept: "application/json, text/plain, */*"
-          json:
-            credentialTypeId: "33095f2f-6f80-4168-8301-abc815848aef"
-            issuerDid: "did:ebsi:zpD3Qp8h4psvdgnTGMX6hfE"
-            credentialSubject:
-              name: "Bianca"
-              age: 30
-              surname: "Castafiori"
-            oid4vciVersion: "Draft13"
-            userPin: 6831
-          captures:
-            deeplink:
-              jsonpath: $.rawCredentialOffer
-     
+    VID-Identity:
+        steps:
+            - name: "Create pre-auth issuance"
+              http:
+                  method: POST
+                  url: ${{ env.host }}
+                  headers:
+                      accept: "application/json, text/plain, */*"
+                  json:
+                      credentialTypeId: "33095f2f-6f80-4168-8301-abc815848aef"
+                      issuerDid: "did:ebsi:zpD3Qp8h4psvdgnTGMX6hfE"
+                      credentialSubject:
+                          name: "Bianca"
+                          age: 30
+                          surname: "Castafiori"
+                      oid4vciVersion: "Draft13"
+                      userPin: 6831
+                  captures:
+                      deeplink:
+                          jsonpath: $.rawCredentialOffer
 ```
 
 ---
 
 ### OpenID4VCI — Get Credential Offer (GET)
 
-Use this when the Issuer provides a direct `request_uri` to fetch the offer. 
+Use this when the Issuer provides a direct `request_uri` to fetch the offer.
 
 This example integrates with the [https://issuer.procivis.pensiondemo.findy.fi/](https://issuer.procivis.pensiondemo.findy.fi/) issuer.
-
 
 ```yaml
 version: "1.0"
 name: "Findynet/Procivis"
 env:
-  host: https://issuer.procivis.pensiondemo.findy.fi
+    host: https://issuer.procivis.pensiondemo.findy.fi
 tests:
-  procivis-get-credential:
-    steps:
-      - name: "Get rehabilitation pension credential"
-        http:
-          method: GET
-          url: ${{ env.host }}/pensioncredential-rehabilitation.json
-          captures:
-           deeplink:
-             body: true
+    procivis-get-credential:
+        steps:
+            - name: "Get rehabilitation pension credential"
+              http:
+                  method: GET
+                  url: ${{ env.host }}/pensioncredential-rehabilitation.json
+                  captures:
+                      deeplink:
+                          body: true
 ```
 
 ---
@@ -116,58 +112,58 @@ version: "1.1"
 name: Sicpa Test Issuer
 
 env:
-  host: https://ewc.pre.vc-dts.sicpa.com/api/fetchIssuanceQrCode?attributes[surname]=Matkalainen&attributes[given_name]=Hannah
+    host: https://ewc.pre.vc-dts.sicpa.com/api/fetchIssuanceQrCode?attributes[surname]=Matkalainen&attributes[given_name]=Hannah
 
 tests:
-  get-deeplink:
-    steps:
-      - name: get deeplink code
-        http:
-          url: ${{ env.host }}
-          method: GET
-          captures:
-            deeplink:
-              jsonpath: $.qr
-      - name: parse
-        http:
-          url: https://aisenseapi.com/services/v1/qrcode_decode
-          method: POST
-          headers:
-            Accept-Encoding: identity
-          json:
-            payload: "${{captures.deeplink | slice: 22}}"
-          captures:
-            deeplink:
-              jsonpath: $.qrcode_content
+    get-deeplink:
+        steps:
+            - name: get deeplink code
+              http:
+                  url: ${{ env.host }}
+                  method: GET
+                  captures:
+                      deeplink:
+                          jsonpath: $.qr
+            - name: parse
+              http:
+                  url: https://aisenseapi.com/services/v1/qrcode_decode
+                  method: POST
+                  headers:
+                      Accept-Encoding: identity
+                  json:
+                      payload: "${{captures.deeplink | slice: 22}}"
+                  captures:
+                      deeplink:
+                          jsonpath: $.qrcode_content
 ```
 
 ### OpenID4VCI — read deeplink from html body
 
-Some issuers show the in the body of an HTML page. You can navigate the DOM using *deeplink.xpath* to find the element you're looking for.
-
+Some issuers show the in the body of an HTML page. You can navigate the DOM using _deeplink.xpath_ to find the element you're looking for.
 
 ```yaml
 version: "1.1"
 name: Captures
 env:
-  host: https://issuer-backend.eudiw.dev/issuer/credentialsOffer/generate
-  body: "credentialIds=eu.europa.ec.eudi.pid_vc_sd_jwt&credentialsOfferUri=openid-credential-offer%3A%2F%2F"
+    host: https://issuer-backend.eudiw.dev/issuer/credentialsOffer/generate
+    body: "credentialIds=eu.europa.ec.eudi.pid_vc_sd_jwt&credentialsOfferUri=openid-credential-offer%3A%2F%2F"
 tests:
-  example:
-    steps:
-      - name: Post the post
-        http:
-          url: ${{env.host}}
-          method: POST
-          headers:
-            Content-Type: application/x-www-form-urlencoded
-          body: ${{env.body}}
-          check:
-            status: /^20/
-          captures:
-            deeplink:
-              xpath: /html/body/main/div/div[5]/div[2]/div/code
+    example:
+        steps:
+            - name: Post the post
+              http:
+                  url: ${{env.host}}
+                  method: POST
+                  headers:
+                      Content-Type: application/x-www-form-urlencoded
+                  body: ${{env.body}}
+                  check:
+                      status: /^20/
+                  captures:
+                      deeplink:
+                          xpath: /html/body/main/div/div[5]/div[2]/div/code
 ```
+
 ---
 
 ## OpenID4VP examples
@@ -183,72 +179,66 @@ version: "1.0"
 name: "VID Identity – issuance-pre-auth"
 
 env:
-  base_url: "https://labs-openid-interop.vididentity.net"
+    base_url: "https://labs-openid-interop.vididentity.net"
 
 tests:
-  VID-Identity–issuance-pre-auth:
-    steps:
-      - name: "Create pre-auth issuance"
-        http:
-          method: POST
-          url: ${{ env.base_url }}/api/presentations
-          headers:
-            accept: "application/json, text/plain, */*"
-          json:
-            scope: "SDJWTCredential"
-          captures:
-            deeplink:
-              jsonpath: $.rawOpenid4vp
-            qr:
-              jsonpath: $.qrBase64
-            sessionId:
-              jsonpath: $.sessionId
+    VID-Identity–issuance-pre-auth:
+        steps:
+            - name: "Create pre-auth issuance"
+              http:
+                  method: POST
+                  url: ${{ env.base_url }}/api/presentations
+                  headers:
+                      accept: "application/json, text/plain, */*"
+                  json:
+                      scope: "SDJWTCredential"
+                  captures:
+                      deeplink:
+                          jsonpath: $.rawOpenid4vp
+                      qr:
+                          jsonpath: $.qrBase64
+                      sessionId:
+                          jsonpath: $.sessionId
 ```
 
 ### OpenID4VP — Get Presentation Request (POST)
 
 Use this to create a **presentation request** (often session‑based) and capture the `openid4vp://...` deeplink.
 
-The example below integrates with the "Rent a car" verification on [https://funke.animo.id](https://funke.animo.id).
-
 ```yaml
 version: "1.0"
 name: "VID Identity – issuance-pre-auth"
 
 env:
-  host: "https://labs-openid-interop.vididentity.net"
+    host: "https://labs-openid-interop.vididentity.net"
 
 tests:
-  VID-Identity–issuance-pre-auth:
-    steps:
-      - name: "Create pre-auth issuance"
-        http:
-          method: POST
-          url: ${{ env.host }}/api/presentations
-          headers:
-            accept: "application/json, text/plain, */*"
-          json:
-            scope: "SDJWTCredential"
-          captures:
-            deeplink:
-              jsonpath: $.rawOpenid4vp
-            qr:
-              jsonpath: $.qrBase64
-            sessionId:
-              jsonpath: $.sessionId
+    VID-Identity–issuance-pre-auth:
+        steps:
+            - name: "Create pre-auth issuance"
+              http:
+                  method: POST
+                  url: ${{ env.host }}/api/presentations
+                  headers:
+                      accept: "application/json, text/plain, */*"
+                  json:
+                      scope: "SDJWTCredential"
+                  captures:
+                      deeplink:
+                          jsonpath: $.rawOpenid4vp
+                      qr:
+                          jsonpath: $.qrBase64
+                      sessionId:
+                          jsonpath: $.sessionId
 ```
-
-
 
 ---
 
 # Wallet actions
 
-These YAML snippets describe **[Maestro](https://maestro.dev/) flows** that run on a mobile wallet. They consume the deeplinks captured by StepCI and automate user interactions (open app, accept, verify). 
+These YAML snippets describe **[Maestro](https://maestro.dev/) flows** that run on a mobile wallet. They consume the deeplinks captured by StepCI and automate user interactions (open app, accept, verify).
 
-The  snippets can be created with **[Maestro Studio](https://maestro.dev/#maestro-studio)** which you can download and install on Windows/Linux/Mac, you'll also need Android Studio and/or Xcode to run it.
-
-
+The snippets can be created with **[Maestro Studio](https://maestro.dev/#maestro-studio)** which you can download and install on Windows/Linux/Mac, you'll also need Android Studio and/or Xcode to run it.
 
 ## 📱 Wallet Actions (Maestro)
 
@@ -258,35 +248,34 @@ StepCI captures the deeplink. Maestro drives the wallet app, this works with the
 appId: com.didroom.wallet
 ---
 - launchApp:
-    clearState: true
+      clearState: true
 - tapOn: SKIP
 - tapOn: LOGIN
 - tapOn:
-    below: Email
+      below: Email
 - inputText: tess@tes.com
 - hideKeyboard
 - tapOn:
-    below: password
+      below: password
 - inputText: testtest
 - hideKeyboard
 - tapOn: NEXT next
 - scroll
 - scroll
 - tapOn:
-    below: insert your passphrase
+      below: insert your passphrase
 - inputText: chronic property inject opera glow client horse notable grape build engine damage
 - tapOn: LOGIN
 - tapOn: GET CREDENTIALS
 - tapOn: "dc+sd-jwt Voucher Credential dc+sd-jwt Voucher Credential test ci"
 - tapOn: CONTINUE
 - tapOn:
-    text: Voucher
-    index: 1
+      text: Voucher
+      index: 1
 - inputText: ten
 - hideKeyboard
 - tapOn: AUTHENTICATE
 - tapOn: Wallet
-
 ```
 
 ---

@@ -332,9 +332,9 @@ func buildPipelineRetentionScheduleAction(
 					OlderThanDays: olderThanDays,
 					DryRun:        false,
 				},
-				Config: map[string]any{
+				Config: workflowengine.WithInternalAppURL(map[string]any{
 					"app_url": appURL,
-				},
+				}),
 			},
 		},
 	}

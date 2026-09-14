@@ -43,8 +43,8 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"pipeline_id":          "pipe-1",
 						"pipeline_name":        "Pipeline 1",
 						"pipeline_identifier":  "namespace-1/pipe-1",
-						"runner_types":         []any{"android", "ios"},
-						"runners":              []any{"runner-1", "runner-2"},
+						"device_types":         []any{"android", "ios"},
+						"device_ids":           []any{"runner-1", "runner-2"},
 						"total_runs":           10.0,
 						"total_successes":      8.0,
 						"manual_executions":    3.0,
@@ -53,7 +53,7 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"min_execution_time":   "10m0s",
 						"first_execution_date": "2026-01-01T00:00:00Z",
 						"last_execution_date":  "2026-04-01T00:00:00Z",
-						"last_successful_run": map[string]any{
+						"last_run": map[string]any{
 							"workflow_id": "wf-1",
 							"run_id":      "run-1",
 							"start_time":  "2026-04-01T10:00:00Z",
@@ -65,8 +65,8 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"pipeline_id":          "pipe-1",
 						"pipeline_name":        "Pipeline 1",
 						"pipeline_identifier":  "namespace-2/pipe-1",
-						"runner_types":         []any{"android"},
-						"runners":              []any{"runner-3"},
+						"device_types":         []any{"android"},
+						"device_ids":           []any{"runner-3"},
 						"total_runs":           5.0,
 						"total_successes":      5.0,
 						"manual_executions":    1.0,
@@ -75,7 +75,7 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"min_execution_time":   "2m0s",
 						"first_execution_date": "2026-02-01T00:00:00Z",
 						"last_execution_date":  "2026-04-03T00:00:00Z",
-						"last_successful_run": map[string]any{
+						"last_run": map[string]any{
 							"workflow_id": "wf-2",
 							"run_id":      "run-2",
 							"start_time":  "2026-04-03T10:00:00Z",
@@ -85,8 +85,8 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"pipeline_id":          "pipe-2",
 						"pipeline_name":        "Pipeline 2",
 						"pipeline_identifier":  "namespace-2/pipe-2",
-						"runner_types":         []any{"android"},
-						"runners":              []any{"runner-3"},
+						"device_types":         []any{"android"},
+						"device_ids":           []any{"runner-3"},
 						"total_runs":           5.0,
 						"total_successes":      5.0,
 						"manual_executions":    1.0,
@@ -95,7 +95,7 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"min_execution_time":   "2m0s",
 						"first_execution_date": "2026-02-02T00:00:00Z",
 						"last_execution_date":  "2026-02-03T00:00:00Z",
-						"last_successful_run": map[string]any{
+						"last_run": map[string]any{
 							"workflow_id": "wf-3",
 							"run_id":      "run-3",
 							"start_time":  "2026-02-03T10:00:00Z",
@@ -166,9 +166,9 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 				require.ElementsMatch(
 					t,
 					[]string{"runner-1", "runner-2", "runner-3"},
-					pipeline1.Runners,
+					pipeline1.DeviceIDs,
 				)
-				require.ElementsMatch(t, []string{"android", "ios"}, pipeline1.RunnerTypes)
+				require.ElementsMatch(t, []string{"android", "ios"}, pipeline1.DeviceTypes)
 				require.NotNil(t, pipeline1.LastExecution)
 				require.Equal(t, "Pipeline 1", pipeline1.LastExecution.PipelineName)
 				require.Equal(t, "https://example.com/logo.png", pipeline1.LastExecution.OrgLogo)
@@ -178,7 +178,7 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 				require.Equal(t, 5, pipeline2.TotalRuns)
 				require.Equal(t, 5, pipeline2.TotalSuccesses)
 				require.Equal(t, 5, pipeline2.CIExecutions)
-				require.ElementsMatch(t, []string{"runner-3"}, pipeline2.Runners)
+				require.ElementsMatch(t, []string{"runner-3"}, pipeline2.DeviceIDs)
 				require.NotNil(t, pipeline2.LastExecution)
 				require.Equal(t, "Pipeline 2", pipeline2.LastExecution.PipelineName)
 			},
@@ -197,8 +197,8 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"pipeline_id":          "pipe-1",
 						"pipeline_name":        "Pipeline 1",
 						"pipeline_identifier":  "namespace-1/pipe-1",
-						"runner_types":         []any{"android"},
-						"runners":              []any{"runner-1"},
+						"device_types":         []any{"android"},
+						"device_ids":           []any{"runner-1"},
 						"total_runs":           4.0,
 						"total_successes":      3.0,
 						"manual_executions":    1.0,
@@ -206,7 +206,7 @@ func TestAggregateScoreboardWorkflow(t *testing.T) {
 						"min_execution_time":   "45s",
 						"first_execution_date": "2026-04-01T00:00:00Z",
 						"last_execution_date":  "2026-04-02T00:00:00Z",
-						"last_successful_run": map[string]any{
+						"last_run": map[string]any{
 							"workflow_id": "wf-1",
 							"run_id":      "run-1",
 							"start_time":  "2026-04-02T10:00:00Z",
@@ -401,7 +401,7 @@ func TestAggregateScoreboardWorkflowOrdersMixedTimestampPrecision(t *testing.T) 
 	lastRunMap := map[string]*pipelineRunRef{}
 	w.trackLastRun(
 		map[string]any{
-			"last_successful_run": map[string]any{
+			"last_run": map[string]any{
 				"workflow_id": "whole-second",
 				"run_id":      "run-1",
 				"start_time":  "2026-04-21T10:00:00Z",
@@ -413,7 +413,7 @@ func TestAggregateScoreboardWorkflowOrdersMixedTimestampPrecision(t *testing.T) 
 	)
 	w.trackLastRun(
 		map[string]any{
-			"last_successful_run": map[string]any{
+			"last_run": map[string]any{
 				"workflow_id": "fractional-second",
 				"run_id":      "run-2",
 				"start_time":  "2026-04-21T10:00:00.1Z",

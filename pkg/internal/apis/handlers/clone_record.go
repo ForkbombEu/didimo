@@ -368,7 +368,7 @@ func extractFileNames(value interface{}) []string {
 func cloneSingleFile(fs *filesystem.System, basePath, fileName string) (*filesystem.File, error) {
 	originalPath := basePath + "/" + fileName
 
-	reader, err := fs.GetFile(originalPath)
+	reader, err := fs.GetReader(originalPath)
 	if err != nil {
 		return nil, fmt.Errorf("file not found: %w", err)
 	}

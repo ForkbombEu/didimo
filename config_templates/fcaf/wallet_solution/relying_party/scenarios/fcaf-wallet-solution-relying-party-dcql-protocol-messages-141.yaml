@@ -1,6 +1,6 @@
 name: 'FCAF ProtocolMessages 141: Conflicting dcql_query and scope causes invalid_request'
 runtime:
-  global_runner_id: forkbomb-bv-andrea/usb
+  global_device_id: forkbomb-bv-andrea/usb/device
   temporal:
     activity_options:
       schedule_to_close_timeout: 50m
@@ -65,6 +65,7 @@ steps:
   use: fcaf-validation
   with:
     test_ids:
+      - WS_RP_MS_ProtocolMessages__021
       - WS_RP_MS_ProtocolMessages__141
     suite: wallet_solution/relying_party
     pipeline_outputs:

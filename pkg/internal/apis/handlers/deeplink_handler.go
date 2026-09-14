@@ -97,10 +97,10 @@ func getDeeplinkFromYAML(
 		Payload: workflows.CustomCheckWorkflowPayload{
 			Yaml: yaml,
 		},
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"memo":    memo,
 			"app_url": appURL,
-		},
+		}),
 		Secrets:         secretsToMap(secrets),
 		ActivityOptions: ao,
 	}

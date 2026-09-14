@@ -46,5 +46,10 @@ export const extras: ExtraLink[] = [
 		href: 'https://lote.credimi.io/',
 		title: m.extra_tl_lote_onboarding_catalogue(),
 		description: m.extra_tl_lote_onboarding_catalogue_description()
+	},
+	{
+		href: 'https://tsl.credimi.io/',
+		title: m.extra_token_status_list_console(),
+		description: m.extra_token_status_list_console_description()
 	}
 ];

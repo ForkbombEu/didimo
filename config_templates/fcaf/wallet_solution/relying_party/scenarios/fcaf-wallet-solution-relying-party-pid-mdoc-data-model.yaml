@@ -4,7 +4,7 @@ runtime:
     issuer_url: https://capture-wallet.credimi.io
     verifier_url: https://capture-wallet.credimi.io
     log_checker: capture-wallet
-  global_runner_id: ""
+  global_device_id: ""
   temporal:
     activity_options:
       schedule_to_close_timeout: 50m
@@ -174,6 +174,9 @@ steps:
         - WS_RP_DM_IdentifyingData_Sex_PID_ISO-mdoc_002
         - WS_RP_DM_IdentifyingData_Sex_PID_ISO-mdoc_003
         - WS_RP_SH_Cryptography_CryptographicHash_002
+
+        - WS_RP_SH_Encoding_TextualEncoding_014
+        - WS_RP_SH_Encoding_TextualEncoding_015
       suite: wallet_solution/relying_party
       pipeline_outputs:
         pipeline.pid.presentation.mdoc.all-claims-elements:

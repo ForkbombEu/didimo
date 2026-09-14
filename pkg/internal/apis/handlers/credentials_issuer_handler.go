@@ -244,11 +244,11 @@ func HandleCredentialIssuerStartCheck() func(*core.RequestEvent) error {
 		opt := workflows.DefaultActivityOptions
 		opt.RetryPolicy.MaximumAttempts = 1
 		workflowInput := workflowengine.WorkflowInput{
-			Config: map[string]any{
+			Config: workflowengine.WithInternalAppURL(map[string]any{
 				"app_url":       appURL,
 				"issuer_schema": credIssuerSchemaStr,
 				"orgID":         organization,
-			},
+			}),
 			Payload: workflows.CredentialsIssuersWorkflowPayload{
 				IssuerID: record.Id,
 				BaseURL:  req.URL,
@@ -425,11 +425,11 @@ func HandleCredentialIssuerImportFides() func(*core.RequestEvent) error {
 		}
 
 		workflowInput := workflowengine.WorkflowInput{
-			Config: map[string]any{
+			Config: workflowengine.WithInternalAppURL(map[string]any{
 				"app_url":       e.App.Settings().Meta.AppURL,
 				"issuer_schema": issuerSchema,
 				"orgID":         organization,
-			},
+			}),
 		}
 
 		if req.IntervalDays > 0 {

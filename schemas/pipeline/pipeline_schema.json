@@ -132,7 +132,7 @@
           },
           "type": "object"
         },
-        "global_runner_id": {
+        "global_device_id": {
           "type": "string"
         },
         "schedule": {
@@ -486,10 +486,6 @@
                                   "type": "array"
                                 }
                               },
-                              "required": [
-                                "IPv4Address",
-                                "IPv6Address"
-                              ],
                               "type": "object"
                             },
                             "IPAddress": {
@@ -1059,14 +1055,14 @@
                         "additionalProperties": true,
                         "type": "object"
                       },
+                      "device_id": {
+                        "type": "string"
+                      },
                       "parameters": {
                         "additionalProperties": {
                           "type": "string"
                         },
                         "type": "object"
-                      },
-                      "runner_id": {
-                        "type": "string"
                       }
                     },
                     "required": [
@@ -1084,14 +1080,14 @@
                         "additionalProperties": true,
                         "type": "object"
                       },
+                      "device_id": {
+                        "type": "string"
+                      },
                       "parameters": {
                         "additionalProperties": {
                           "type": "string"
                         },
                         "type": "object"
-                      },
-                      "runner_id": {
-                        "type": "string"
                       },
                       "version_id": {
                         "type": "string"
@@ -1113,14 +1109,14 @@
                         "additionalProperties": true,
                         "type": "object"
                       },
+                      "device_id": {
+                        "type": "string"
+                      },
                       "parameters": {
                         "additionalProperties": {
                           "type": "string"
                         },
                         "type": "object"
-                      },
-                      "runner_id": {
-                        "type": "string"
                       },
                       "version_id": {
                         "type": "string"

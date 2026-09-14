@@ -67,7 +67,7 @@ func cleanupTempRecords(
 	if len(items) == 0 {
 		return nil
 	}
-	appURL, _ := config["app_url"].(string)
+	appURL := workflowengine.InternalAppURLFromConfig(config)
 	if appURL == "" {
 		return nil
 	}

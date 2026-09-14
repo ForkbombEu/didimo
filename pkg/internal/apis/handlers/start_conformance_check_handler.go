@@ -438,7 +438,7 @@ func startOpenID4VPWalletWorkflow(i WorkflowStarterParams) (workflowengine.Workf
 			TestName: parsedData.TestName,
 			UserMail: email,
 		},
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"app_url":   appURL,
 			"template":  templateStr,
 			"namespace": namespace,
@@ -446,7 +446,7 @@ func startOpenID4VPWalletWorkflow(i WorkflowStarterParams) (workflowengine.Workf
 			"app_name":  i.AppName,
 			"app_logo":  i.LogoUrl,
 			"user_name": i.UserName,
-		},
+		}),
 	}
 	results, err := openID4VPWalletWorkflowStart(input)
 	if err != nil {
@@ -502,7 +502,7 @@ func startOpenIDAutomatedConformanceWorkflow(
 			TestName:   conformanceInputString(rawData, "test"),
 			UserMail:   i.Email,
 		},
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"app_url":   i.AppURL,
 			"template":  templateStr,
 			"namespace": i.Namespace,
@@ -510,7 +510,7 @@ func startOpenIDAutomatedConformanceWorkflow(
 			"app_name":  i.AppName,
 			"app_logo":  i.LogoUrl,
 			"user_name": i.UserName,
-		},
+		}),
 	}
 
 	results, err := starter(input)
@@ -595,7 +595,7 @@ func startEWCLikeWorkflow(
 			Parameters: conformanceInputParameters(rawData, nil),
 			UserMail:   i.Email,
 		},
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"app_url":        i.AppURL,
 			"template":       templateStr,
 			"namespace":      i.Namespace,
@@ -605,7 +605,7 @@ func startEWCLikeWorkflow(
 			"app_name":       i.AppName,
 			"app_logo":       i.LogoUrl,
 			"user_name":      i.UserName,
-		},
+		}),
 	}
 	results, err := starter(input)
 	if err != nil {
@@ -655,7 +655,7 @@ func startEudiwWorkflow(i WorkflowStarterParams) (workflowengine.WorkflowResult,
 			ID:       parsedData.ID,
 			UserMail: email,
 		},
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"app_url":   appURL,
 			"template":  templateStr,
 			"namespace": namespace,
@@ -663,7 +663,7 @@ func startEudiwWorkflow(i WorkflowStarterParams) (workflowengine.WorkflowResult,
 			"app_name":  i.AppName,
 			"app_logo":  i.LogoUrl,
 			"user_name": i.UserName,
-		},
+		}),
 	}
 	results, err := eudiwWorkflowStart(input)
 	if err != nil {
@@ -725,11 +725,11 @@ func startvLEIWorkflow(i WorkflowStarterParams) (workflowengine.WorkflowResult, 
 		)
 	}
 	input := workflowengine.WorkflowInput{
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"app_url":    appURL,
 			"server_url": parsedData.ServerURL,
 			"memo":       memo,
-		},
+		}),
 		Payload: workflows.VLEIValidationWorkflowPayload{
 			CredentialID: parsedData.CredentialID,
 		},

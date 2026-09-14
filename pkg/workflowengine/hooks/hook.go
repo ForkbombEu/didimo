@@ -86,9 +86,9 @@ func WorkersHook(app *pocketbase.PocketBase) {
 		log.Printf("[WorkersHook] All namespaces ready, workers started")
 		return se.Next()
 	})
-	app.OnTerminate().BindFunc(func(_ *core.TerminateEvent) error {
+	app.OnTerminate().BindFunc(func(te *core.TerminateEvent) error {
 		shutdownTemporalClientsFn()
-		return nil
+		return te.Next()
 	})
 }
 
@@ -278,9 +278,9 @@ var DefaultWorkers = []workerConfig{
 		},
 	},
 	{
-		TaskQueue: workflows.MobileRunnerSemaphoreTaskQueue,
+		TaskQueue: workflows.MobileDeviceSemaphoreTaskQueue,
 		Workflows: []workflowengine.Workflow{
-			workflows.NewMobileRunnerSemaphoreWorkflow(),
+			workflows.NewMobileDeviceSemaphoreWorkflow(),
 			workflows.NewGitHubPRCommentWorkflow(),
 		},
 		Activities: []workflowengine.ExecutableActivity{
@@ -288,8 +288,8 @@ var DefaultWorkers = []workerConfig{
 			activities.NewCheckWorkflowClosedActivity(),
 			activities.NewSignalWorkflowActivity(),
 			activities.NewCancelWorkflowActivity(),
-			activities.NewCleanupMobileRunnerSemaphoreResourcesActivity(),
-			activities.NewQueryMobileRunnerSemaphoreRunStatusActivity(),
+			activities.NewCleanupMobileDeviceSemaphoreResourcesActivity(),
+			activities.NewQueryMobileDeviceSemaphoreRunStatusActivity(),
 			activities.NewUpdateGitHubPRCommentActivity(),
 			activities.NewPatchGitHubPRCommentActivity(),
 		},
@@ -685,9 +685,9 @@ func executeWorkerManagerWorkflow(
 			OldNamespace: oldNamespace,
 			RunnerURLs:   uniqueWorkerManagerURLs(runnerURLs),
 		},
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"app_url": appURL,
-		},
+		}),
 		ActivityOptions: ao,
 	}
 

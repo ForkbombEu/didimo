@@ -135,10 +135,10 @@ func processCustomChecks(
 			Yaml:       yaml,
 			Parameters: parameters,
 		},
-		Config: map[string]any{
+		Config: workflowengine.WithInternalAppURL(map[string]any{
 			"memo":    memo,
 			"app_url": appURL,
-		},
+		}),
 		ActivityOptions: &workflow.ActivityOptions{
 			ScheduleToCloseTimeout: totalTimeout,
 			StartToCloseTimeout:    timeout,

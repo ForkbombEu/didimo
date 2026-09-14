@@ -8,6 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	import { entities } from '$lib/global';
 
 	import { renderComponent } from '@/components/ui/data-table';
+	import { m } from '@/i18n';
 
 	import * as Column from '../column';
 	import * as EntityDisplay from '../entity-display';
@@ -21,10 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 			),
 		id: 'verifiers',
 		header: renderComponent(EntityHeader, {
-			data: entities.verifiers,
-			trimLabel: true,
-			align: 'right',
-			hideIcon: true
+			label: m.Presentations()
 		}),
 		sortField: 'verifiers.name',
 		manualPillPositioning: true
@@ -35,4 +33,4 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	let { value }: Column.Props<typeof column> = $props();
 </script>
 
-<EntityDisplay.List items={value} layout="avatar-only" align="end" />
+<EntityDisplay.List items={value} layout="logos" />

@@ -110,7 +110,7 @@ $(DATA):
 dev: $(WEBENV) tools devtools submodules $(BIN) $(DATA) ## 🚀 run in watch mode
 	$(call require_tools,$(DEPS) $(DEV_DEPS))
 	$(call write_compose_dev_override)
-	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) COMPOSE_DEV_OVERRIDE_FILE=$(COMPOSE_DEV_OVERRIDE_FILE) bash -c 'export CREDIMI_ELASTIC_PASSWORD=$${CREDIMI_ELASTIC_PASSWORD:-devpassword} PUBLIC_TURNSTILE_SITE_KEY=$${PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA} TURNSTILE_SECRET_KEY=$${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}; trap "docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} stop elasticsearch postgresql temporal temporal_ui" EXIT; POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} up --build -d elasticsearch postgresql temporal temporal_ui temporal_setup; DEBUG=1 $(GOTOOL) hivemind -T -l API,UI Procfile.dev'
+	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) COMPOSE_DEV_OVERRIDE_FILE=$(COMPOSE_DEV_OVERRIDE_FILE) bash -c 'export CREDIMI_ELASTIC_PASSWORD=$${CREDIMI_ELASTIC_PASSWORD:-devpassword} CREDIMI_INTERNAL_APP_URL=$${CREDIMI_INTERNAL_APP_URL:-http://localhost:8090} PUBLIC_TURNSTILE_SITE_KEY=$${PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA} TURNSTILE_SECRET_KEY=$${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}; trap "docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} stop elasticsearch postgresql temporal temporal_ui" EXIT; POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} up --build -d elasticsearch postgresql temporal temporal_ui temporal_setup; DEBUG=1 $(GOTOOL) hivemind -T -l API,UI Procfile.dev'
 
 test: ## 🧪 run tests
 	$(call require_tools,$(TEST_DEPS))
@@ -120,14 +120,16 @@ test.all: ## 🧪 run all tests, including long tests skipped by test
 	$(call require_tools,$(TEST_DEPS))
 	TEST_SHORT=0 bash ./scripts/test-summary.sh
 
+testdata.refresh: ## 🗄️ Apply pending migrations into test_pb_data (run after PocketBase upgrades)
+	$(GOCMD) run ./cmd/testdata-refresh
 fcaf-generate: ## Generate one complete FCAF validation pipeline from scenario sources
 	$(GOCMD) run ./cmd/fcaf-pipeline-gen
 
 fcaf-run: fcaf-generate ## Run complete FCAF validation through Credimi and store results server-side
-	$(GOCMD) run . fcaf run $(if $(API_KEY),--api-key "$(API_KEY)",) --instance "$(or $(INSTANCE),http://localhost:8090)" --dir "$(or $(FCAF_DIR),config_templates/fcaf/wallet_solution/relying_party/pipelines)" $(if $(FCAF_OUTPUT),--output "$(FCAF_OUTPUT)",) $(if $(FCAF_FILTER),--filter "$(FCAF_FILTER)",) $(if $(FCAF_RUNNER_ID),--runner-id "$(FCAF_RUNNER_ID)",)
+	$(GOCMD) run . fcaf run $(if $(API_KEY),--api-key "$(API_KEY)",) --instance "$(or $(INSTANCE),http://localhost:8090)" --dir "$(or $(FCAF_DIR),config_templates/fcaf/wallet_solution/relying_party/pipelines)" $(if $(FCAF_OUTPUT),--output "$(FCAF_OUTPUT)",) $(if $(FCAF_FILTER),--filter "$(FCAF_FILTER)",) $(if $(FCAF_DEVICE_ID),--device-id "$(FCAF_DEVICE_ID)",)
 
 fcaf-sync: fcaf-generate ## Synchronize complete FCAF pipeline and credential definitions without running them
-	$(GOCMD) run . fcaf sync $(if $(API_KEY),--api-key "$(API_KEY)",) --instance "$(or $(INSTANCE),http://localhost:8090)" --dir "$(or $(FCAF_DIR),config_templates/fcaf/wallet_solution/relying_party/pipelines)" --imports-dir "$(or $(FCAF_IMPORTS_DIR),config_templates/fcaf/imports)" $(if $(FCAF_RUNNER_ID),--runner-id "$(FCAF_RUNNER_ID)",)
+	$(GOCMD) run . fcaf sync $(if $(API_KEY),--api-key "$(API_KEY)",) --instance "$(or $(INSTANCE),http://localhost:8090)" --dir "$(or $(FCAF_DIR),config_templates/fcaf/wallet_solution/relying_party/pipelines)" --imports-dir "$(or $(FCAF_IMPORTS_DIR),config_templates/fcaf/imports)" $(if $(FCAF_DEVICE_ID),--device-id "$(FCAF_DEVICE_ID)",)
 ifeq (test.p, $(firstword $(MAKECMDGOALS)))
   test_name := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
   $(eval $(test_name):;@true)
@@ -203,14 +205,16 @@ $(BINARY_NAME)-ui: $(UI_SRC)
 	kill $$PID;
 
 docker: $(DATA) submodules ## 🐳 run docker with all the infrastructure services
+	if [ -z "$$CREDIMI_EXTRA_PAT" ] && command -v gh >/dev/null 2>&1; then CREDIMI_EXTRA_PAT="$$(gh auth token 2>/dev/null || true)"; fi; \
 	EXTRA_BUILD_ARGS=""; [ -n "$$CREDIMI_EXTRA_PAT" ] && EXTRA_BUILD_ARGS="--build-arg CREDIMI_EXTRA_PAT=$$CREDIMI_EXTRA_PAT"; \
-	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 docker compose build --build-arg PUBLIC_POCKETBASE_URL="http://localhost:8090" --build-arg PUBLIC_TURNSTILE_SITE_KEY="$${PUBLIC_TURNSTILE_SITE_KEY:-}" $$EXTRA_BUILD_ARGS
-	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 docker compose up
+	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 CREDIMI_ELASTIC_PASSWORD="$${CREDIMI_ELASTIC_PASSWORD:-devpassword}" docker compose build --build-arg PUBLIC_POCKETBASE_URL="http://localhost:8090" --build-arg PUBLIC_TURNSTILE_SITE_KEY="$${PUBLIC_TURNSTILE_SITE_KEY:?PUBLIC_TURNSTILE_SITE_KEY is required}" $$EXTRA_BUILD_ARGS
+	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 CREDIMI_ELASTIC_PASSWORD="$${CREDIMI_ELASTIC_PASSWORD:-devpassword}" docker compose up
 
 docker-tunnel: $(DATA) submodules ## 🌐 run docker (detached, logs hidden) and expose http://localhost:8090 over a public cloudflared tunnel
 	$(call require_tools,cloudflared)
+	if [ -z "$$CREDIMI_EXTRA_PAT" ] && command -v gh >/dev/null 2>&1; then CREDIMI_EXTRA_PAT="$$(gh auth token 2>/dev/null || true)"; fi; \
 	EXTRA_BUILD_ARGS=""; [ -n "$$CREDIMI_EXTRA_PAT" ] && EXTRA_BUILD_ARGS="--build-arg CREDIMI_EXTRA_PAT=$$CREDIMI_EXTRA_PAT"; \
-	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 docker compose build --build-arg PUBLIC_POCKETBASE_URL="" --build-arg PUBLIC_TURNSTILE_SITE_KEY="$${PUBLIC_TURNSTILE_SITE_KEY:-}" $$EXTRA_BUILD_ARGS
+	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 CREDIMI_ELASTIC_PASSWORD="$${CREDIMI_ELASTIC_PASSWORD:-devpassword}" docker compose build --build-arg PUBLIC_POCKETBASE_URL="" --build-arg PUBLIC_TURNSTILE_SITE_KEY="$${PUBLIC_TURNSTILE_SITE_KEY:?PUBLIC_TURNSTILE_SITE_KEY is required}" $$EXTRA_BUILD_ARGS
 	@COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 bash -euc '\
 		printf "$(CYAN)🐳 Starting docker compose detached (runtime logs hidden — run \`docker compose logs -f\` to view)...$(RESET)\n"; \
 		docker compose up -d --remove-orphans; \
@@ -220,6 +224,9 @@ docker-tunnel: $(DATA) submodules ## 🌐 run docker (detached, logs hidden) and
 		printf "\n$(GREEN)🌍 Public URL will appear in the cloudflared banner below:$(RESET)\n\n"; \
 		cloudflared tunnel --url http://localhost:8090 \
 	'
+
+waf-emulator: ## 🛡  emulate a Cloudflare-proxied deployment (challenges non-browser callers) on :8091
+	$(GOCMD) run ./scripts/waf-emulator
 
 ## Misc
 

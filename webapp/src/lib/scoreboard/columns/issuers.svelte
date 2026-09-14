@@ -8,6 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	import { entities } from '$lib/global';
 
 	import { renderComponent } from '@/components/ui/data-table';
+	import { m } from '@/i18n';
 
 	import * as Column from '../column';
 	import * as EntityDisplay from '../entity-display';
@@ -21,9 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 			),
 		id: 'issuers',
 		header: renderComponent(EntityHeader, {
-			data: entities.credential_issuers,
-			trimLabel: true,
-			hideIcon: true,
+			label: m.Issuance(),
 			align: 'right'
 		}),
 		sortField: 'issuers.name',
@@ -35,4 +34,4 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	let { value }: Column.Props<typeof column> = $props();
 </script>
 
-<EntityDisplay.List items={value} layout="avatar-only" align="end" />
+<EntityDisplay.List items={value} layout="logos" />

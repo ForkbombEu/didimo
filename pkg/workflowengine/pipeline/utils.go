@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/forkbombeu/credimi/pkg/internal/canonify"
@@ -258,7 +259,7 @@ func formatPayloadDecodeError(s *pipeline.StepDefinition, err error) string {
 		return err.Error()
 	}
 
-	if typeErr.Field == "parameters" && typeErr.Type.Kind() == reflect.String {
+	if typeErr.Field == "parameters" || strings.HasPrefix(typeErr.Field, "parameters.") {
 		return formatStringParameterDecodeError(s)
 	}
 
