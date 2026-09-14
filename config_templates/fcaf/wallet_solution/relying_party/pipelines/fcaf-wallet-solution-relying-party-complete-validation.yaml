@@ -249,7 +249,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claim-id-missing-with-claim-set-6de0c1eb-exercise-wallet
       use: mobile-automation
@@ -264,7 +264,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claim-id-missing-with-claim-set-6de0c1eb-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claim-id-missing-with-claim-set-6de0c1eb-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claim-path-reversed-e458d519-create
       use: http-request
@@ -291,7 +291,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claim-path-reversed-e458d519-wallet
       use: mobile-automation
@@ -306,7 +306,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claim-path-reversed-e458d519-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claim-path-reversed-e458d519-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claim-sets-empty-2fce8ed5-evidence-empty-claim-sets-request
       use: json-parse
@@ -597,7 +597,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claims-omitted-119046a6-present-without-claims
       use: mobile-automation
@@ -637,7 +637,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-omitted-119046a6-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-omitted-119046a6-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claims-path-no-match-00a99e11-create
       use: http-request
@@ -663,7 +663,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claims-path-no-match-00a99e11-wallet
       use: mobile-automation
@@ -720,7 +720,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-path-no-match-00a99e11-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-path-no-match-00a99e11-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claims-union-b689aff5-create-presentation
       use: http-request
@@ -832,7 +832,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claims-values-no-match-9e05fa90-wallet
       use: mobile-automation
@@ -889,7 +889,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-values-no-match-9e05fa90-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-values-no-match-9e05fa90-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claims-without-id-without-claim-939800aa-create-capture-session
       use: http-request
@@ -912,7 +912,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claims-without-id-without-claim-939800aa-exercise-wallet
       use: mobile-automation
@@ -927,7 +927,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-without-id-without-claim-939800aa-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-without-id-without-claim-939800aa-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-claims-without-values-174b98b6-create-presentation
       use: http-request
@@ -950,7 +950,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-claims-without-values-174b98b6-present-claim-without-values
       use: mobile-automation
@@ -1009,7 +1009,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-without-values-174b98b6-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-claims-without-values-174b98b6-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-format-disallowed-c8dd9078-create
       use: http-request
@@ -1025,7 +1025,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-format-disallowed-c8dd9078-reject
       use: mobile-automation
@@ -1046,7 +1046,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-format-disallowed-c8dd9078-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-format-disallowed-c8dd9078-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-format-missing-b1b0b25b-create
       use: http-request
@@ -1063,7 +1063,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-format-missing-b1b0b25b-reject
       use: mobile-automation
@@ -1084,7 +1084,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-format-missing-b1b0b25b-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-format-missing-b1b0b25b-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-create-capture-session
       use: http-request
@@ -1111,7 +1111,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-exercise-wallet
       use: mobile-automation
@@ -1126,7 +1126,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-035-create-pid-mdoc-offer
       use: credential-offer
@@ -1168,7 +1168,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-035-present-pid-mdoc
       use: mobile-automation
@@ -1183,7 +1183,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-035-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-035-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-036-create-pid-sdjwt-offer
       use: credential-offer
@@ -1223,7 +1223,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-036-present-pid-sdjwt
       use: mobile-automation
@@ -1238,7 +1238,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-036-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-036-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-039-create-capture-session
       use: http-request
@@ -1265,7 +1265,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-039-exercise-wallet
       use: mobile-automation
@@ -1308,7 +1308,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-039-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-039-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-040-create-capture-session
       use: http-request
@@ -1335,7 +1335,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-formats-3cfeac03-credential-formats-040-exercise-wallet
       use: mobile-automation
@@ -1378,7 +1378,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-040-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-formats-3cfeac03-credential-formats-040-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-id-duplicate-0ca7fa96-create
       use: http-request
@@ -1401,7 +1401,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-id-duplicate-0ca7fa96-reject
       use: mobile-automation
@@ -1422,7 +1422,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-duplicate-0ca7fa96-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-duplicate-0ca7fa96-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-id-empty-6d3e76ff-create
       use: http-request
@@ -1440,7 +1440,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-id-empty-6d3e76ff-reject
       use: mobile-automation
@@ -1461,7 +1461,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-empty-6d3e76ff-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-empty-6d3e76ff-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-id-invalid-966ca275-create
       use: http-request
@@ -1479,7 +1479,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-id-invalid-966ca275-reject
       use: mobile-automation
@@ -1500,7 +1500,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-invalid-966ca275-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-invalid-966ca275-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-id-missing-b9fe0583-create
       use: http-request
@@ -1517,7 +1517,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-id-missing-b9fe0583-reject
       use: mobile-automation
@@ -1538,7 +1538,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-missing-b9fe0583-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-missing-b9fe0583-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-id-non-string-222522d5-create
       use: http-request
@@ -1556,7 +1556,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-id-non-string-222522d5-reject
       use: mobile-automation
@@ -1577,7 +1577,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-non-string-222522d5-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-id-non-string-222522d5-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-empty-84f34308-create
       use: http-request
@@ -1596,7 +1596,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-empty-84f34308-reject
       use: mobile-automation
@@ -1617,7 +1617,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-empty-84f34308-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-empty-84f34308-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-options-empty-b28d4071-create-capture-session
       use: http-request
@@ -1639,7 +1639,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-options-empty-b28d4071-reject-empty-credential-sets-options
       use: mobile-automation
@@ -1697,7 +1697,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-empty-b28d4071-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-empty-b28d4071-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-options-invalid-0dc69b3d-create-capture-session
       use: http-request
@@ -1720,7 +1720,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-options-invalid-0dc69b3d-exercise-wallet
       use: mobile-automation
@@ -1805,7 +1805,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-invalid-0dc69b3d-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-invalid-0dc69b3d-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-options-missing-a6f66784-create-capture-session
       use: http-request
@@ -1830,7 +1830,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-options-missing-a6f66784-reject-missing-credential-sets-options
       use: mobile-automation
@@ -1888,7 +1888,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-missing-a6f66784-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-missing-a6f66784-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-options-non-arr-da1eeeb3-create-capture-session
       use: http-request
@@ -1910,7 +1910,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-options-non-arr-da1eeeb3-exercise-wallet
       use: mobile-automation
@@ -1995,7 +1995,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-non-arr-da1eeeb3-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-non-arr-da1eeeb3-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-options-valid-r-bea443fd-create-capture-session
       use: http-request
@@ -2018,7 +2018,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-options-valid-r-bea443fd-present-valid-credential-sets-options
       use: mobile-automation
@@ -2082,7 +2082,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-valid-r-bea443fd-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-options-valid-r-bea443fd-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-required-false-88748634-create-presentation
       use: http-request
@@ -2232,7 +2232,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-required-true-m-c6f43473-present-required-credential-set
       use: mobile-automation
@@ -2247,7 +2247,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-required-true-m-c6f43473-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-required-true-m-c6f43473-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credential-sets-required-true-n-bfc8e293-create-capture-session
       use: http-request
@@ -2271,7 +2271,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credential-sets-required-true-n-bfc8e293-reject-required-credential-set
       use: mobile-automation
@@ -2322,7 +2322,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-required-true-n-bfc8e293-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credential-sets-required-true-n-bfc8e293-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credentials-empty-8a34dae1-create-capture-session
       use: http-request
@@ -2335,7 +2335,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credentials-empty-8a34dae1-reject-empty-credentials
       use: mobile-automation
@@ -2366,7 +2366,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-empty-8a34dae1-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-empty-8a34dae1-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credentials-malformed-e90a2f4e-create
       use: http-request
@@ -2380,7 +2380,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credentials-malformed-e90a2f4e-reject
       use: mobile-automation
@@ -2401,7 +2401,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-malformed-e90a2f4e-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-malformed-e90a2f4e-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credentials-match-cc301c32-onboard-reference-wallet
       use: mobile-automation
@@ -2453,7 +2453,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credentials-match-cc301c32-present-with-reference-implementation
       use: mobile-automation
@@ -2475,7 +2475,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-match-cc301c32-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-match-cc301c32-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credentials-missing-377a6829-create-capture-session
       use: http-request
@@ -2487,7 +2487,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credentials-missing-377a6829-reject-missing-credentials
       use: mobile-automation
@@ -2518,7 +2518,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-missing-377a6829-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-missing-377a6829-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-credentials-non-array-f11dc532-create-capture-session
       use: http-request
@@ -2531,7 +2531,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-credentials-non-array-f11dc532-reject-non-array-credentials
       use: mobile-automation
@@ -2562,7 +2562,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-non-array-f11dc532-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-credentials-non-array-f11dc532-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-cryptography-1a488a33-create-capture-session
       use: http-request
@@ -2589,7 +2589,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-cryptography-1a488a33-exercise-wallet
       use: mobile-automation
@@ -2604,7 +2604,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-cryptography-1a488a33-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-cryptography-1a488a33-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-device-binding-f7c71f86-create-capture-session
       use: http-request
@@ -2631,7 +2631,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-device-binding-f7c71f86-exercise-wallet
       use: mobile-automation
@@ -2646,7 +2646,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-device-binding-f7c71f86-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-device-binding-f7c71f86-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-duplicate-claim-ids-05455537-create-capture-session
       use: http-request
@@ -2673,7 +2673,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-duplicate-claim-ids-05455537-exercise-wallet
       use: mobile-automation
@@ -2758,7 +2758,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-duplicate-claim-ids-05455537-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-duplicate-claim-ids-05455537-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-empty-claim-id-30473d71-create-capture-session
       use: http-request
@@ -2782,7 +2782,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-empty-claim-id-30473d71-exercise-wallet
       use: mobile-automation
@@ -2867,7 +2867,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-id-30473d71-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-id-30473d71-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-empty-claim-path-selection-5f7756d6-create
       use: http-request
@@ -2892,7 +2892,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-empty-claim-path-selection-5f7756d6-wallet
       use: mobile-automation
@@ -2907,7 +2907,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-path-selection-5f7756d6-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-path-selection-5f7756d6-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-empty-claim-path-5e517cde-create-capture-session
       use: http-request
@@ -2930,7 +2930,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-empty-claim-path-5e517cde-exercise-wallet
       use: mobile-automation
@@ -3015,14 +3015,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-path-5e517cde-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-path-5e517cde-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-empty-claim-path-5e517cde-fetch-signed-request-object
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-path-5e517cde-create-capture-session.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-empty-claim-path-5e517cde-create-capture-session.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-encoding-93928417-create-capture-session
       use: http-request
@@ -3049,7 +3049,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-encoding-93928417-exercise-wallet
       use: mobile-automation
@@ -3145,7 +3145,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-encoding-93928417-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-encoding-93928417-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-format-mso-mdoc-fe537db0-create-presentation
       use: http-request
@@ -3600,7 +3600,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-interaction-engagement-d1f27e9f-exercise-wallet
       use: mobile-automation
@@ -3696,7 +3696,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-engagement-d1f27e9f-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-engagement-d1f27e9f-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-interaction-metadata-f9737358-create-capture-session
       use: http-request
@@ -3723,7 +3723,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-interaction-metadata-f9737358-exercise-wallet
       use: mobile-automation
@@ -3738,7 +3738,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-metadata-f9737358-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-metadata-f9737358-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-interaction-protocol-flow-8f466d9d-create-capture-session
       use: http-request
@@ -3765,7 +3765,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-interaction-protocol-flow-8f466d9d-exercise-wallet
       use: mobile-automation
@@ -3861,14 +3861,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-protocol-flow-8f466d9d-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-protocol-flow-8f466d9d-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-interaction-protocol-flow-8f466d9d-fetch-signed-request-object
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-protocol-flow-8f466d9d-create-capture-session.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-protocol-flow-8f466d9d-create-capture-session.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-interaction-supportive-9a64a7f5-create-capture-session
       use: http-request
@@ -3895,7 +3895,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-interaction-supportive-9a64a7f5-exercise-wallet
       use: mobile-automation
@@ -3991,7 +3991,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-supportive-9a64a7f5-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-interaction-supportive-9a64a7f5-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-invalid-claim-id-characters-810a5ad8-create-capture-session
       use: http-request
@@ -4015,7 +4015,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-invalid-claim-id-characters-810a5ad8-exercise-wallet
       use: mobile-automation
@@ -4100,7 +4100,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-invalid-claim-id-characters-810a5ad8-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-invalid-claim-id-characters-810a5ad8-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-issuer-integrity-34b33943-create-capture-session
       use: http-request
@@ -4127,7 +4127,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-issuer-integrity-34b33943-exercise-wallet
       use: mobile-automation
@@ -4223,7 +4223,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-issuer-integrity-34b33943-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-issuer-integrity-34b33943-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-create-capture-session
       use: http-request
@@ -4250,7 +4250,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-exercise-wallet
       use: mobile-automation
@@ -4265,7 +4265,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-019-create-presentation
       use: http-request
@@ -4298,7 +4298,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-019-present-with-reference-implementation
       use: mobile-automation
@@ -4339,7 +4339,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-019-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-019-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-020-create-presentation
       use: http-request
@@ -4372,7 +4372,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-020-present-second-preferred-option
       use: mobile-automation
@@ -4425,7 +4425,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-020-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-020-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-022-create-presentation
       use: http-request
@@ -4446,7 +4446,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-022-reject-claim-sets-without-claims
       use: mobile-automation
@@ -4474,7 +4474,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-022-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-022-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-025-create-presentation
       use: http-request
@@ -4508,7 +4508,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-025-present-partial-fallback
       use: mobile-automation
@@ -4537,7 +4537,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-025-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-025-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-026-create-presentation
       use: http-request
@@ -4561,7 +4561,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-026-exercise-no-match
       use: mobile-automation
@@ -4589,7 +4589,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-026-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-026-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-027-create-presentation
       use: http-request
@@ -4615,7 +4615,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-027-exercise-no-match
       use: mobile-automation
@@ -4643,7 +4643,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-027-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-027-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-028-create-pid-mdoc-offer
       use: credential-offer
@@ -4674,7 +4674,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-028-present-full-disclosure
       use: mobile-automation
@@ -4689,7 +4689,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-028-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-028-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-029-create-pid-sdjwt-offer
       use: credential-offer
@@ -4733,7 +4733,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-029-present-required-option
       use: mobile-automation
@@ -4748,7 +4748,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-029-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-029-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-043-create-optional-no-match-presentation
       use: http-request
@@ -4771,7 +4771,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-043-present-optional-no-match
       use: mobile-automation
@@ -4786,7 +4786,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-043-create-optional-no-match-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-043-create-optional-no-match-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-030-create-pid-sdjwt-offer
       use: credential-offer
@@ -4826,7 +4826,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-030-present-available-option
       use: mobile-automation
@@ -4841,7 +4841,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-030-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-030-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-031-create-pid-sdjwt-offer
       use: credential-offer
@@ -4882,7 +4882,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-031-present-combined-option
       use: mobile-automation
@@ -4897,7 +4897,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-031-create-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-031-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-039-create-two-credentials-presentation
       use: http-request
@@ -4932,7 +4932,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-main-interaction-eeb8ef1f-main-interaction-039-present-two-credentials
       use: mobile-automation
@@ -4983,7 +4983,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-039-create-two-credentials-presentation.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-main-interaction-eeb8ef1f-main-interaction-039-create-two-credentials-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-meta-empty-1fc6aca5-create
       use: http-request
@@ -5004,7 +5004,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-meta-empty-1fc6aca5-wallet
       use: mobile-automation
@@ -5019,14 +5019,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-empty-1fc6aca5-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-empty-1fc6aca5-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-meta-empty-1fc6aca5-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-empty-1fc6aca5-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-empty-1fc6aca5-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-meta-format-mismatch-dbb8d5c5-create
       use: http-request
@@ -5048,7 +5048,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-meta-format-mismatch-dbb8d5c5-wallet
       use: mobile-automation
@@ -5079,14 +5079,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-format-mismatch-dbb8d5c5-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-format-mismatch-dbb8d5c5-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-meta-format-mismatch-dbb8d5c5-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-format-mismatch-dbb8d5c5-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-format-mismatch-dbb8d5c5-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-meta-omitted-3812c5e1-create
       use: http-request
@@ -5106,7 +5106,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-meta-omitted-3812c5e1-wallet
       use: mobile-automation
@@ -5137,14 +5137,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-omitted-3812c5e1-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-omitted-3812c5e1-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-meta-omitted-3812c5e1-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-omitted-3812c5e1-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-meta-omitted-3812c5e1-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-meta-vct-mismatch-1d861c4c-create-presentation
       use: http-request
@@ -5233,7 +5233,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-metadata-b66a6319-exercise-wallet
       use: mobile-automation
@@ -5248,7 +5248,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-metadata-b66a6319-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-metadata-b66a6319-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-missing-claim-path-4cb9035a-create-capture-session
       use: http-request
@@ -5270,7 +5270,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-missing-claim-path-4cb9035a-exercise-wallet
       use: mobile-automation
@@ -5355,7 +5355,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-missing-claim-path-4cb9035a-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-missing-claim-path-4cb9035a-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-multiple-non-boolean-c494241c-create
       use: http-request
@@ -5379,7 +5379,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-multiple-non-boolean-c494241c-wallet
       use: mobile-automation
@@ -5410,14 +5410,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-multiple-non-boolean-c494241c-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-multiple-non-boolean-c494241c-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-multiple-non-boolean-c494241c-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-multiple-non-boolean-c494241c-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-multiple-non-boolean-c494241c-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-multiple-true-ad438f05-create-presentation
       use: http-request
@@ -5612,7 +5612,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-non-array-claim-path-c23ef0aa-exercise-wallet
       use: mobile-automation
@@ -5697,7 +5697,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-non-array-claim-path-c23ef0aa-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-non-array-claim-path-c23ef0aa-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-object-claim-path-array-selecto-611dd5cc-create
       use: http-request
@@ -5725,7 +5725,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-object-claim-path-array-selecto-611dd5cc-wallet
       use: mobile-automation
@@ -5740,7 +5740,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-object-claim-path-array-selecto-611dd5cc-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-object-claim-path-array-selecto-611dd5cc-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-presentation-76d882de-create-capture-session
       use: http-request
@@ -5767,7 +5767,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-presentation-76d882de-exercise-wallet
       use: mobile-automation
@@ -5863,7 +5863,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-presentation-76d882de-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-presentation-76d882de-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-120-b6247e8b-create-capture-session
       use: http-request
@@ -5887,7 +5887,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-120-b6247e8b-exercise-wallet
       use: mobile-automation
@@ -5983,7 +5983,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-120-b6247e8b-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-120-b6247e8b-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-121-47c8da6a-create-capture-session
       use: http-request
@@ -6007,7 +6007,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-121-47c8da6a-exercise-wallet
       use: mobile-automation
@@ -6103,7 +6103,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-121-47c8da6a-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-121-47c8da6a-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-122-d80887a4-create-capture-session
       use: http-request
@@ -6126,7 +6126,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-122-d80887a4-exercise-wallet
       use: mobile-automation
@@ -6222,7 +6222,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-122-d80887a4-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-122-d80887a4-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-123-dab665e2-create-capture-session
       use: http-request
@@ -6246,7 +6246,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-123-dab665e2-exercise-wallet
       use: mobile-automation
@@ -6342,7 +6342,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-123-dab665e2-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-123-dab665e2-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-124-cc145d3b-create-capture-session
       use: http-request
@@ -6366,7 +6366,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-124-cc145d3b-exercise-wallet
       use: mobile-automation
@@ -6462,7 +6462,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-124-cc145d3b-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-124-cc145d3b-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-125-7274a364-create-capture-session
       use: http-request
@@ -6487,7 +6487,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-125-7274a364-exercise-wallet
       use: mobile-automation
@@ -6583,7 +6583,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-125-7274a364-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-125-7274a364-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-126-8a9d038e-create-capture-session
       use: http-request
@@ -6609,7 +6609,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-126-8a9d038e-exercise-wallet
       use: mobile-automation
@@ -6705,7 +6705,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-126-8a9d038e-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-126-8a9d038e-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-127-c4ddbfd3-create-capture-session
       use: http-request
@@ -6732,7 +6732,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-127-c4ddbfd3-exercise-wallet
       use: mobile-automation
@@ -6828,7 +6828,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-127-c4ddbfd3-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-127-c4ddbfd3-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-128-027cac9d-create-capture-session
       use: http-request
@@ -6852,7 +6852,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-128-027cac9d-exercise-wallet
       use: mobile-automation
@@ -6948,7 +6948,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-128-027cac9d-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-128-027cac9d-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-129-af9c62b2-create-capture-session
       use: http-request
@@ -6971,7 +6971,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-129-af9c62b2-exercise-wallet
       use: mobile-automation
@@ -7067,7 +7067,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-129-af9c62b2-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-129-af9c62b2-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-130-5206ae84-create-capture-session
       use: http-request
@@ -7090,7 +7090,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-130-5206ae84-exercise-wallet
       use: mobile-automation
@@ -7186,7 +7186,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-130-5206ae84-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-130-5206ae84-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-131-ab40189a-create-capture-session
       use: http-request
@@ -7209,7 +7209,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-131-ab40189a-exercise-wallet
       use: mobile-automation
@@ -7305,7 +7305,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-131-ab40189a-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-131-ab40189a-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-132-2ac66810-create-capture-session
       use: http-request
@@ -7328,7 +7328,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-132-2ac66810-exercise-wallet
       use: mobile-automation
@@ -7424,7 +7424,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-132-2ac66810-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-132-2ac66810-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-133-0e82ab68-create-capture-session
       use: http-request
@@ -7447,7 +7447,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-133-0e82ab68-exercise-wallet
       use: mobile-automation
@@ -7543,7 +7543,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-133-0e82ab68-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-133-0e82ab68-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-134-b2f66cd5-create-capture-session
       use: http-request
@@ -7566,7 +7566,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-134-b2f66cd5-exercise-wallet
       use: mobile-automation
@@ -7662,7 +7662,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-134-b2f66cd5-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-134-b2f66cd5-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-135-a8f6bf3d-create-capture-session
       use: http-request
@@ -7688,7 +7688,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-135-a8f6bf3d-exercise-wallet
       use: mobile-automation
@@ -7784,7 +7784,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-135-a8f6bf3d-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-135-a8f6bf3d-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-136-5cce48a8-create-capture-session
       use: http-request
@@ -7810,7 +7810,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-136-5cce48a8-exercise-wallet
       use: mobile-automation
@@ -7891,7 +7891,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-136-5cce48a8-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-136-5cce48a8-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-137-ba3248bd-create-capture-session
       use: http-request
@@ -7915,7 +7915,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-137-ba3248bd-exercise-wallet
       use: mobile-automation
@@ -8011,7 +8011,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-137-ba3248bd-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-137-ba3248bd-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-138-f0f24bb5-create-capture-session
       use: http-request
@@ -8035,7 +8035,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-138-f0f24bb5-exercise-wallet
       use: mobile-automation
@@ -8131,7 +8131,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-138-f0f24bb5-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-138-f0f24bb5-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-139-6e481943-create-capture-session
       use: http-request
@@ -8155,7 +8155,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-139-6e481943-exercise-wallet
       use: mobile-automation
@@ -8251,7 +8251,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-139-6e481943-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-139-6e481943-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-140-f6edc6e1-create-capture-session
       use: http-request
@@ -8275,7 +8275,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-140-f6edc6e1-exercise-wallet
       use: mobile-automation
@@ -8371,7 +8371,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-140-f6edc6e1-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-140-f6edc6e1-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-141-d9dbf3bc-create-capture-session
       use: http-request
@@ -8395,7 +8395,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-141-d9dbf3bc-exercise-wallet
       use: mobile-automation
@@ -8491,7 +8491,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-141-d9dbf3bc-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-141-d9dbf3bc-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-142-f7a51d3c-create-capture-session
       use: http-request
@@ -8504,7 +8504,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-142-f7a51d3c-exercise-wallet
       use: mobile-automation
@@ -8600,7 +8600,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-142-f7a51d3c-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-142-f7a51d3c-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-143-991665c6-create-capture-session
       use: http-request
@@ -8624,7 +8624,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-143-991665c6-exercise-wallet
       use: mobile-automation
@@ -8720,7 +8720,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-143-991665c6-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-143-991665c6-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-144-3b15905c-create-capture-session
       use: http-request
@@ -8744,7 +8744,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-144-3b15905c-exercise-wallet
       use: mobile-automation
@@ -8840,7 +8840,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-144-3b15905c-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-144-3b15905c-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-145-43efad77-create-capture-session
       use: http-request
@@ -8868,7 +8868,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-145-43efad77-exercise-wallet
       use: mobile-automation
@@ -8964,7 +8964,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-145-43efad77-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-145-43efad77-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-146-3483d14f-create-capture-session
       use: http-request
@@ -8989,7 +8989,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-146-3483d14f-exercise-wallet
       use: mobile-automation
@@ -9085,7 +9085,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-146-3483d14f-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-146-3483d14f-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-150-5b015ca8-create-capture-session
       use: http-request
@@ -9108,7 +9108,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-150-5b015ca8-exercise-wallet
       use: mobile-automation
@@ -9204,7 +9204,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-150-5b015ca8-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-150-5b015ca8-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-151-02b4e313-create-capture-session
       use: http-request
@@ -9227,7 +9227,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-151-02b4e313-exercise-wallet
       use: mobile-automation
@@ -9323,7 +9323,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-151-02b4e313-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-151-02b4e313-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-153-0bf70160-create-capture-session
       use: http-request
@@ -9349,7 +9349,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-153-0bf70160-exercise-wallet
       use: mobile-automation
@@ -9445,7 +9445,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-153-0bf70160-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-153-0bf70160-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-154-922365b1-create-capture-session
       use: http-request
@@ -9472,7 +9472,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-154-922365b1-exercise-wallet
       use: mobile-automation
@@ -9568,7 +9568,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-154-922365b1-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-154-922365b1-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-155-dfda78fc-create-capture-session
       use: http-request
@@ -9594,7 +9594,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-155-dfda78fc-exercise-wallet
       use: mobile-automation
@@ -9690,7 +9690,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-155-dfda78fc-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-155-dfda78fc-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-156-244b8949-create-capture-session
       use: http-request
@@ -9717,7 +9717,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-156-244b8949-exercise-wallet
       use: mobile-automation
@@ -9813,7 +9813,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-156-244b8949-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-156-244b8949-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-157-c7e04b42-create-capture-session
       use: http-request
@@ -9840,7 +9840,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-157-c7e04b42-exercise-wallet
       use: mobile-automation
@@ -9936,7 +9936,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-157-c7e04b42-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-157-c7e04b42-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-158-ae4d2651-create-capture-session
       use: http-request
@@ -9964,7 +9964,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-158-ae4d2651-exercise-wallet
       use: mobile-automation
@@ -10060,14 +10060,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-158-ae4d2651-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-158-ae4d2651-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-158-ae4d2651-fetch-signed-request-object
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-158-ae4d2651-create-capture-session.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-158-ae4d2651-create-capture-session.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-protocol-messages-159-fd92371b-create-capture-session
       use: http-request
@@ -10095,7 +10095,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-159-fd92371b-exercise-wallet
       use: mobile-automation
@@ -10191,7 +10191,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-159-fd92371b-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-159-fd92371b-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-a25772b2-create-capture-session
       use: http-request
@@ -10218,7 +10218,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-protocol-messages-a25772b2-exercise-wallet
       use: mobile-automation
@@ -10233,14 +10233,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-a25772b2-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-a25772b2-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-protocol-messages-a25772b2-fetch-signed-request-object
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-a25772b2-create-capture-session.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-protocol-messages-a25772b2-create-capture-session.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-required-credentials-no-partial-c6dd8f09-create-capture-session
       use: http-request
@@ -10270,7 +10270,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-required-credentials-no-partial-c6dd8f09-reject-partial-presentation
       use: mobile-automation
@@ -10318,7 +10318,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-required-credentials-no-partial-c6dd8f09-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-required-credentials-no-partial-c6dd8f09-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-rp-integrity-3576cc79-create-capture-session
       use: http-request
@@ -10345,7 +10345,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-rp-integrity-3576cc79-exercise-wallet
       use: mobile-automation
@@ -10360,7 +10360,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-rp-integrity-3576cc79-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-rp-integrity-3576cc79-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-same-credential-multiple-querie-28308591-evidence-request
       use: json-parse
@@ -10458,7 +10458,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-session-binding-a642defc-exercise-wallet
       use: mobile-automation
@@ -10554,7 +10554,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-session-binding-a642defc-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-session-binding-a642defc-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-session-encryption-210827bd-create-capture-session
       use: http-request
@@ -10581,7 +10581,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-session-encryption-210827bd-exercise-wallet
       use: mobile-automation
@@ -10596,7 +10596,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-session-encryption-210827bd-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-session-encryption-210827bd-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-standard-all-28f43ce6-onboard-reference-wallet
       use: mobile-automation
@@ -10644,7 +10644,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-standard-all-28f43ce6-exercise-wallet
       use: mobile-automation
@@ -10659,7 +10659,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-standard-all-28f43ce6-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-standard-all-28f43ce6-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-string-claim-path-index-selecto-e72d9b13-create
       use: http-request
@@ -10687,7 +10687,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-string-claim-path-index-selecto-e72d9b13-wallet
       use: mobile-automation
@@ -10702,7 +10702,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-string-claim-path-index-selecto-e72d9b13-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-string-claim-path-index-selecto-e72d9b13-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-string-claim-path-segment-189c3530-create
       use: http-request
@@ -10729,7 +10729,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-string-claim-path-segment-189c3530-wallet
       use: mobile-automation
@@ -10744,7 +10744,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-string-claim-path-segment-189c3530-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-string-claim-path-segment-189c3530-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-top-level-claim-path-no-match-07b20d93-create
       use: http-request
@@ -10770,7 +10770,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-top-level-claim-path-no-match-07b20d93-wallet
       use: mobile-automation
@@ -10785,7 +10785,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-top-level-claim-path-no-match-07b20d93-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-top-level-claim-path-no-match-07b20d93-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trust-mechanisms-157d0f39-create-capture-session
       use: http-request
@@ -10812,7 +10812,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trust-mechanisms-157d0f39-exercise-wallet
       use: mobile-automation
@@ -10827,7 +10827,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trust-mechanisms-157d0f39-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trust-mechanisms-157d0f39-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-empty-21a59091-create
       use: http-request
@@ -10851,7 +10851,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trusted-authorities-empty-21a59091-wallet
       use: mobile-automation
@@ -10866,14 +10866,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-empty-21a59091-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-empty-21a59091-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-empty-21a59091-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-empty-21a59091-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-empty-21a59091-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-trusted-authorities-invalid-obj-72360be6-create
       use: http-request
@@ -10898,7 +10898,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trusted-authorities-invalid-obj-72360be6-wallet
       use: mobile-automation
@@ -10913,14 +10913,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-invalid-obj-72360be6-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-invalid-obj-72360be6-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-invalid-obj-72360be6-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-invalid-obj-72360be6-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-invalid-obj-72360be6-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-trusted-authorities-match-a95b9bcc-create-presentation
       use: http-request
@@ -11053,7 +11053,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trusted-authorities-missing-typ-64de56cc-wallet
       use: mobile-automation
@@ -11068,14 +11068,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-missing-typ-64de56cc-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-missing-typ-64de56cc-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-missing-typ-64de56cc-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-missing-typ-64de56cc-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-missing-typ-64de56cc-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-trusted-authorities-missing-val-3972fc33-evidence-missing-trusted-authorities-values
       use: json-parse
@@ -11137,7 +11137,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trusted-authorities-no-match-9fc63a53-present-with-reference-implementation
       use: mobile-automation
@@ -11205,7 +11205,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-no-match-9fc63a53-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-no-match-9fc63a53-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-non-array-b004573c-create
       use: http-request
@@ -11229,7 +11229,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trusted-authorities-non-array-b004573c-wallet
       use: mobile-automation
@@ -11244,14 +11244,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-non-array-b004573c-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-non-array-b004573c-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-non-array-b004573c-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-non-array-b004573c-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-non-array-b004573c-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-trusted-authorities-type-non-st-4e26a188-evidence-null
       use: json-parse
@@ -11442,7 +11442,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-trusted-authorities-unsupported-90d3d4bb-wallet
       use: mobile-automation
@@ -11457,14 +11457,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-unsupported-90d3d4bb-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-unsupported-90d3d4bb-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-trusted-authorities-unsupported-90d3d4bb-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-unsupported-90d3d4bb-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-trusted-authorities-unsupported-90d3d4bb-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: dcql-trusted-authorities-values-empt-9ce9e426-evidence-single
       use: json-parse
@@ -11957,7 +11957,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: dcql-unsupported-claim-path-componen-39ccebe1-wallet
       use: mobile-automation
@@ -11972,7 +11972,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-unsupported-claim-path-componen-39ccebe1-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-unsupported-claim-path-componen-39ccebe1-create.outputs.body.session_id }}
     - continue_on_error: true
       id: dcql-user-authentication-failed-9c3ae613-create-presentation
       use: http-request
@@ -12397,7 +12397,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: engagement-haip-vp-4bb0f83a-invoke-wallet-with-haip-vp
       use: mobile-automation
@@ -12412,7 +12412,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ engagement-haip-vp-4bb0f83a-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ engagement-haip-vp-4bb0f83a-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: invalid-request-uri-method-f8c49ad9-create-presentation
       use: http-request
@@ -12516,7 +12516,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: malformed-dcql-1e84df7a-wallet
       use: mobile-automation
@@ -12536,14 +12536,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ malformed-dcql-1e84df7a-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ malformed-dcql-1e84df7a-create.outputs.body.session_id }}
     - continue_on_error: true
       id: malformed-dcql-1e84df7a-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ malformed-dcql-1e84df7a-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ malformed-dcql-1e84df7a-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: mdoc-absent-namespace-8c8f84c8-onboard-reference-wallet
       use: mobile-automation
@@ -12589,7 +12589,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: mdoc-absent-namespace-8c8f84c8-exercise-wallet
       use: mobile-automation
@@ -12604,7 +12604,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ mdoc-absent-namespace-8c8f84c8-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ mdoc-absent-namespace-8c8f84c8-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: metadata-direct-post-jwt-bf077ae9-create-presentation
       use: http-request
@@ -12805,7 +12805,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: pid-mdoc-data-model-8f915369-invoke-wallet-with-haip-vp
       use: mobile-automation
@@ -12820,7 +12820,7 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ pid-mdoc-data-model-8f915369-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ pid-mdoc-data-model-8f915369-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: request-object-by-value-f1c94061-create-presentation
       use: http-request
@@ -13295,7 +13295,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: transaction-data-matching-credential-09aba950-exercise-wallet
       use: mobile-automation
@@ -13347,14 +13347,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-matching-credential-09aba950-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-matching-credential-09aba950-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: transaction-data-matching-credential-09aba950-fetch-signed-request-object
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-matching-credential-09aba950-create-capture-session.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-matching-credential-09aba950-create-capture-session.outputs.body.session_id }}/request
     - continue_on_error: true
       id: transaction-data-non-array-41ef94bc-create
       use: http-request
@@ -13381,7 +13381,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: transaction-data-non-array-41ef94bc-wallet
       use: mobile-automation
@@ -13401,14 +13401,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-non-array-41ef94bc-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-non-array-41ef94bc-create.outputs.body.session_id }}
     - continue_on_error: true
       id: transaction-data-non-array-41ef94bc-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-non-array-41ef94bc-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-non-array-41ef94bc-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: transaction-data-type-non-string-22c10bda-create
       use: http-request
@@ -13436,7 +13436,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: transaction-data-type-non-string-22c10bda-wallet
       use: mobile-automation
@@ -13456,14 +13456,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-type-non-string-22c10bda-create.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-type-non-string-22c10bda-create.outputs.body.session_id }}
     - continue_on_error: true
       id: transaction-data-type-non-string-22c10bda-request
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-type-non-string-22c10bda-create.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ transaction-data-type-non-string-22c10bda-create.outputs.body.session_id }}/request
     - continue_on_error: true
       id: verifier-info-all-credentials-039537ba-create-capture-session
       use: http-request
@@ -13494,7 +13494,7 @@ steps:
         headers:
             Content-Type: application/json
         method: POST
-        url: https://capture-wallet.credimi.io/openid4vp/sessions
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     - continue_on_error: true
       id: verifier-info-all-credentials-039537ba-exercise-wallet
       use: mobile-automation
@@ -13590,14 +13590,14 @@ steps:
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ verifier-info-all-credentials-039537ba-create-capture-session.outputs.body.session_id }}
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ verifier-info-all-credentials-039537ba-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
       id: verifier-info-all-credentials-039537ba-fetch-signed-request-object
       use: http-request
       with:
         expected_status: 200
         method: GET
-        url: https://capture-wallet.credimi.io/openid4vp/sessions/${{ verifier-info-all-credentials-039537ba-create-capture-session.outputs.body.session_id }}/request
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ verifier-info-all-credentials-039537ba-create-capture-session.outputs.body.session_id }}/request
     - id: run-complete-fcaf-validation
       use: fcaf-validation
       with:
