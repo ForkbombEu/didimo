@@ -17,7 +17,6 @@ import (
 
 	"github.com/forkbombeu/credimi/pkg/fcaf/catalog"
 	"github.com/forkbombeu/credimi/pkg/fcaf/dsl"
-
 	"gopkg.in/yaml.v3"
 )
 
@@ -233,7 +232,7 @@ func buildAggregate(
 	aggregate := aggregateDefinition{
 		Name: name,
 		Runtime: map[string]any{
-			"global_runner_id": "forkbomb-bv-andrea/usb",
+			"global_device_id": "forkbomb-bv-andrea/usb/device",
 			"temporal": map[string]any{
 				"activity_options": map[string]any{
 					"schedule_to_close_timeout": "50m",
@@ -303,11 +302,17 @@ func buildAggregate(
 		}
 	}
 	if filterTestsByEvidence {
-		testDefinitions, err := catalog.LoadTests(filepath.Join(filepath.Dir(paths[0]), "..", "tests"))
+		testDefinitions, err := catalog.LoadTests(
+			filepath.Join(filepath.Dir(paths[0]), "..", "tests"),
+		)
 		if err != nil {
 			return fmt.Errorf("load FCAF test definitions: %w", err)
 		}
-		if err := removeTestsWithoutAvailableEvidence(testIDs, pipelineOutputs, testDefinitions); err != nil {
+		if err := removeTestsWithoutAvailableEvidence(
+			testIDs,
+			pipelineOutputs,
+			testDefinitions,
+		); err != nil {
 			return err
 		}
 	}
@@ -357,7 +362,12 @@ func removeTestsWithoutAvailableEvidence(
 		for evidenceName, binding := range test.Evidence {
 			source, outputName, found := strings.Cut(binding.From, ".outputs.")
 			if !found || source == "" || outputName == "" {
-				return fmt.Errorf("FCAF test %q evidence %q has invalid source %q", id, evidenceName, binding.From)
+				return fmt.Errorf(
+					"FCAF test %q evidence %q has invalid source %q",
+					id,
+					evidenceName,
+					binding.From,
+				)
 			}
 			rawSource, exists := pipelineOutputs[source]
 			if !exists {

@@ -5,10 +5,14 @@
 min_version = '2025.1.8'
 
 [tools]
-go = "1.26.6"
-bun = "1.3.12"
+go = "1.27.0"
+bun = "latest"
 node = "24.13.0"
 "aqua:dyne/slangroom-exec" = "latest"
 pre-commit = "latest"
 "github:forkbombeu/stepci-captured-runner" = { version = "latest", bin = "stepci-captured-runner" }
 "github:forkbombeu/et-tu-cesr" = "latest"
+
+[tools."github:temporalio/cli"]
+version = "1.8.1"
+

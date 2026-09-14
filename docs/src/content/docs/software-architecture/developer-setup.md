@@ -88,13 +88,43 @@ temporal operator search-attributes create --name PipelineIdentifier --type Keyw
 If the attribute is added after workflows already exist, trigger a Temporal visibility reindex to backfill
 historical data (see Temporal admin tooling docs for your deployment).
 
-## Mobile Runner Semaphore Ops (Internal)
+## Emulating a Cloudflare-proxied deployment
+
+Production Credimi is served through a Cloudflare proxy that challenges non-browser clients. Temporal
+activities use a plain HTTP client, so any callback sent to the public `app_url` is answered with a
+managed-challenge interstitial instead of the API response, and the activity fails.
+
+`scripts/waf-emulator` reproduces that split locally on the host:
+
+- browser-like requests (an `Accept: text/html` document navigation with a real browser user agent) are proxied to the origin,
+- every other client — Go's `net/http`, curl, server SDKs — receives `403` with `cf-mitigated: challenge`.
+
+```bash
+make waf-emulator   # listens on :8091, proxies to http://localhost:8090
+```
+
+Use `http://localhost:8091` as the public App URL when testing browser links from the host. The
+production Compose file intentionally has no host-gateway aliases; add those only in a local override
+if a containerized worker must reach the emulator.
+
+To exercise the callback fix, keep the internal URL pointed at the origin:
+
+```text
+Settings → App URL          http://localhost:8091
+CREDIMI_INTERNAL_APP_URL    http://credimi:8090
+```
+
+Callbacks then use the origin and avoid the emulated challenge. Clearing `CREDIMI_INTERNAL_APP_URL`
+sends them through the emulated proxy and the run fails with `Unexpected HTTP status code: expected
+200, got 403`, matching the production failure mode.
+
+## mobile device semaphore Ops (Internal)
 
 ### Defaults and knobs
 
 - Default acquire wait timeout: 45m.
-- Override timeout: `MOBILE_RUNNER_SEMAPHORE_WAIT_TIMEOUT=30m` (or any valid `time.ParseDuration` value).
-- Disable semaphore (no-op acquire/release): `MOBILE_RUNNER_SEMAPHORE_DISABLED=1`.
+- Override timeout: `MOBILE_DEVICE_SEMAPHORE_WAIT_TIMEOUT=30m` (or any valid `time.ParseDuration` value).
+- Disable semaphore (no-op acquire/release): `MOBILE_DEVICE_SEMAPHORE_DISABLED=1`.
 - Internal Temporal API auth key: `CREDIMI_INTERNAL_ADMIN_KEY=<plaintext key>` (required for internal workflow HTTP calls).
 
 ### Internal admin API key rollout
@@ -107,6 +137,6 @@ historical data (see Temporal admin tooling docs for your deployment).
 
 ### Emergency procedures
 
-- Semaphore workflows live in the Temporal `default` namespace with IDs: `mobile-runner-semaphore/<runner_id>`.
-- Query current state via Temporal UI (`GetState`) or `GET /api/mobile-runner/semaphore?runner_identifier=...`.
+- Semaphore workflows live in the Temporal `default` namespace with IDs: `mobile-device-semaphore/<device_id>`.
+- Query current state via Temporal UI (`GetState`) or `GET /api/mobile-runner/semaphore?device_identifier=...`.
 - To unstick a runner, terminate the semaphore workflow in Temporal; it will be recreated on the next acquire.

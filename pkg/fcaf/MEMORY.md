@@ -57,10 +57,10 @@ maintainer rejected both a positives-only aggregate of all 75 positive
 scenarios (500 tests, ~86 wallet actions, "full assessment minus negatives")
 and a strict single-presentation flow (72 tests, below the 200+ check
 expectation). Deployment to the fcaf-1 org on credimi.io: apply the CLI org
-rewrite (`forkbomb-bv-andrea/` -> `fcaf-1/`), drop `runtime.global_runner_id`,
-and upload the record; the webapp queue flow injects the UI-selected runner
-as `global_runner_id` at queue time. `installed_from_external_source` is a
-platform sentinel (use the wallet pre-installed on the runner), not a
+rewrite (`forkbomb-bv-andrea/` -> `fcaf-1/`), drop `runtime.global_device_id`,
+and upload the record; the webapp queue flow injects the UI-selected device
+as `global_device_id` at queue time. `installed_from_external_source` is a
+platform sentinel (use the wallet pre-installed on the device host), not a
 wallet_versions lookup, and needs no org rewrite.
 
 ## Happy flow fcaf-1 deployment incident

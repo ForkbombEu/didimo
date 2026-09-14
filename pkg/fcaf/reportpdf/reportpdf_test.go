@@ -366,11 +366,19 @@ func testPNG(t *testing.T) []byte {
 
 func TestDeduplicateScreenshotsKeepsLastPerCloudBurst(t *testing.T) {
 	images := []ImageAsset{
-		{Filename: "engagement_haip_vp_4bb0f83a_obtain_pid_sdjwt_step_004_tap_on_element_eudi_wallet_a.png"},
-		{Filename: "engagement_haip_vp_4bb0f83a_obtain_pid_sdjwt_step_005_tap_on_element_just_once_b.png"},
-		{Filename: "engagement_haip_vp_4bb0f83a_obtain_pid_sdjwt_step_006_tap_on_element_always_c.png"},
+		{
+			Filename: "engagement_haip_vp_4bb0f83a_obtain_pid_sdjwt_step_004_tap_on_element_eudi_wallet_a.png",
+		},
+		{
+			Filename: "engagement_haip_vp_4bb0f83a_obtain_pid_sdjwt_step_005_tap_on_element_just_once_b.png",
+		},
+		{
+			Filename: "engagement_haip_vp_4bb0f83a_obtain_pid_sdjwt_step_006_tap_on_element_always_c.png",
+		},
 		{Filename: "engagement_haip_vp_4bb0f83a_obtain_pid_sdjwt_credential_added_d.png"},
-		{Filename: "engagement_haip_vp_4bb0f83a_invoke_wallet_with_haip_vp_fcaf_engagement_haip_vp_invoked_e.png"},
+		{
+			Filename: "engagement_haip_vp_4bb0f83a_invoke_wallet_with_haip_vp_fcaf_engagement_haip_vp_invoked_e.png",
+		},
 	}
 
 	kept, dropped := DeduplicateScreenshots(images)

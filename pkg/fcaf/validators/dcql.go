@@ -1115,17 +1115,26 @@ func validateMDocClaimPathPresentation(
 	expectedPath []any,
 ) Result {
 	if len(expectedPath) != 2 {
-		return Result{Status: StatusError, Message: "expected_claim_path must contain namespace and element"}
+		return Result{
+			Status:  StatusError,
+			Message: "expected_claim_path must contain namespace and element",
+		}
 	}
 	namespace, namespaceOK := expectedPath[0].(string)
 	element, elementOK := expectedPath[1].(string)
 	if !namespaceOK || namespace == "" || !elementOK || element == "" {
-		return Result{Status: StatusError, Message: "expected_claim_path namespace and element must be non-empty strings"}
+		return Result{
+			Status:  StatusError,
+			Message: "expected_claim_path namespace and element must be non-empty strings",
+		}
 	}
 
 	credentials, ok := query["credentials"].([]any)
 	if !ok || len(credentials) != 1 {
-		return Result{Status: StatusFail, Message: "dcql_query must contain exactly one credential query"}
+		return Result{
+			Status:  StatusFail,
+			Message: "dcql_query must contain exactly one credential query",
+		}
 	}
 	if err := validateDCQLCredentialQueries(credentials); err != nil {
 		return Result{Status: StatusFail, Message: err.Error()}
@@ -1152,7 +1161,10 @@ func validateMDocClaimPathPresentation(
 		}
 	}
 	if !pathFound {
-		return Result{Status: StatusFail, Message: "mdoc credential query does not contain the expected namespace and element path"}
+		return Result{
+			Status:  StatusFail,
+			Message: "mdoc credential query does not contain the expected namespace and element path",
+		}
 	}
 
 	response, ok := normalizeJSONObject(responseValue)
@@ -1161,37 +1173,76 @@ func validateMDocClaimPathPresentation(
 	}
 	presentations, ok := response[queryID].([]any)
 	if !ok || len(presentations) == 0 {
-		return Result{Status: StatusFail, Message: fmt.Sprintf("vp_token has no presentation for query %q", queryID)}
+		return Result{
+			Status:  StatusFail,
+			Message: fmt.Sprintf("vp_token has no presentation for query %q", queryID),
+		}
 	}
 	for index, rawPresentation := range presentations {
 		token, ok := rawPresentation.(string)
 		if !ok || token == "" {
-			return Result{Status: StatusFail, Message: fmt.Sprintf("vp_token[%q][%d] is not an mdoc presentation", queryID, index)}
+			return Result{
+				Status: StatusFail,
+				Message: fmt.Sprintf(
+					"vp_token[%q][%d] is not an mdoc presentation",
+					queryID,
+					index,
+				),
+			}
 		}
 		presentation, err := evidence.ParseMDocPresentation(token)
 		if err != nil {
-			return Result{Status: StatusFail, Message: fmt.Sprintf("vp_token[%q][%d] is not a valid mdoc presentation: %v", queryID, index, err)}
+			return Result{
+				Status: StatusFail,
+				Message: fmt.Sprintf(
+					"vp_token[%q][%d] is not a valid mdoc presentation: %v",
+					queryID,
+					index,
+					err,
+				),
+			}
 		}
 		if _, found := presentation.Element(namespace, element); !found {
-			return Result{Status: StatusFail, Message: fmt.Sprintf("vp_token[%q][%d] does not contain mdoc element %q in namespace %q", queryID, index, element, namespace)}
+			return Result{
+				Status: StatusFail,
+				Message: fmt.Sprintf(
+					"vp_token[%q][%d] does not contain mdoc element %q in namespace %q",
+					queryID,
+					index,
+					element,
+					namespace,
+				),
+			}
 		}
 	}
-	return Result{Status: StatusPass, Message: "wallet returned the requested mdoc namespace and element in a CBOR presentation"}
+	return Result{
+		Status:  StatusPass,
+		Message: "wallet returned the requested mdoc namespace and element in a CBOR presentation",
+	}
 }
 
 func validateMDocClaimPathNoMatch(query map[string]any, expectedPath []any) Result {
 	if len(expectedPath) != 2 {
-		return Result{Status: StatusError, Message: "expected_claim_path must contain namespace and element"}
+		return Result{
+			Status:  StatusError,
+			Message: "expected_claim_path must contain namespace and element",
+		}
 	}
 	namespace, namespaceOK := expectedPath[0].(string)
 	element, elementOK := expectedPath[1].(string)
 	if !namespaceOK || namespace == "" || !elementOK || element == "" {
-		return Result{Status: StatusError, Message: "expected_claim_path namespace and element must be non-empty strings"}
+		return Result{
+			Status:  StatusError,
+			Message: "expected_claim_path namespace and element must be non-empty strings",
+		}
 	}
 
 	credentials, ok := query["credentials"].([]any)
 	if !ok || len(credentials) != 1 {
-		return Result{Status: StatusFail, Message: "dcql_query must contain exactly one credential query"}
+		return Result{
+			Status:  StatusFail,
+			Message: "dcql_query must contain exactly one credential query",
+		}
 	}
 	if err := validateDCQLCredentialQueries(credentials); err != nil {
 		return Result{Status: StatusFail, Message: err.Error()}
@@ -1211,10 +1262,16 @@ func validateMDocClaimPathNoMatch(query map[string]any, expectedPath []any) Resu
 		}
 		path, ok := claim["path"].([]any)
 		if ok && reflect.DeepEqual(path, expectedPath) {
-			return Result{Status: StatusPass, Message: "mdoc credential query contains the expected absent namespace path"}
+			return Result{
+				Status:  StatusPass,
+				Message: "mdoc credential query contains the expected absent namespace path",
+			}
 		}
 	}
-	return Result{Status: StatusFail, Message: "mdoc credential query does not contain the expected absent namespace path"}
+	return Result{
+		Status:  StatusFail,
+		Message: "mdoc credential query does not contain the expected absent namespace path",
+	}
 }
 
 func validateVPTokenSignedPresentation(
@@ -1699,13 +1756,15 @@ func validateCredentialSetsOptions(
 				Message: "wallet returned a vp_token for an invalid credential_sets.options query",
 			}
 		}
-		if mode == "credential_sets_options_invalid_references" && normalizeString(errorValue) == "" {
+		if mode == "credential_sets_options_invalid_references" &&
+			normalizeString(errorValue) == "" {
 			return Result{
 				Status:  StatusFail,
 				Message: "wallet did not return a privacy-preserving error for invalid credential_sets.options references",
 			}
 		}
-		if (mode == "credential_sets_options_empty" || mode == "credential_sets_options_non_array") && errorValue != invalidRequestError {
+		if (mode == "credential_sets_options_empty" || mode == "credential_sets_options_non_array") &&
+			errorValue != invalidRequestError {
 			return Result{
 				Status:  StatusFail,
 				Message: "wallet did not return invalid_request for an invalid credential_sets.options query",
@@ -2491,7 +2550,11 @@ func validateClaimsUnion(query map[string]any, responseValue any, forbiddenPaths
 	}
 }
 
-func validateClaimsPathNoMatch(query map[string]any, responseValue any, expectedClaimPath []any) Result {
+func validateClaimsPathNoMatch(
+	query map[string]any,
+	responseValue any,
+	expectedClaimPath []any,
+) Result {
 	credentials, ok := query["credentials"].([]any)
 	if !ok || len(credentials) == 0 {
 		return Result{Status: StatusFail, Message: "dcql_query does not contain credentials"}
@@ -2541,7 +2604,10 @@ func validateClaimsPathNoMatch(query map[string]any, responseValue any, expected
 		}
 	}
 	if !foundExpectedClaimPath {
-		return Result{Status: StatusFail, Message: "dcql_query does not contain the expected unmatched claim path"}
+		return Result{
+			Status:  StatusFail,
+			Message: "dcql_query does not contain the expected unmatched claim path",
+		}
 	}
 	if !isEmptyDCQLValue(responseValue) {
 		return Result{
@@ -3915,7 +3981,10 @@ func validateWalletErrorRequired(responseValue, errorValue any) Result {
 	if errStr := normalizeString(errorValue); errStr != "" {
 		return Result{Status: StatusPass, Message: fmt.Sprintf("wallet returned error %s", errStr)}
 	}
-	return Result{Status: StatusFail, Message: "wallet returned no vp_token but no error, expected error"}
+	return Result{
+		Status:  StatusFail,
+		Message: "wallet returned no vp_token but no error, expected error",
+	}
 }
 
 // validateErrorCode checks that wallet returns a specific OAuth2/OID4VP error code.

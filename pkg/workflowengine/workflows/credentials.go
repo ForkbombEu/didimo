@@ -106,7 +106,7 @@ func (w *CredentialsIssuersWorkflow) ExecuteWorkflow(
 			"credentialsNumber": credentialsNumber,
 		}, nil
 	})
-	baseURL, appURL, issuerSchema, issuerID, err := validateInput(input)
+	baseURL, _, issuerSchema, issuerID, err := validateInput(input)
 	if err != nil {
 		return workflowengine.WorkflowResult{}, err
 	}
@@ -145,7 +145,7 @@ func (w *CredentialsIssuersWorkflow) ExecuteWorkflow(
 		ctx,
 		input,
 		credentialIssuerCredentialStoreParams{
-			AppURL:         appURL,
+			AppURL:         workflowengine.InternalAppURLFromConfig(input.Config),
 			IssuerID:       issuerID,
 			OrganizationID: orgID,
 		},
@@ -531,7 +531,7 @@ func (w *GetCredentialOfferWorkflow) ExecuteWorkflow(
 		Payload: activities.InternalHTTPActivityPayload{
 			Method: http.MethodGet,
 			URL: utils.JoinURL(
-				appURL,
+				workflowengine.InternalAppURLFromConfig(input.Config),
 				"api", "credential", "get-credential-offer",
 			),
 			QueryParams: map[string]string{

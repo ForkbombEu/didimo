@@ -1,6 +1,6 @@
 name: FCAF wallet relying-party demo validation
 runtime:
-    global_runner_id: forkbomb-bv-andrea/usb
+    global_device_id: forkbomb-bv-andrea/usb/device
     temporal:
         activity_options:
             heartbeat_timeout: 10m
@@ -128,7 +128,7 @@ steps:
       use: fcaf-validation
       with:
         pipeline_outputs:
-            forkbomb-bv-andrea/fcaf-wallet-solution-relying-party-engagement-haip-vp:
+            forkbomb-bv-andrea/fcaf/device-wallet-solution-relying-party-engagement-haip-vp:
                 output:
                     create-capture-session: ${{ engagement-haip-vp-4bb0f83a-create-capture-session.outputs | optional }}
                     create-pid-sdjwt-offer: ${{ engagement-haip-vp-4bb0f83a-create-pid-sdjwt-offer.outputs | optional }}

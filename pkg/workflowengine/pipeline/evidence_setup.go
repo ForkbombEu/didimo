@@ -49,7 +49,7 @@ func PipelineEvidenceSetupHook(
 	extractionReq := workflowengine.ActivityInput{
 		Payload: activities.PipelineEvidenceExtractionInput{
 			WorkflowDefinition: wfDef,
-			CredimiBaseURL:     appURL,
+			CredimiBaseURL:     workflowengine.InternalAppURLFromConfig(config),
 		},
 	}
 
@@ -96,7 +96,7 @@ func PipelineEvidenceSetupHook(
 		Payload: activities.InternalHTTPActivityPayload{
 			Method: http.MethodPost,
 			URL: utils.JoinURL(
-				appURL,
+				workflowengine.InternalAppURLFromConfig(config),
 				"api",
 				"pipeline",
 				"pipeline-execution-results",

@@ -1,6 +1,6 @@
 name: 'FCAF ProtocolMessages 026: transaction_data credential IDs non-array'
 runtime:
-  global_runner_id: forkbomb-bv-andrea/usb
+  global_device_id: forkbomb-bv-andrea/usb/device
 steps:
 - id: create
   use: http-request

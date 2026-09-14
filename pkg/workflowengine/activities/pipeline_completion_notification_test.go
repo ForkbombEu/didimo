@@ -69,6 +69,34 @@ func TestSendPipelineCompletionNotificationActivitySuccess(t *testing.T) {
 	require.Equal(t, "success", body["result"])
 }
 
+func TestSendPipelineCompletionNotificationActivityUsesEndpointURL(t *testing.T) {
+	var gotBody string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		gotBody = string(body)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	t.Setenv("CREDIMI_INTERNAL_ADMIN_KEY", "internal-admin-key")
+	publicURL := "https://public.example"
+	activity := NewSendPipelineCompletionNotificationActivity()
+	_, err := activity.Execute(context.Background(), workflowengine.ActivityInput{
+		Payload: SendPipelineCompletionNotificationInput{
+			AppURL:      publicURL,
+			EndpointURL: server.URL,
+			WorkflowID:  "wf-1",
+			RunID:       "run-1",
+			Result:      "success",
+		},
+	})
+	require.NoError(t, err)
+
+	var body map[string]string
+	require.NoError(t, json.Unmarshal([]byte(gotBody), &body))
+	require.Equal(t, publicURL, body["app_url"])
+}
+
 func TestSendPipelineCompletionNotificationActivityMissingFields(t *testing.T) {
 	t.Setenv("CREDIMI_INTERNAL_ADMIN_KEY", "internal-admin-key")
 

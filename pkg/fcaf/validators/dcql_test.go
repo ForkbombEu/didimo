@@ -1638,7 +1638,9 @@ func TestDCQLClaimsPathNoMatchRequiresExpectedClaimPath(t *testing.T) {
 			"dcql_query": map[string]any{
 				"credentials": []any{func() map[string]any {
 					credential := validSDJWTCredentialQuery("pid")
-					credential["claims"] = []any{map[string]any{"path": []any{"address", "street_address"}}}
+					credential["claims"] = []any{
+						map[string]any{"path": []any{"address", "street_address"}},
+					}
 					return credential
 				}()},
 			},

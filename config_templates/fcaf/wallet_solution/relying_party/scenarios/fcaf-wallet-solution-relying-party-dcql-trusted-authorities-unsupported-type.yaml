@@ -1,5 +1,5 @@
 name: 'FCAF ProtocolMessages 088: unsupported trusted authority type'
-runtime: { global_runner_id: forkbomb-bv-andrea/usb }
+runtime: { global_device_id: forkbomb-bv-andrea/usb/device }
 steps:
 - id: create
   use: http-request

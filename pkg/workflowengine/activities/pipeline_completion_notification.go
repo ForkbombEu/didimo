@@ -20,6 +20,7 @@ import (
 
 type SendPipelineCompletionNotificationInput struct {
 	AppURL       string `json:"app_url"`
+	EndpointURL  string `json:"endpoint_url,omitempty"`
 	WorkflowID   string `json:"workflow_id"`
 	RunID        string `json:"run_id"`
 	Result       string `json:"result"`
@@ -75,8 +76,13 @@ func (a *SendPipelineCompletionNotificationActivity) Execute(
 			Message: "CREDIMI_INTERNAL_ADMIN_KEY is required",
 		})
 	}
-
-	body, err := json.Marshal(SendPipelineCompletionNotificationInput{
+	body, err := json.Marshal(struct {
+		AppURL       string `json:"app_url"`
+		WorkflowID   string `json:"workflow_id"`
+		RunID        string `json:"run_id"`
+		Result       string `json:"result"`
+		ErrorMessage string `json:"error_message,omitempty"`
+	}{
 		AppURL:       appURL,
 		WorkflowID:   workflowID,
 		RunID:        runID,
@@ -86,11 +92,17 @@ func (a *SendPipelineCompletionNotificationActivity) Execute(
 	if err != nil {
 		return result, fmt.Errorf("marshal pipeline completion notification payload: %w", err)
 	}
-
+	endpointURL := strings.TrimSpace(payload.EndpointURL)
+	if endpointURL == "" {
+		endpointURL = workflowengine.InternalAppURLOverride()
+	}
+	if endpointURL == "" {
+		endpointURL = appURL
+	}
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodPost,
-		utils.JoinURL(appURL, "api", "web-push", "pipeline-completed"),
+		utils.JoinURL(endpointURL, "api", "web-push", "pipeline-completed"),
 		bytes.NewReader(body),
 	)
 	if err != nil {

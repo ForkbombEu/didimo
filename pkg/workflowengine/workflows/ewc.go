@@ -363,7 +363,7 @@ func executeEWCLikeStatusWorkflow(
 	result, err := pollEWCCheck(
 		ctx,
 		interval,
-		appURL,
+		workflowengine.InternalAppURLFromConfig(input.Config),
 		checkEndpoint,
 		logsEndpoint,
 		payload.SessionID,
