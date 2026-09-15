@@ -12302,6 +12302,99 @@ steps:
         method: GET
         url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ dcql-valid-id-special-4b48cc60-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
+      id: did-empty-metadata-0b80b79f-create-presentation
+      use: http-request
+      with:
+        body:
+            client_id_scheme: decentralized_identifier
+            client_metadata: {}
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-did-empty-metadata
+            response_mode: direct_post
+            response_type: vp_token
+        expected_status: 201
+        headers:
+            Content-Type: application/json
+        method: POST
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
+    - continue_on_error: true
+      id: did-empty-metadata-0b80b79f-exercise-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-exercise-wallet-generic
+        parameters:
+            deeplink: ${{ did-empty-metadata-0b80b79f-create-presentation.outputs.body.deeplink }}
+        version_id: installed_from_external_source
+    - continue_on_error: true
+      id: did-empty-metadata-0b80b79f-fetch-session
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ did-empty-metadata-0b80b79f-create-presentation.outputs.body.session_id }}
+    - continue_on_error: true
+      id: did-metadata-b39af5a1-create-presentation
+      use: http-request
+      with:
+        body:
+            client_id_scheme: decentralized_identifier
+            client_metadata:
+                vp_formats_supported:
+                    mso_mdoc:
+                        alg:
+                            - ES256
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-did-metadata
+            response_mode: direct_post
+            response_type: vp_token
+        expected_status: 201
+        headers:
+            Content-Type: application/json
+        method: POST
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
+    - continue_on_error: true
+      id: did-metadata-b39af5a1-exercise-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-exercise-wallet-generic
+        parameters:
+            deeplink: ${{ did-metadata-b39af5a1-create-presentation.outputs.body.deeplink }}
+        version_id: installed_from_external_source
+    - continue_on_error: true
+      id: did-metadata-b39af5a1-fetch-session
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ did-metadata-b39af5a1-create-presentation.outputs.body.session_id }}
+    - continue_on_error: true
+      id: did-metadata-b39af5a1-fetch-did
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/did.json
+    - continue_on_error: true
       id: engagement-haip-vp-4bb0f83a-create-pid-sdjwt-offer
       use: credential-offer
       with:
@@ -12999,6 +13092,48 @@ steps:
         expected_status: 200
         method: GET
         url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ pid-mdoc-data-model-8f915369-create-capture-session.outputs.body.session_id }}
+    - continue_on_error: true
+      id: plain-redirect-uri-82b46bbe-create-presentation
+      use: http-request
+      with:
+        body:
+            client_id_scheme: redirect_uri
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-plain-redirect-uri
+            redirect_uri: https://beta-capture-wallet.credimi.io/openid4vp/redirect
+            request_delivery: plain
+            response_mode: direct_post
+            response_type: vp_token
+        expected_status: 201
+        headers:
+            Content-Type: application/json
+        method: POST
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
+    - continue_on_error: true
+      id: plain-redirect-uri-82b46bbe-exercise-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-exercise-wallet-generic
+        parameters:
+            deeplink: ${{ plain-redirect-uri-82b46bbe-create-presentation.outputs.body.deeplink }}
+        version_id: installed_from_external_source
+    - continue_on_error: true
+      id: plain-redirect-uri-82b46bbe-fetch-capture-session
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ plain-redirect-uri-82b46bbe-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
       id: request-object-by-value-f1c94061-create-presentation
       use: http-request
@@ -14752,6 +14887,18 @@ steps:
                     onboard-reference-wallet: ${{ onboard-reference-wallet.outputs | optional }}
                     visual_evidence: ${{ engagement-haip-vp-4bb0f83a-invoke-wallet-with-haip-vp.outputs.flow_output.maestro_screenshot_urls | optional }}
                     wallet_engagement: ${{ engagement-haip-vp-4bb0f83a-fetch-capture-session.outputs.body | optional }}
+            pipeline.wallet.metadata.did:
+                output:
+                    request_evidence:
+                        did_document: ${{ did-metadata-b39af5a1-fetch-did.outputs.body | optional }}
+                        request_object: ${{ did-metadata-b39af5a1-fetch-session.outputs.body.raw.authorization_request_jwt | optional }}
+                    visual_evidence: ${{ did-metadata-b39af5a1-exercise-wallet.outputs.flow_output.maestro_screenshot_urls | optional }}
+                    wallet_response: ${{ did-metadata-b39af5a1-fetch-session.outputs.body | optional }}
+            pipeline.wallet.metadata.did-empty:
+                output:
+                    request_object: ${{ did-empty-metadata-0b80b79f-fetch-session.outputs.body.raw.authorization_request_jwt | optional }}
+                    visual_evidence: ${{ did-empty-metadata-0b80b79f-exercise-wallet.outputs.flow_output.maestro_screenshot_urls | optional }}
+                    wallet_response: ${{ did-empty-metadata-0b80b79f-fetch-session.outputs.body | optional }}
             pipeline.wallet.metadata.direct-post-jwt:
                 output:
                     authorization_request: ${{ metadata-direct-post-jwt-bf077ae9-get-presentation-result.outputs.body.authorization_request | optional }}
@@ -14762,6 +14909,11 @@ steps:
                     submit-direct-post-jwt: ${{ metadata-direct-post-jwt-bf077ae9-submit-direct-post-jwt.outputs | optional }}
                     visual_evidence: ${{ metadata-direct-post-jwt-bf077ae9-submit-direct-post-jwt.outputs.flow_output.maestro_screenshot_urls | optional }}
                     wallet_response: ${{ metadata-direct-post-jwt-bf077ae9-get-presentation-result.outputs.body | optional }}
+            pipeline.wallet.protocol.plain-redirect-uri:
+                output:
+                    authorization_request: ${{ plain-redirect-uri-82b46bbe-create-presentation.outputs.body.authorization_request | optional }}
+                    visual_evidence: ${{ plain-redirect-uri-82b46bbe-exercise-wallet.outputs.flow_output.maestro_screenshot_urls | optional }}
+                    wallet_response: ${{ plain-redirect-uri-82b46bbe-fetch-capture-session.outputs.body | optional }}
             pipeline.wallet.protocol.request-object-by-value:
                 output:
                     create-presentation: ${{ request-object-by-value-f1c94061-create-presentation.outputs | optional }}

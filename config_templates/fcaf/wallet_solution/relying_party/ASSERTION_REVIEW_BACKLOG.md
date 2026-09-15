@@ -49,8 +49,6 @@ conformance-pass claim.
 
 - [ ] `WS_RP_MS_ProtocolMessages__038` (unsigned `redirect_uri:` request with `request_delivery: plain`)
 - [ ] `WS_RP_MS_Metadata__111` (signed `x509_hash`, `x509_san_dns`, or `decentralized_identifier` request)
-- [ ] `WS_RP_MS_Metadata__125` (valid `x509_san_dns` binding using the service certificate)
-- [ ] `WS_RP_MS_Metadata__127` (matching `x509_san_dns` and redirect-URI host)
 - [ ] `WS_RP_MS_Metadata__129` (valid default `x509_hash` certificate-hash binding)
 - [ ] `WS_RP_MS_Metadata__131` (request signed by the default x509 leaf key)
 - [ ] `WS_RP_IA_Metadata__015` (published `decentralized_identifier` DID document and client metadata)
@@ -120,6 +118,13 @@ captured Wallet error, and no `vp_token`.
 The beta contract supplies only the capabilities documented in
 `CAPTURE_WALLET_API.md`. These items require an input, credential fixture,
 transport capture, Wallet profile, or verifier behavior that remains absent.
+
+### Capture Wallet certificate controls
+
+- [ ] `WS_RP_MS_Metadata__125` and `WS_RP_MS_Metadata__127` (Capture Wallet
+  rejects `client_id_scheme: x509_san_dns` because its supplied X.509 leaf
+  certificate has no DNS SAN. Re-enable only after the service publishes a
+  matching certificate and the Request Object can be captured.)
 
 ### Missing controls for source tests without a Credimi definition
 

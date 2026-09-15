@@ -2164,8 +2164,6 @@ steps:
             - WS_RP_IA_Metadata__012
             - WS_RP_IA_Metadata__013
             - WS_RP_IA_Metadata__014
-            - WS_RP_IA_Metadata__015
-            - WS_RP_IA_Metadata__016
             - WS_RP_MS_CredentialFormats__029
             - WS_RP_MS_CredentialFormats__030
             - WS_RP_MS_CredentialFormats__031
@@ -2217,7 +2215,6 @@ steps:
             - WS_RP_MS_Metadata__108
             - WS_RP_MS_Metadata__109
             - WS_RP_MS_Metadata__110
-            - WS_RP_MS_Metadata__111
             - WS_RP_MS_Metadata__112
             - WS_RP_MS_Metadata__113
             - WS_RP_MS_Metadata__114
@@ -2235,9 +2232,7 @@ steps:
             - WS_RP_MS_Metadata__126
             - WS_RP_MS_Metadata__127
             - WS_RP_MS_Metadata__128
-            - WS_RP_MS_Metadata__129
             - WS_RP_MS_Metadata__130
-            - WS_RP_MS_Metadata__131
             - WS_RP_MS_Metadata__132
             - WS_RP_MS_Metadata__133
             - WS_RP_MS_Metadata__134
@@ -2270,7 +2265,6 @@ steps:
             - WS_RP_MS_ProtocolMessages__035
             - WS_RP_MS_ProtocolMessages__036
             - WS_RP_MS_ProtocolMessages__037
-            - WS_RP_MS_ProtocolMessages__038
             - WS_RP_MS_ProtocolMessages__039
             - WS_RP_MS_ProtocolMessages__040
             - WS_RP_MS_ProtocolMessages__041
