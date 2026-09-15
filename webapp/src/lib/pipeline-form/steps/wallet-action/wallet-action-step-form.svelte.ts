@@ -150,9 +150,8 @@ export class WalletActionStepForm extends BaseForm<WalletActionStepData, WalletA
 		this.data.device = undefined;
 	}
 
-	applyBulkVersionIfMatchingWallet(walletId: string, version: SelectedVersion): boolean {
-		if (this.data.wallet?.id !== walletId) return false;
+	applyBulkWalletVersion(walletId: string, version: SelectedVersion) {
+		if (this.data.wallet?.id !== walletId) return;
 		this.data.version = version;
-		return true;
 	}
 }

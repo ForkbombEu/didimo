@@ -18,11 +18,10 @@ vi.mock('../steps/wallet-action/index.js', () => {
 	class WalletActionStepForm {
 		data: Record<string, unknown> = {};
 
-		applyBulkVersionIfMatchingWallet(walletId: string, version: unknown): boolean {
+		applyBulkWalletVersion(walletId: string, version: unknown) {
 			const wallet = this.data.wallet as { id?: string } | undefined;
-			if (wallet?.id !== walletId) return false;
+			if (wallet?.id !== walletId) return;
 			this.data.version = version;
-			return true;
 		}
 	}
 

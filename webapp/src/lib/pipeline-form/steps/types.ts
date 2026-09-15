@@ -10,7 +10,7 @@ import type {
 	PipelineStepType
 } from '$lib/pipeline/types';
 import type { Renderable } from '$lib/renderable';
-import type { ExecutionTarget } from '$pipeline-form/execution-target/types.js';
+import type { ExecutionTarget, SelectedVersion } from '$pipeline-form/execution-target/types.js';
 import type { Component } from 'svelte';
 import type { Simplify } from 'type-fest';
 
@@ -62,6 +62,8 @@ export interface Form<Deserialized = unknown, T = any> extends Renderable<T> {
 	canSave(): boolean;
 	getSubmitData(): Deserialized | undefined;
 	commit(data?: Deserialized): void;
+	/** Sync open form state after a pipeline-wide wallet version change. */
+	applyBulkWalletVersion?(walletId: string, version: SelectedVersion): void;
 }
 
 export interface CardData {

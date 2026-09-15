@@ -13,10 +13,7 @@ import { StateManager } from '$lib/state-manager/state-manager';
 import { showPipelineFormError } from '$pipeline-form/errors.js';
 import { resolveExecutionTarget } from '$pipeline-form/execution-target/index.js';
 import * as pipelinestep from '$pipeline-form/steps';
-import {
-	walletActionStepConfig,
-	WalletActionStepForm
-} from '$pipeline-form/steps/wallet-action/index.js';
+import { walletActionStepConfig } from '$pipeline-form/steps/wallet-action/index.js';
 import { isError } from 'effect/Predicate';
 import { cloneDeep } from 'lodash';
 
@@ -344,8 +341,8 @@ export class StepsBuilder implements Renderable<StepsBuilder> {
 		if (!ctx) return;
 		this.stateManager.run((state) => {
 			state.steps = this.syncMobileStepVersions(state.steps, ctx.wallet.id, version);
-			if (state.mode.id === 'form' && state.mode.form instanceof WalletActionStepForm) {
-				state.mode.form.applyBulkVersionIfMatchingWallet(ctx.wallet.id, version);
+			if (state.mode.id === 'form') {
+				state.mode.form.applyBulkWalletVersion?.(ctx.wallet.id, version);
 			}
 		});
 	}
