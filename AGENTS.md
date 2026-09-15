@@ -158,7 +158,7 @@ Local dev process:
 - `make dev.noworkers` is the same stack with `CREDIMI_TEMPORAL_WORKERS_DISABLED=1` so Temporal workers are not registered (faster boot; pipelines/workflows will not run).
 - Classic ports (primary checkout): Temporal gRPC `localhost:7233`, PocketBase `localhost:8090`, webapp `localhost:5100`, Temporal UI `localhost:8280`.
 - PocketBase proxies `/{path...}` to `ADDRESS_UI` in `pkg/routes/routes.go`.
-- Parallel worktrees: require Worktrunk (`.config/wt.toml`). Ports live in gitignored `.env.worktree`. Primary `make dev` keeps classic ports without Worktrunk. See developer-setup “Parallel worktrees”.
+- Parallel worktrees: require Worktrunk for bootstrap. Cursor sandboxes use `.cursor/worktrees.json` → `make worktree-bootstrap`; CLI worktrees use `.config/wt.toml` pre-start. Ports live in gitignored `.env.worktree`. Checkout path is per-user (not committed). Primary `make dev` keeps classic ports without Worktrunk. See developer-setup “Parallel worktrees”.
 
 Procfile dev processes (classic defaults; runtime Procfile substitutes worktree ports):
 

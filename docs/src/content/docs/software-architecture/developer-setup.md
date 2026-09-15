@@ -86,24 +86,40 @@ This sets `CREDIMI_TEMPORAL_WORKERS_DISABLED=1`. Temporal Docker still starts be
 
 ## Parallel worktrees
 
-Parallel Credimi checkouts require [Worktrunk](https://worktrunk.dev/). Classic ports stay centralized in `scripts/dev-ports.env` (`8090` / `5100` / `7233` / `8280`). Other worktrees override them with a gitignored `.env.worktree`.
+Parallel Credimi checkouts require [Worktrunk](https://worktrunk.dev/) for bootstrap (copy-ignored + unique ports). Classic ports stay centralized in `scripts/dev-ports.env` (`8090` / `5100` / `7233` / `8280`). Other worktrees override them with a gitignored `.env.worktree`.
 
-Install once:
+Checkout **location** is per user, not per repo. Do not commit a Worktrunk `worktree-path`. Set it in `~/.config/worktrunk/config.toml` if you use `wt switch` (see [Worktrunk config](https://worktrunk.dev/config/)). Cursor agent sandboxes usually live under `~/.cursor/worktrees/` and do not need that setting.
+
+Install Worktrunk once (needed for both flows below):
 
 ```bash
 brew install worktrunk && wt config shell install
 ```
 
-Create a worktree (runs `make worktree-bootstrap` via `.config/wt.toml` pre-start):
+### Disposable Cursor sandboxes
+
+Intended flow: open an agent worktree, run `make dev`, check results, dispose.
+
+`.cursor/worktrees.json` runs `make worktree-bootstrap` when Cursor creates a worktree (`/worktree`, Agents Window, or CLI). Then in that checkout:
+
+```bash
+make dev
+```
+
+When finished, stop Compose with `make worktree-down` (or dispose the sandbox after stacks are down). Language servers are often off by default under `~/.cursor/worktrees/`; turn on “Enable LSPs for Worktrees” if you need full IDE features while checking.
+
+### Worktrunk CLI worktrees
 
 ```bash
 wt switch -c feat/my-thing
 make dev
 ```
 
+`.config/wt.toml` runs the same bootstrap on pre-start and `make worktree-down` on remove.
+
 Bootstrap (also callable by hand) uses `wt step copy-ignored --require-include` for `.worktreeinclude` (`.env`, `webapp/.env`, `webapp/node_modules/`, `pb_data/`), writes unique ports into `.env.worktree` (Worktrunk `hash_port` seeds + collision walk), syncs PocketBase URLs in `webapp/.env`, initializes submodules, and runs `make tools` when `.bin` is missing.
 
-Edit `.env.worktree` to change ports; regenerators never overwrite an existing file. Stop this checkout’s Compose stack with `make worktree-down` (also hooked on Worktrunk remove).
+Edit `.env.worktree` to change ports; regenerators never overwrite an existing file.
 
 Prefer stopping PocketBase in the source worktree before copying `pb_data/` so SQLite is quiet during the copy.
 
