@@ -17,6 +17,13 @@ vi.mock('$lib/layout/global-confirm.svelte', () => ({
 vi.mock('../steps/wallet-action/index.js', () => {
 	class WalletActionStepForm {
 		data: Record<string, unknown> = {};
+
+		applyBulkVersionIfMatchingWallet(walletId: string, version: unknown): boolean {
+			const wallet = this.data.wallet as { id?: string } | undefined;
+			if (wallet?.id !== walletId) return false;
+			this.data.version = version;
+			return true;
+		}
 	}
 
 	return {

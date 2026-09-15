@@ -344,12 +344,8 @@ export class StepsBuilder implements Renderable<StepsBuilder> {
 		if (!ctx) return;
 		this.stateManager.run((state) => {
 			state.steps = this.syncMobileStepVersions(state.steps, ctx.wallet.id, version);
-			if (
-				state.mode.id === 'form' &&
-				state.mode.form instanceof WalletActionStepForm &&
-				state.mode.form.data.wallet?.id === ctx.wallet.id
-			) {
-				state.mode.form.data.version = version;
+			if (state.mode.id === 'form' && state.mode.form instanceof WalletActionStepForm) {
+				state.mode.form.applyBulkVersionIfMatchingWallet(ctx.wallet.id, version);
 			}
 		});
 	}

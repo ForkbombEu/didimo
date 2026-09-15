@@ -91,6 +91,27 @@ describe('WalletActionStepForm execution target', () => {
 		form.requestChangeWalletVersion();
 		expect(requestChangeWalletVersion).toHaveBeenCalledOnce();
 	});
+
+	it('applyBulkVersionIfMatchingWallet updates only the matching wallet', () => {
+		const form = new WalletActionStepForm(
+			createInitFormOptions({
+				intent: 'edit',
+				initial: {
+					wallet: { id: 'w1', name: 'W' } as never,
+					version: EXTERNAL_VERSION,
+					device: GLOBAL_DEVICE,
+					action: { id: 'a1', name: 'Old' } as never
+				}
+			})
+		);
+		const nextVersion = { id: 'v2', tag: '2.0' } as never;
+
+		expect(form.applyBulkVersionIfMatchingWallet('other', nextVersion)).toBe(false);
+		expect(form.data.version).toBe(EXTERNAL_VERSION);
+
+		expect(form.applyBulkVersionIfMatchingWallet('w1', nextVersion)).toBe(true);
+		expect(form.data.version).toBe(nextVersion);
+	});
 });
 
 describe('WalletActionStepForm edit intent', () => {
