@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/forkbombeu/credimi/pkg/internal/canonify"
+	"github.com/forkbombeu/credimi/pkg/workflowengine/hooks"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tests"
@@ -158,6 +159,27 @@ func TestEnsureNamespaceAndWorkersSkipsExisting(t *testing.T) {
 		return nil
 	}
 
+	startWorkersByNamespaceFn = func(_ string) {
+		require.Fail(t, "startWorkersByNamespace should not be called")
+	}
+
+	ensureNamespaceAndWorkers("tenant")
+}
+
+func TestEnsureNamespaceAndWorkersSkipsWhenTemporalWorkersDisabled(t *testing.T) {
+	t.Setenv(hooks.TemporalWorkersDisabledEnv, "1")
+
+	origClient := newNamespaceClient
+	origStart := startWorkersByNamespaceFn
+	t.Cleanup(func() {
+		newNamespaceClient = origClient
+		startWorkersByNamespaceFn = origStart
+	})
+
+	newNamespaceClient = func(_ client.Options) (client.NamespaceClient, error) {
+		require.Fail(t, "newNamespaceClient should not be called")
+		return nil, nil
+	}
 	startWorkersByNamespaceFn = func(_ string) {
 		require.Fail(t, "startWorkersByNamespace should not be called")
 	}

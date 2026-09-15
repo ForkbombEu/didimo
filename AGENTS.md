@@ -154,6 +154,7 @@ Source of truth:
 Local dev process:
 
 - `make dev` starts infrastructure and runs the API/UI through `hivemind`.
+- `make dev.noworkers` is the same stack with `CREDIMI_TEMPORAL_WORKERS_DISABLED=1` so Temporal workers are not registered (faster boot; pipelines/workflows will not run).
 - Temporal is provided by Docker Compose in dev, with gRPC at `localhost:7233`.
 - PocketBase API runs at `localhost:8090`.
 - Webapp runs at `localhost:5100`.
@@ -177,6 +178,7 @@ Key environment variables:
 
 - `TEMPORAL_ADDRESS`: Temporal host and port.
 - `ADDRESS_UI`: UI reverse proxy target.
+- `CREDIMI_TEMPORAL_WORKERS_DISABLED`: when `1`/`true`/`yes`, skips Temporal namespace creation, worker registration and worker-manager workflow starts (used by `make dev.noworkers`).
 - `MOBILE_RUNNER_SEMAPHORE_DISABLED`: disables the mobile-runner semaphore path when configured.
 - `MOBILE_RUNNER_SEMAPHORE_WAIT_TIMEOUT`: mobile-runner queue wait timeout.
 - `CREDIMI_INTERNAL_ADMIN_KEY`: plaintext runtime key for trusted internal HTTP activities and internal result posting.
