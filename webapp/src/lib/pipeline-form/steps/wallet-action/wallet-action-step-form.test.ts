@@ -76,6 +76,21 @@ describe('WalletActionStepForm execution target', () => {
 
 		expect(form.isExecutionTargetLocked()).toBe(false);
 	});
+
+	it('delegates bulk wallet version availability and open requests', () => {
+		const requestChangeWalletVersion = vi.fn();
+		const form = new WalletActionStepForm(
+			createInitFormOptions({
+				intent: 'edit',
+				canChangeWalletVersion: () => true,
+				requestChangeWalletVersion
+			})
+		);
+
+		expect(form.canChangeWalletVersion()).toBe(true);
+		form.requestChangeWalletVersion();
+		expect(requestChangeWalletVersion).toHaveBeenCalledOnce();
+	});
 });
 
 describe('WalletActionStepForm edit intent', () => {

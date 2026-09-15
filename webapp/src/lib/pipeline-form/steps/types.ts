@@ -25,12 +25,18 @@ export type ExecutionTargetFormContext = {
 	isExecutionTargetLocked: () => boolean;
 };
 
+export type BulkWalletVersionFormContext = {
+	canChangeWalletVersion?: () => boolean;
+	requestChangeWalletVersion?: () => void;
+};
+
 export type InitFormOptions<T> = {
 	intent: FormIntent;
 	initial?: T;
 	/** Opens a different step form, replacing the current one. */
 	openStep?: (type: string) => void;
-} & ExecutionTargetFormContext;
+} & ExecutionTargetFormContext &
+	BulkWalletVersionFormContext;
 
 export interface Config<ID extends string = string, Serialized = unknown, Deserialized = unknown> {
 	use: ID;
@@ -116,5 +122,13 @@ export abstract class BaseForm<Deserialized, T> implements Form<Deserialized, T>
 
 	isExecutionTargetLocked() {
 		return this.opts?.isExecutionTargetLocked?.();
+	}
+
+	canChangeWalletVersion() {
+		return this.opts?.canChangeWalletVersion?.() ?? false;
+	}
+
+	requestChangeWalletVersion() {
+		this.opts?.requestChangeWalletVersion?.();
 	}
 }

@@ -13,7 +13,10 @@ import { StateManager } from '$lib/state-manager/state-manager';
 import { showPipelineFormError } from '$pipeline-form/errors.js';
 import { resolveExecutionTarget } from '$pipeline-form/execution-target/index.js';
 import * as pipelinestep from '$pipeline-form/steps';
-import { walletActionStepConfig } from '$pipeline-form/steps/wallet-action/index.js';
+import {
+	walletActionStepConfig,
+	WalletActionStepForm
+} from '$pipeline-form/steps/wallet-action/index.js';
 import { isError } from 'effect/Predicate';
 import { cloneDeep } from 'lodash';
 
@@ -21,7 +24,12 @@ import type { GenericRecord } from '@/utils/types';
 
 import { m } from '@/i18n';
 
-import { getBulkWalletVersionContext, getStepData, isStepEditable } from './_partials/index.js';
+import {
+	getBulkWalletVersionContext,
+	getStepData,
+	isChangeWalletVersionAvailable,
+	isStepEditable
+} from './_partials/index.js';
 import { isExecutionTargetLocked } from './execution-target-lock.js';
 import { InlineManualEditor } from './inline-manual-editor.svelte.js';
 import Component from './steps-builder.svelte';
@@ -66,6 +74,8 @@ export class StepsBuilder implements Renderable<StepsBuilder> {
 	);
 
 	private formEffectCleanup: (() => void) | null = null;
+
+	changeWalletVersionDialogOpen = $state(false);
 
 	constructor(private props: Props) {
 		this.state.steps = props.steps;
@@ -158,7 +168,16 @@ export class StepsBuilder implements Renderable<StepsBuilder> {
 								intent,
 								steps: this.state.steps,
 								target: this.executionTarget
-							})
+							}),
+						canChangeWalletVersion: () =>
+							this.isChangeWalletVersionAvailable(
+								isExecutionTargetLocked({
+									intent,
+									steps: this.state.steps,
+									target: this.executionTarget
+								})
+							),
+						requestChangeWalletVersion: () => this.openChangeWalletVersion()
 					});
 				} catch (e) {
 					showPipelineFormError(e);
@@ -311,11 +330,35 @@ export class StepsBuilder implements Renderable<StepsBuilder> {
 
 	//
 
+	isChangeWalletVersionAvailable(locked?: boolean) {
+		const mode = this.state.mode;
+		const effectiveLocked =
+			locked ??
+			(mode.id === 'form' &&
+				isExecutionTargetLocked({
+					intent: mode.intent,
+					steps: this.state.steps,
+					target: this.executionTarget
+				}));
+		return isChangeWalletVersionAvailable(this.state.steps, { locked: effectiveLocked });
+	}
+
+	openChangeWalletVersion() {
+		this.changeWalletVersionDialogOpen = true;
+	}
+
 	applyBulkWalletVersion(version: SelectedVersion) {
 		const ctx = getBulkWalletVersionContext(this.state.steps);
 		if (!ctx) return;
 		this.stateManager.run((state) => {
 			state.steps = this.syncMobileStepVersions(state.steps, ctx.wallet.id, version);
+			if (
+				state.mode.id === 'form' &&
+				state.mode.form instanceof WalletActionStepForm &&
+				state.mode.form.data.wallet?.id === ctx.wallet.id
+			) {
+				state.mode.form.data.version = version;
+			}
 		});
 	}
 
