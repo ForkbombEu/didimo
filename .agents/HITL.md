@@ -148,7 +148,7 @@ Do not treat an entry here as approved policy until a human maintainer resolves 
 - owner: human maintainer
 - context: Multiple git worktrees need isolated Compose projects and host ports without editing tracked Procfile/compose per checkout. Recent Worktrunk-style tooling was reviewed in `.agents/research/2026-09-15-git-worktree-utilities.md`.
 - question: How should Credimi expose ports and bootstrap copies for parallel worktrees?
-- options considered: (1) port offset knob; (2) explicit ports in `.env.worktree` with classic defaults centralized; (3) adopt Coasts daemon for runtime isolation.
-- default risk: Offset math is opaque; Coasts adds a large runtime before Compose parameterization is proven.
-- decision: Keep classic ports in `scripts/dev-ports.env`. Override only via `.env.worktree`. Copy allowlist includes `.env`, `webapp/.env`, `webapp/node_modules/`, and `pb_data/`. Recreate `.bin` via `make tools`. Document Worktrunk as optional team tool; durable contract is `make worktree-bootstrap` / `make dev`.
-- follow-up: Pilot two local worktrees; measure whether node_modules copy is worth keeping; do not enable Worktrunk commit/merge automation.
+- options considered: (1) port offset knob; (2) explicit ports in `.env.worktree` with classic defaults centralized; (3) adopt Coasts daemon for runtime isolation; (4) Worktrunk optional vs required.
+- default risk: Offset math is opaque; Coasts adds a large runtime before Compose parameterization is proven; keeping a plain-git copy shim duplicates Worktrunk.
+- decision: Keep classic ports in `scripts/dev-ports.env`. Override only via `.env.worktree`. Copy allowlist includes `.env`, `webapp/.env`, `webapp/node_modules/`, and `pb_data/`. Recreate `.bin` via `make tools`. **Require Worktrunk** for parallel worktrees (`wt step copy-ignored`, `hash_port` seeds); keep Credimi scripts for ports/Procfile/Compose/`sync-urls`. Primary checkout `make dev` remains Worktrunk-free. Do not enable Worktrunk commit/merge automation.
+- follow-up: Pilot two local worktrees; measure whether node_modules copy is worth keeping.

@@ -123,7 +123,7 @@ dev: $(WEBENV) tools devtools submodules $(BIN) $(DATA) ## 🚀 run in watch mod
 dev.noworkers: ## 🚀 run in watch mode without Temporal workers
 	CREDIMI_TEMPORAL_WORKERS_DISABLED=1 $(MAKE) dev
 
-worktree-bootstrap: ## 🌳 copy allowlisted ignored files + write .env.worktree ports
+worktree-bootstrap: ## 🌳 Worktrunk bootstrap: copy-ignored + .env.worktree ports
 	bash ./scripts/worktree-bootstrap.sh
 
 worktree-down: ## 🌳 stop this worktree Compose project

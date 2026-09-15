@@ -15,7 +15,8 @@ Usage: scripts/worktree-env.sh <command>
 
 Commands:
   print     Print resolved port env (defaults + .env.worktree overrides)
-  write     Write .env.worktree if missing (unique ports; never overwrites)
+  write     Write .env.worktree if missing (unique ports via Worktrunk hash_port;
+            never overwrites). Requires `wt` unless --classic.
   write --classic
             Write classic defaults from scripts/dev-ports.env if missing
   sync-urls Rewrite PUBLIC_POCKETBASE_URL / VITE_API / PB_TYPEGEN_URL in webapp/.env
@@ -42,17 +43,20 @@ port_free() {
 	fi
 }
 
-hash_port() {
-	local seed="$1"
-	local h
-	h="$(printf '%s' "${seed}" | cksum | awk '{print $1}')"
-	echo $((10000 + h % 10000))
+# Seed from Worktrunk's hash_port (10000-19999), then walk on collision.
+seed_port() {
+	local label="$1"
+	if ! command -v wt >/dev/null 2>&1; then
+		echo "error: Worktrunk (\`wt\`) is required to allocate unique ports" >&2
+		exit 1
+	fi
+	wt step eval "{{ (\"${label}-\" ~ branch) | hash_port }}"
 }
 
 pick_port() {
-	local seed="$1"
+	local label="$1"
 	local candidate
-	candidate="$(hash_port "${seed}")"
+	candidate="$(seed_port "${label}")"
 	local i=0
 	while [[ "${i}" -lt 200 ]]; do
 		if port_free "${candidate}"; then
@@ -62,7 +66,7 @@ pick_port() {
 		candidate=$((10000 + (candidate - 10000 + 1) % 10000))
 		i=$((i + 1))
 	done
-	echo "error: could not find a free port for seed ${seed}" >&2
+	echo "error: could not find a free port for label ${label}" >&2
 	return 1
 }
 
@@ -107,13 +111,13 @@ EOF
 	else
 		local branch
 		branch="$(branch_name)"
-		API_PORT="$(pick_port "api-${branch}-${COMPOSE_PROJECT_NAME}")"
-		UI_PORT="$(pick_port "ui-${branch}-${COMPOSE_PROJECT_NAME}")"
-		TEMPORAL_PORT="$(pick_port "temporal-${branch}-${COMPOSE_PROJECT_NAME}")"
-		TEMPORAL_UI_PORT="$(pick_port "temporal-ui-${branch}-${COMPOSE_PROJECT_NAME}")"
+		API_PORT="$(pick_port "api")"
+		UI_PORT="$(pick_port "ui")"
+		TEMPORAL_PORT="$(pick_port "temporal")"
+		TEMPORAL_UI_PORT="$(pick_port "temporal-ui")"
 		cat >"${WORKTREE_ENV_FILE}" <<EOF
 # Generated unique ports for worktree ${COMPOSE_PROJECT_NAME} (branch ${branch})
-# Edit this file to change ports. Regenerators will not overwrite it.
+# Seeds from Worktrunk hash_port; collision walk applied. Edit freely; not overwritten.
 API_PORT=${API_PORT}
 UI_PORT=${UI_PORT}
 TEMPORAL_PORT=${TEMPORAL_PORT}

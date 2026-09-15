@@ -86,26 +86,28 @@ This sets `CREDIMI_TEMPORAL_WORKERS_DISABLED=1`. Temporal Docker still starts be
 
 ## Parallel worktrees
 
-Classic ports stay centralized in `scripts/dev-ports.env` (`8090` / `5100` / `7233` / `8280`). Parallel checkouts override them with a gitignored `.env.worktree`.
+Parallel Credimi checkouts require [Worktrunk](https://worktrunk.dev/). Classic ports stay centralized in `scripts/dev-ports.env` (`8090` / `5100` / `7233` / `8280`). Other worktrees override them with a gitignored `.env.worktree`.
 
-**Optional team tool:** [Worktrunk](https://worktrunk.dev/) (`.config/wt.toml`). Install with `brew install worktrunk && wt config shell install`. Credimi does not require it.
+Install once:
 
 ```bash
-# Worktrunk
-wt switch -c feat/my-thing   # runs make worktree-bootstrap via pre-start
+brew install worktrunk && wt config shell install
+```
 
-# Plain git
-git worktree add -b feat/my-thing ../DIDimo-wt-my-thing
-cd ../DIDimo-wt-my-thing
-make worktree-bootstrap
+Create a worktree (runs `make worktree-bootstrap` via `.config/wt.toml` pre-start):
+
+```bash
+wt switch -c feat/my-thing
 make dev
 ```
 
-`make worktree-bootstrap` copies allowlisted ignored paths from `.worktreeinclude` (`.env`, `webapp/.env`, `webapp/node_modules/`, `pb_data/`), writes unique ports into `.env.worktree`, syncs PocketBase URLs in `webapp/.env`, initializes submodules, and runs `make tools` when `.bin` is missing.
+Bootstrap (also callable by hand) uses `wt step copy-ignored --require-include` for `.worktreeinclude` (`.env`, `webapp/.env`, `webapp/node_modules/`, `pb_data/`), writes unique ports into `.env.worktree` (Worktrunk `hash_port` seeds + collision walk), syncs PocketBase URLs in `webapp/.env`, initializes submodules, and runs `make tools` when `.bin` is missing.
 
-Edit `.env.worktree` to change ports; regenerators never overwrite an existing file. Stop this checkout’s Compose stack with `make worktree-down`.
+Edit `.env.worktree` to change ports; regenerators never overwrite an existing file. Stop this checkout’s Compose stack with `make worktree-down` (also hooked on Worktrunk remove).
 
 Prefer stopping PocketBase in the source worktree before copying `pb_data/` so SQLite is quiet during the copy.
+
+Primary checkout does not need Worktrunk for `make dev` (classic ports). Worktrunk is required for additional parallel worktrees.
 
 ## Temporal Visibility Search Attributes
 

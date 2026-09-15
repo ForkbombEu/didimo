@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 #
-# Optional Worktrunk project config.
+# Required Worktrunk project config for parallel Credimi worktrees.
 # Install: brew install worktrunk && wt config shell install
-# Credimi also works with plain `git worktree` + `make worktree-bootstrap`.
 # Do not enable Worktrunk commit/merge automation for Credimi agent workflows.
 
 [[pre-start]]

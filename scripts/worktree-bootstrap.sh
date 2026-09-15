@@ -5,31 +5,27 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-INCLUDE_FILE="${ROOT_DIR}/.worktreeinclude"
 CLASSIC=0
 
 usage() {
 	cat <<'USAGE'
-Usage: scripts/worktree-bootstrap.sh [--classic] [--from <primary-path>]
+Usage: scripts/worktree-bootstrap.sh [--classic]
 
-Copies allowlisted gitignored paths from the primary worktree, writes
-.env.worktree with unique ports (unless --classic), syncs webapp/.env URLs,
-initializes submodules, and ensures .bin tools exist.
+For parallel worktrees, requires Worktrunk (`wt`). Copies allowlisted
+gitignored paths via `wt step copy-ignored --require-include`, writes
+.env.worktree with unique ports, syncs webapp/.env URLs, initializes
+submodules, and ensures .bin tools exist.
 
-Primary is detected via `git worktree list` (first entry) unless --from is set.
+On the primary checkout (or with --classic), only classic ports are written;
+Worktrunk is not required.
 USAGE
 }
 
-FROM_PATH=""
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 	--classic)
 		CLASSIC=1
 		shift
-		;;
-	--from)
-		FROM_PATH="${2:-}"
-		shift 2
 		;;
 	-h | --help)
 		usage
@@ -43,77 +39,37 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-if [[ -z "${FROM_PATH}" ]]; then
-	FROM_PATH="$(git -C "${ROOT_DIR}" worktree list --porcelain | awk '/^worktree / { print $2; exit }')"
-fi
+cd "${ROOT_DIR}"
 
-if [[ -z "${FROM_PATH}" || ! -d "${FROM_PATH}" ]]; then
-	echo "error: could not resolve primary worktree path" >&2
-	exit 1
-fi
-
-if [[ "$(cd "${FROM_PATH}" && pwd -P)" == "$(cd "${ROOT_DIR}" && pwd -P)" ]]; then
-	echo "bootstrap on primary worktree: writing classic ports only"
+primary="$(git worktree list --porcelain | awk '/^worktree / { print $2; exit }')"
+if [[ -n "${primary}" && "$(cd "${primary}" && pwd -P)" == "$(pwd -P)" ]]; then
+	echo "bootstrap on primary worktree: classic ports only"
 	CLASSIC=1
 fi
 
-copy_path() {
-	local rel="$1"
-	local src="${FROM_PATH}/${rel}"
-	local dst="${ROOT_DIR}/${rel}"
-	if [[ ! -e "${src}" ]]; then
-		echo "skip missing ${rel}"
-		return 0
+if [[ "${CLASSIC}" -eq 0 ]]; then
+	if ! command -v wt >/dev/null 2>&1; then
+		echo "error: Worktrunk (\`wt\`) is required for parallel worktrees." >&2
+		echo "Install: brew install worktrunk && wt config shell install" >&2
+		echo "docs: https://worktrunk.dev/" >&2
+		exit 1
 	fi
-	if [[ -e "${dst}" ]]; then
-		echo "keep existing ${rel}"
-		return 0
-	fi
-	mkdir -p "$(dirname "${dst}")"
-	if [[ -d "${src}" ]]; then
-		if cp -cR "${src}" "${dst}" 2>/dev/null; then
-			echo "cloned ${rel}"
-		else
-			cp -R "${src}" "${dst}"
-			echo "copied ${rel}"
-		fi
-	else
-		cp "${src}" "${dst}"
-		echo "copied ${rel}"
-	fi
-}
-
-echo "bootstrap from ${FROM_PATH} -> ${ROOT_DIR}"
-
-if [[ -f "${INCLUDE_FILE}" ]]; then
-	while IFS= read -r line || [[ -n "${line}" ]]; do
-		case "${line}" in
-		'' | \#*) continue ;;
-		esac
-		rel="${line%/}"
-		rel="${rel#/}"
-		copy_path "${rel}"
-	done <"${INCLUDE_FILE}"
+	echo "copying allowlisted ignored files via Worktrunk"
+	wt step copy-ignored --require-include
+	./scripts/worktree-env.sh write
 else
-	echo "warning: ${INCLUDE_FILE} missing; copying .env and webapp/.env only"
-	copy_path ".env"
-	copy_path "webapp/.env"
+	./scripts/worktree-env.sh write --classic
 fi
 
-if [[ "${CLASSIC}" -eq 1 ]]; then
-	"${ROOT_DIR}/scripts/worktree-env.sh" write --classic
-else
-	"${ROOT_DIR}/scripts/worktree-env.sh" write
-fi
-"${ROOT_DIR}/scripts/worktree-env.sh" sync-urls
+./scripts/worktree-env.sh sync-urls
 
-git -C "${ROOT_DIR}" submodule update --init --recursive
+git submodule update --init --recursive
 
-if [[ ! -x "${ROOT_DIR}/.bin/stepci-captured-runner" || ! -x "${ROOT_DIR}/.bin/et-tu-cesr" ]]; then
+if [[ ! -x .bin/stepci-captured-runner || ! -x .bin/et-tu-cesr ]]; then
 	echo "running make tools"
-	make -C "${ROOT_DIR}" tools
+	make tools
 fi
 
 echo
 echo "bootstrap complete. next: make dev"
-"${ROOT_DIR}/scripts/worktree-env.sh" print
+./scripts/worktree-env.sh print
