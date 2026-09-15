@@ -54,21 +54,22 @@ type StartAggregateScoreboardResponse struct {
 }
 
 type PipelineStatsResponse struct {
-	PipelineID          string   `json:"pipeline_id"`
-	PipelineName        string   `json:"pipeline_name"`
-	PipelineIdentifier  string   `json:"pipeline_identifier"`
-	DeviceTypes         []string `json:"device_types"`
-	DeviceIDs           []string `json:"device_ids"`
-	TotalRuns           int      `json:"total_runs"`
-	TotalSuccesses      int      `json:"total_successes"`
-	SuccessRate         float64  `json:"success_rate"`
-	ManualExecutions    int      `json:"manual_executions"`
-	ScheduledExecutions int      `json:"scheduled_executions"`
-	CIExecutions        int      `json:"ci_executions"`
-	MinExecutionTime    string   `json:"min_execution_time"`
-	FirstExecutionDate  string   `json:"first_execution_date"`
-	LastExecutionDate   string   `json:"last_execution_date"`
-	LastRun             *LastRun `json:"last_run,omitempty"`
+	PipelineID              string   `json:"pipeline_id"`
+	PipelineName            string   `json:"pipeline_name"`
+	PipelineIdentifier      string   `json:"pipeline_identifier"`
+	DeviceTypes             []string `json:"device_types"`
+	DeviceIDs               []string `json:"device_ids"`
+	TotalRuns               int      `json:"total_runs"`
+	TotalSuccesses          int      `json:"total_successes"`
+	SuccessRate             float64  `json:"success_rate"`
+	ManualExecutions        int      `json:"manual_executions"`
+	ScheduledExecutions     int      `json:"scheduled_executions"`
+	CIExecutions            int      `json:"ci_executions"`
+	MinExecutionTime        string   `json:"min_execution_time"`
+	MinExecutionTimeSeconds int      `json:"min_execution_time_seconds"`
+	FirstExecutionDate      string   `json:"first_execution_date"`
+	LastExecutionDate       string   `json:"last_execution_date"`
+	LastRun                 *LastRun `json:"last_run,omitempty"`
 }
 
 type LastRun struct {
@@ -78,18 +79,19 @@ type LastRun struct {
 }
 
 type PipelineStats struct {
-	PipelineName        string
-	DeviceIDs           []string
-	DeviceTypes         []string
-	TotalRuns           int
-	TotalSuccesses      int
-	SuccessRate         float64
-	ManualExecutions    int
-	ScheduledExecutions int
-	CIExecutions        int
-	MinExecutionTime    string
-	FirstExecutionDate  string
-	LastExecutionDate   string
+	PipelineName            string
+	DeviceIDs               []string
+	DeviceTypes             []string
+	TotalRuns               int
+	TotalSuccesses          int
+	SuccessRate             float64
+	ManualExecutions        int
+	ScheduledExecutions     int
+	CIExecutions            int
+	MinExecutionTime        string
+	MinExecutionTimeSeconds int
+	FirstExecutionDate      string
+	LastExecutionDate       string
 }
 
 // ScoreboardExpandedData is the display-safe relation snapshot consumed by the
@@ -524,18 +526,19 @@ func HandleGetPipelineScoreboard() func(*core.RequestEvent) error {
 					namespace,
 					pipelineRecord.GetString("canonified_name"),
 				),
-				DeviceTypes:         stats.DeviceTypes,
-				DeviceIDs:           stats.DeviceIDs,
-				TotalRuns:           stats.TotalRuns,
-				TotalSuccesses:      stats.TotalSuccesses,
-				SuccessRate:         stats.SuccessRate,
-				ManualExecutions:    stats.ManualExecutions,
-				ScheduledExecutions: stats.ScheduledExecutions,
-				CIExecutions:        stats.CIExecutions,
-				MinExecutionTime:    stats.MinExecutionTime,
-				FirstExecutionDate:  stats.FirstExecutionDate,
-				LastExecutionDate:   stats.LastExecutionDate,
-				LastRun:             lastRun,
+				DeviceTypes:             stats.DeviceTypes,
+				DeviceIDs:               stats.DeviceIDs,
+				TotalRuns:               stats.TotalRuns,
+				TotalSuccesses:          stats.TotalSuccesses,
+				SuccessRate:             stats.SuccessRate,
+				ManualExecutions:        stats.ManualExecutions,
+				ScheduledExecutions:     stats.ScheduledExecutions,
+				CIExecutions:            stats.CIExecutions,
+				MinExecutionTime:        stats.MinExecutionTime,
+				MinExecutionTimeSeconds: stats.MinExecutionTimeSeconds,
+				FirstExecutionDate:      stats.FirstExecutionDate,
+				LastExecutionDate:       stats.LastExecutionDate,
+				LastRun:                 lastRun,
 			})
 		}
 		return e.JSON(http.StatusOK, response)
@@ -722,6 +725,7 @@ func calculateStatsFromExecutions(
 	stats.FirstExecutionDate = firstTime
 	stats.LastExecutionDate = lastTime
 	stats.MinExecutionTime = formatDurationString(minDuration, minDurationSet)
+	stats.MinExecutionTimeSeconds = durationSeconds(minDuration, minDurationSet)
 
 	var lastRun *LastRun
 	if lastExec != nil {
@@ -921,6 +925,13 @@ func formatDurationString(d time.Duration, set bool) string {
 		seconds := int(d.Seconds()) % 60
 		return fmt.Sprintf("%dh%dm%ds", hours, minutes, seconds)
 	}
+}
+
+func durationSeconds(d time.Duration, set bool) int {
+	if !set {
+		return 0
+	}
+	return int(math.Round(d.Seconds()))
 }
 
 func extractFirstTwoParts(fullPath string) string {
@@ -1348,6 +1359,7 @@ func setBasicFields(record *core.Record, stats workflows.AggregatedPipelineStats
 	record.Set("scheduled_runs", stats.ScheduledExecutions)
 	record.SetIfFieldExists("CI_runs", stats.CIExecutions)
 	record.Set("minimum_running_time", stats.MinExecutionTime)
+	record.SetIfFieldExists("minimum_running_time_seconds", stats.MinExecutionTimeSeconds)
 	record.Set("first_execution", stats.FirstExecutionDate)
 	record.Set("last_execution_date", stats.LastExecutionDate)
 }

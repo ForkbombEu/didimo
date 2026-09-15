@@ -434,6 +434,7 @@ func TestHandleGetPipelineScoreboard(t *testing.T) {
 		stats1.DeviceIDs,
 	)
 	require.Equal(t, "5s", stats1.MinExecutionTime)
+	require.Equal(t, 5, stats1.MinExecutionTimeSeconds)
 	expectedFirstTime := exec1.Info.GetStartTime().AsTime()
 	actualFirstTime, err := time.Parse(time.RFC3339Nano, stats1.FirstExecutionDate)
 	require.NoError(t, err)
@@ -460,6 +461,7 @@ func TestHandleGetPipelineScoreboard(t *testing.T) {
 		stats2.DeviceIDs,
 	)
 	require.Equal(t, "4m10s", stats2.MinExecutionTime)
+	require.Equal(t, 250, stats2.MinExecutionTimeSeconds)
 	expectedTime2 := exec4.Info.GetStartTime().AsTime()
 	actualTime2, err := time.Parse(time.RFC3339Nano, stats2.FirstExecutionDate)
 	require.NoError(t, err)
@@ -1095,19 +1097,20 @@ func TestSaveScoreboardResults(t *testing.T) {
 	t.Run("success - saves results correctly", func(t *testing.T) {
 		aggregatedPipelines := []workflows.AggregatedPipelineStats{
 			{
-				PipelineID:          pipeline.Id,
-				PipelineName:        "Test Pipeline",
-				DeviceTypes:         []string{},
-				DeviceIDs:           []string{"usera-s-organization/test-runner/test-device"},
-				TotalRuns:           10,
-				TotalSuccesses:      8,
-				SuccessRate:         80.0,
-				ManualExecutions:    5,
-				ScheduledExecutions: 5,
-				CIExecutions:        2,
-				MinExecutionTime:    "1m30s",
-				FirstExecutionDate:  "2024-01-01T00:00:00Z",
-				LastExecutionDate:   "2024-01-02T00:00:00Z",
+				PipelineID:              pipeline.Id,
+				PipelineName:            "Test Pipeline",
+				DeviceTypes:             []string{},
+				DeviceIDs:               []string{"usera-s-organization/test-runner/test-device"},
+				TotalRuns:               10,
+				TotalSuccesses:          8,
+				SuccessRate:             80.0,
+				ManualExecutions:        5,
+				ScheduledExecutions:     5,
+				CIExecutions:            2,
+				MinExecutionTime:        "1m30s",
+				MinExecutionTimeSeconds: 90,
+				FirstExecutionDate:      "2024-01-01T00:00:00Z",
+				LastExecutionDate:       "2024-01-02T00:00:00Z",
 				LastExecution: &workflows.LatestExecutionDetails{
 					PipelineName: "Test Pipeline",
 					WorkflowID:   "wf-new",
@@ -1181,6 +1184,7 @@ func TestSaveScoreboardResults(t *testing.T) {
 		require.Equal(t, 5, record.GetInt("scheduled_runs"))
 		require.Equal(t, 2, record.GetInt("CI_runs"))
 		require.Equal(t, "1m30s", record.GetString("minimum_running_time"))
+		require.Equal(t, 90, record.GetInt("minimum_running_time_seconds"))
 
 		deviceIDs := record.GetStringSlice("mobile_devices")
 		require.Len(t, deviceIDs, 1)

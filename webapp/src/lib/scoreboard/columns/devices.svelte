@@ -18,7 +18,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		id: 'devices',
 		header: renderComponent(EntityHeader, {
 			label: m.Devices()
-		})
+		}),
+		sortField: 'mobile_devices.name'
 	});
 </script>
 
