@@ -112,7 +112,6 @@ type ScoreboardExpandedEntity struct {
 	ID               string `json:"id"`
 	CollectionName   string `json:"collectionName"`
 	Name             string `json:"name,omitempty"`
-	Logo             string `json:"logo,omitempty"`
 	LogoURL          string `json:"logo_url,omitempty"`
 	Published        bool   `json:"published"`
 	CanonifiedPath   string `json:"__canonified_path__"`
@@ -1282,8 +1281,7 @@ func scoreboardExpandedRecord(
 		ID:               record.Id,
 		CollectionName:   collection,
 		Name:             record.GetString("name"),
-		Logo:             record.GetString("logo"),
-		LogoURL:          record.GetString("logo_url"),
+		LogoURL:          scoreboardLogoURL(app, collection, record),
 		Published:        record.GetBool("published"),
 		CanonifiedPath:   path,
 		Wallet:           record.GetString("wallet"),
@@ -1318,6 +1316,19 @@ func scoreboardExpandedDevices(app core.App, ids []string) ([]ScoreboardMobileDe
 		})
 	}
 	return devices, nil
+}
+func scoreboardLogoURL(app core.App, collection string, record *core.Record) string {
+	if logoURL := record.GetString("logo_url"); logoURL != "" {
+		return logoURL
+	}
+	logo := record.GetString("logo")
+	if logo == "" {
+		return ""
+	}
+	return utils.JoinURL(
+		app.Settings().Meta.AppURL,
+		"api", "files", collection, record.Id, logo,
+	)
 }
 
 func hasFatalScoreboardSaveErrors(saveErrors []error) bool {

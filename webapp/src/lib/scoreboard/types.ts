@@ -13,7 +13,6 @@ export type ScoreboardExpandedEntity = {
 	id: string;
 	collectionName: string;
 	name?: string;
-	logo?: string;
 	logo_url?: string;
 	published: boolean;
 	__canonified_path__: string;

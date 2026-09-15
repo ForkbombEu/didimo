@@ -1068,6 +1068,7 @@ func createCustomCheckRecord(t testing.TB, app *tests.TestApp, orgID, name strin
 func TestSaveScoreboardResults(t *testing.T) {
 	app := setupPipelineApp(t)
 	defer app.Cleanup()
+	app.Settings().Meta.AppURL = "https://credimi.test"
 	ensureMobileDevicesCollection(t, app)
 	ensureScoreboardDeviceRelation(t, app)
 	orgID, err := getOrgIDfromName("userA's organization")
@@ -1081,6 +1082,8 @@ func TestSaveScoreboardResults(t *testing.T) {
 	createDeviceRecord(t, app, orgID, runner.Id, "test-device")
 	createPipelineResult(t, app, orgID, pipeline.Id, "wf-new", "run-new")
 	publicWallet := createWalletRecord(t, app, orgID, "my-wallet")
+	publicWallet.Set("logo", []*filesystem.File{NewTestFile("wallet-logo.png", []byte("logo"))})
+	require.NoError(t, app.Save(publicWallet))
 	privateWallet := createWalletRecord(t, app, orgID, "private-wallet")
 	privateWallet.Set("published", false)
 	require.NoError(t, app.Save(privateWallet))
@@ -1190,6 +1193,11 @@ func TestSaveScoreboardResults(t *testing.T) {
 		require.NotNil(t, expandedData.Pipeline)
 		require.Equal(t, pipeline.Id, expandedData.Pipeline.ID)
 		require.Len(t, expandedData.Wallets, 1)
+		require.Equal(
+			t,
+			"https://credimi.test/api/files/wallets/"+publicWallet.Id+"/wallet-logo.png",
+			expandedData.Wallets[0].LogoURL,
+		)
 		require.Equal(t, publicWallet.Id, expandedData.Wallets[0].ID)
 		require.NotEqual(t, privateWallet.Id, expandedData.Wallets[0].ID)
 		require.Len(t, expandedData.MobileDevices, 1)
