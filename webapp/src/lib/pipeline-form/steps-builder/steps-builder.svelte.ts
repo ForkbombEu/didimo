@@ -169,14 +169,7 @@ export class StepsBuilder implements Renderable<StepsBuilder> {
 								steps: this.state.steps,
 								target: this.executionTarget
 							}),
-						canChangeWalletVersion: () =>
-							this.isChangeWalletVersionAvailable(
-								isExecutionTargetLocked({
-									intent,
-									steps: this.state.steps,
-									target: this.executionTarget
-								})
-							),
+						canChangeWalletVersion: () => this.canOfferChangeWalletVersion(),
 						requestChangeWalletVersion: () => this.openChangeWalletVersion()
 					});
 				} catch (e) {
@@ -330,17 +323,16 @@ export class StepsBuilder implements Renderable<StepsBuilder> {
 
 	//
 
-	isChangeWalletVersionAvailable(locked?: boolean) {
+	canOfferChangeWalletVersion() {
 		const mode = this.state.mode;
-		const effectiveLocked =
-			locked ??
-			(mode.id === 'form' &&
-				isExecutionTargetLocked({
-					intent: mode.intent,
-					steps: this.state.steps,
-					target: this.executionTarget
-				}));
-		return isChangeWalletVersionAvailable(this.state.steps, { locked: effectiveLocked });
+		const locked =
+			mode.id === 'form' &&
+			isExecutionTargetLocked({
+				intent: mode.intent,
+				steps: this.state.steps,
+				target: this.executionTarget
+			});
+		return isChangeWalletVersionAvailable(this.state.steps, { locked });
 	}
 
 	openChangeWalletVersion() {

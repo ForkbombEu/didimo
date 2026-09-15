@@ -283,7 +283,7 @@ describe('StepsBuilder bulk wallet version sync', () => {
 			yamlPreview: () => VALID_YAML
 		});
 
-		expect(builder.isChangeWalletVersionAvailable()).toBe(false);
+		expect(builder.canOfferChangeWalletVersion()).toBe(false);
 
 		(builder as unknown as BuilderInternal).state.mode = {
 			id: 'form',
@@ -292,7 +292,7 @@ describe('StepsBuilder bulk wallet version sync', () => {
 			form: new WalletActionStepForm()
 		};
 
-		expect(builder.isChangeWalletVersionAvailable()).toBe(true);
+		expect(builder.canOfferChangeWalletVersion()).toBe(true);
 	});
 
 	it('updates all mobile-automation steps with the same wallet and re-serializes with', () => {

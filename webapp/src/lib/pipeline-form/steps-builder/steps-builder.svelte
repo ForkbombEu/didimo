@@ -138,7 +138,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		disabled={builder.isManualMode}
 	>
 		{#snippet titleRight()}
-			{#if !builder.isManualMode && builder.isChangeWalletVersionAvailable()}
+			{#if !builder.isManualMode && builder.canOfferChangeWalletVersion()}
 				<DropdownMenu
 					items={[
 						{
