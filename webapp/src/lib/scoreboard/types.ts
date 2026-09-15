@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import type { PipelineExecutionArtifacts } from '$lib/pipeline/execution-artifacts';
-import type { Simplify } from 'type-fest';
 
 import type { PipelineScoreboardCacheResponse } from '@/pocketbase/types';
 
@@ -45,8 +44,4 @@ export type ScoreboardExpandedData = {
 	};
 };
 
-export type ScoreboardRow = Simplify<
-	Omit<PipelineScoreboardCacheResponse<string[]>, 'expanded_data'> & {
-		expanded_data?: ScoreboardExpandedData;
-	}
->;
+export type ScoreboardRow = PipelineScoreboardCacheResponse<string[], ScoreboardExpandedData>;

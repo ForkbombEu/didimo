@@ -40,7 +40,7 @@ describe('scoreboard records visibility', () => {
 			id: 'cache1',
 			pipeline: 'hidden-pipeline-id',
 			expanded_data: undefined
-		} as ScoreboardRow;
+		} as unknown as ScoreboardRow;
 
 		expect(hasVisiblePipeline(row)).toBe(false);
 	});
