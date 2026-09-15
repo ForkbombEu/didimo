@@ -45,6 +45,14 @@ import (
 // Parameters:
 //   - app: The PocketBase application instance to which the hook is attached.
 func WorkersHook(app *pocketbase.PocketBase) {
+	if TemporalWorkersDisabled() {
+		log.Printf(
+			"[WorkersHook] Skipping Temporal workers (%s is set)",
+			TemporalWorkersDisabledEnv,
+		)
+		return
+	}
+
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		namespaces, err := fetchNamespacesFn(app)
 		if err != nil {

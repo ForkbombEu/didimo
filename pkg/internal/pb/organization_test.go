@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/forkbombeu/credimi/pkg/internal/canonify"
+	"github.com/forkbombeu/credimi/pkg/workflowengine/hooks"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tests"
@@ -214,6 +215,46 @@ func TestHookNamespaceOrgsAfterCreate(t *testing.T) {
 	require.Equal(t, "org-1", started.namespace)
 	require.Equal(t, "", started.oldNamespace)
 	require.Equal(t, []string{"https://admin.runner"}, started.runnerURLs)
+}
+
+func TestHookNamespaceOrgsAfterCreateSkipsWhenTemporalWorkersDisabled(t *testing.T) {
+	t.Setenv(hooks.TemporalWorkersDisabledEnv, "1")
+
+	app := pocketbase.NewWithConfig(pocketbase.Config{DefaultDataDir: t.TempDir()})
+
+	origEnsure := ensureNamespaceAndWorkersFn
+	origStartManager := startWorkerManagerFn
+	origAdminRunnerURLs := adminRunnerURLsFn
+	t.Cleanup(func() {
+		ensureNamespaceAndWorkersFn = origEnsure
+		startWorkerManagerFn = origStartManager
+		adminRunnerURLsFn = origAdminRunnerURLs
+	})
+
+	ensureNamespaceAndWorkersFn = func(_ string) {
+		require.Fail(t, "ensureNamespaceAndWorkers should not be called")
+	}
+	adminRunnerURLsFn = func(_ core.App) ([]string, error) {
+		require.Fail(t, "adminRunnerURLs should not be called")
+		return nil, nil
+	}
+	startWorkerManagerFn = func(_ core.App, _, _ string, _ []string) {
+		require.Fail(t, "startWorkerManager should not be called")
+	}
+
+	HookNamespaceOrgs(app)
+
+	collection := core.NewBaseCollection("organizations")
+	record := core.NewRecord(collection)
+	record.Set("canonified_name", "org-1")
+	event := &core.RecordEvent{App: app}
+	event.Record = record
+
+	err := app.OnRecordAfterCreateSuccess("organizations").Trigger(
+		event,
+		func(_ *core.RecordEvent) error { return nil },
+	)
+	require.NoError(t, err)
 }
 
 func TestHookNamespaceOrgsCreateDefaults(t *testing.T) {

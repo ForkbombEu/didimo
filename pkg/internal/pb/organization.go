@@ -75,6 +75,10 @@ func registerOrganizationNamespaceHooks(app core.App) {
 	})
 
 	app.OnRecordAfterCreateSuccess("organizations").BindFunc(func(e *core.RecordEvent) error {
+		if hooks.TemporalWorkersDisabled() {
+			return e.Next()
+		}
+
 		orgName := e.Record.GetString("canonified_name")
 		if orgName != "" {
 			ensureNamespaceAndWorkersFn(orgName)
@@ -89,6 +93,10 @@ func registerOrganizationNamespaceHooks(app core.App) {
 	})
 
 	app.OnRecordAfterUpdateSuccess("organizations").BindFunc(func(e *core.RecordEvent) error {
+		if hooks.TemporalWorkersDisabled() {
+			return e.Next()
+		}
+
 		oldName := e.Record.Original().GetString("canonified_name")
 		newName := e.Record.GetString("canonified_name")
 

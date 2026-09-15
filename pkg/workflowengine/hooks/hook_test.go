@@ -212,6 +212,8 @@ func TestFetchNamespacesIncludesDefault(t *testing.T) {
 }
 
 func TestWorkersHookStartsWorkersAndShutdowns(t *testing.T) {
+	t.Setenv(TemporalWorkersDisabledEnv, "")
+
 	app := pocketbase.NewWithConfig(pocketbase.Config{
 		DefaultDataDir: t.TempDir(),
 	})
@@ -337,6 +339,31 @@ func TestWorkersHookStartsWorkersAndShutdowns(t *testing.T) {
 	case <-time.After(time.Second):
 		t.Fatal("timeout waiting for shutdown call")
 	}
+}
+
+func TestWorkersHookSkipsWhenTemporalWorkersDisabled(t *testing.T) {
+	t.Setenv(TemporalWorkersDisabledEnv, "1")
+
+	app := pocketbase.NewWithConfig(pocketbase.Config{
+		DefaultDataDir: t.TempDir(),
+	})
+
+	origFetch := fetchNamespacesFn
+	t.Cleanup(func() {
+		fetchNamespacesFn = origFetch
+	})
+	fetchNamespacesFn = func(_ core.App) ([]string, error) {
+		t.Fatal("fetchNamespaces should not be called when workers are disabled")
+		return nil, nil
+	}
+
+	WorkersHook(app)
+
+	serveErr := app.OnServe().Trigger(
+		&core.ServeEvent{App: app},
+		func(_ *core.ServeEvent) error { return nil },
+	)
+	require.NoError(t, serveErr)
 }
 
 func TestStartAllWorkersByNamespaceDefault(t *testing.T) {

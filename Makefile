@@ -71,7 +71,7 @@ define write_compose_dev_override
 endef
 
 all: help
-.PHONY: submodules version dev test test.all lint tidy purge build docker docker-tunnel doc clean tools help w devtools coverage-check fcaf-run fcaf-sync
+.PHONY: submodules version dev dev.slim test test.all lint tidy purge build docker docker-tunnel doc clean tools help w devtools coverage-check fcaf-run fcaf-sync
 
 $(BIN):
 	@mkdir -p $@
@@ -111,6 +111,9 @@ dev: $(WEBENV) tools devtools submodules $(BIN) $(DATA) ## 🚀 run in watch mod
 	$(call require_tools,$(DEPS) $(DEV_DEPS))
 	$(call write_compose_dev_override)
 	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) COMPOSE_DEV_OVERRIDE_FILE=$(COMPOSE_DEV_OVERRIDE_FILE) bash -c 'export CREDIMI_ELASTIC_PASSWORD=$${CREDIMI_ELASTIC_PASSWORD:-devpassword} CREDIMI_INTERNAL_APP_URL=$${CREDIMI_INTERNAL_APP_URL:-http://localhost:8090} PUBLIC_TURNSTILE_SITE_KEY=$${PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA} TURNSTILE_SECRET_KEY=$${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}; trap "docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} stop elasticsearch postgresql temporal temporal_ui" EXIT; POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} up --build -d elasticsearch postgresql temporal temporal_ui temporal_setup; DEBUG=1 $(GOTOOL) hivemind -T -l API,UI Procfile.dev'
+
+dev.slim: ## 🚀 run in watch mode without Temporal workers
+	CREDIMI_TEMPORAL_WORKERS_DISABLED=1 $(MAKE) dev
 
 test: ## 🧪 run tests
 	$(call require_tools,$(TEST_DEPS))
