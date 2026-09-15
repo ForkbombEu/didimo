@@ -9,10 +9,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck disable=SC1091
-eval "$(bash "${ROOT_DIR}/scripts/worktree-env.sh" print | sed 's/^/export /')"
-
-COMPOSE_DEV_OVERRIDE_FILE="${COMPOSE_DEV_OVERRIDE_FILE:-/tmp/${COMPOSE_PROJECT_NAME}-docker-compose.dev.yaml}"
-PROCFILE_RUNTIME="${PROCFILE_RUNTIME:-/tmp/${COMPOSE_PROJECT_NAME}-Procfile.dev}"
+eval "$(bash "${ROOT_DIR}/scripts/worktree-env.sh" export)"
 
 printf '%s\n' \
 	'services:' \

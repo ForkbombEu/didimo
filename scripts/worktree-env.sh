@@ -7,19 +7,26 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEFAULTS_FILE="${ROOT_DIR}/scripts/dev-ports.env"
 WORKTREE_ENV_FILE="${ROOT_DIR}/.env.worktree"
-COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(basename "${ROOT_DIR}" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')}"
+
+sanitize_compose_project_name() {
+	basename "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//'
+}
+
+COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(sanitize_compose_project_name "${ROOT_DIR}")}"
 
 usage() {
 	cat <<'USAGE'
 Usage: scripts/worktree-env.sh <command>
 
 Commands:
-  print     Print resolved port env (defaults + .env.worktree overrides)
-  write     Write .env.worktree if missing (unique ports via Worktrunk hash_port;
-            never overwrites). Requires `wt` unless --classic.
+  print         Print resolved port env (defaults + .env.worktree overrides)
+  export        Same as print, each line prefixed with `export ` (for eval)
+  project-name  Print sanitized COMPOSE_PROJECT_NAME for this checkout
+  write         Write .env.worktree if missing (unique ports via Worktrunk hash_port;
+                never overwrites). Requires `wt` unless --classic.
   write --classic
-            Write classic defaults from scripts/dev-ports.env if missing
-  sync-urls Rewrite PUBLIC_POCKETBASE_URL / VITE_API / PB_TYPEGEN_URL in webapp/.env
+                Write classic defaults from scripts/dev-ports.env if missing
+  sync-urls     Rewrite PUBLIC_POCKETBASE_URL / VITE_API / PB_TYPEGEN_URL in webapp/.env
 USAGE
 }
 
@@ -32,6 +39,11 @@ load_defaults() {
 		source "${WORKTREE_ENV_FILE}"
 	fi
 	set +a
+}
+
+resolve_runtime_paths() {
+	COMPOSE_DEV_OVERRIDE_FILE="${COMPOSE_DEV_OVERRIDE_FILE:-/tmp/${COMPOSE_PROJECT_NAME}-docker-compose.dev.yaml}"
+	PROCFILE_RUNTIME="${PROCFILE_RUNTIME:-/tmp/${COMPOSE_PROJECT_NAME}-Procfile.dev}"
 }
 
 port_free() {
@@ -74,8 +86,9 @@ branch_name() {
 	git -C "${ROOT_DIR}" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "detached"
 }
 
-cmd_print() {
+print_env() {
 	load_defaults
+	resolve_runtime_paths
 	cat <<EOF
 API_PORT=${API_PORT}
 UI_PORT=${UI_PORT}
@@ -85,6 +98,31 @@ ADDRESS_UI=http://localhost:${UI_PORT}
 TEMPORAL_ADDRESS=localhost:${TEMPORAL_PORT}
 CREDIMI_INTERNAL_APP_URL=http://localhost:${API_PORT}
 COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+COMPOSE_DEV_OVERRIDE_FILE=${COMPOSE_DEV_OVERRIDE_FILE}
+PROCFILE_RUNTIME=${PROCFILE_RUNTIME}
+EOF
+}
+
+cmd_print() {
+	print_env
+}
+
+cmd_export() {
+	print_env | sed 's/^/export /'
+}
+
+cmd_project_name() {
+	echo "${COMPOSE_PROJECT_NAME}"
+}
+
+write_ports_file() {
+	local header="$1"
+	cat >"${WORKTREE_ENV_FILE}" <<EOF
+${header}
+API_PORT=${API_PORT}
+UI_PORT=${UI_PORT}
+TEMPORAL_PORT=${TEMPORAL_PORT}
+TEMPORAL_UI_PORT=${TEMPORAL_UI_PORT}
 EOF
 }
 
@@ -100,13 +138,7 @@ cmd_write() {
 	# shellcheck disable=SC1091
 	source "${DEFAULTS_FILE}"
 	if [[ "${classic}" -eq 1 ]]; then
-		cat >"${WORKTREE_ENV_FILE}" <<EOF
-# Generated classic ports from scripts/dev-ports.env
-API_PORT=${API_PORT}
-UI_PORT=${UI_PORT}
-TEMPORAL_PORT=${TEMPORAL_PORT}
-TEMPORAL_UI_PORT=${TEMPORAL_UI_PORT}
-EOF
+		write_ports_file "# Generated classic ports from scripts/dev-ports.env"
 	else
 		local branch
 		branch="$(branch_name)"
@@ -114,14 +146,8 @@ EOF
 		UI_PORT="$(pick_port "ui")"
 		TEMPORAL_PORT="$(pick_port "temporal")"
 		TEMPORAL_UI_PORT="$(pick_port "temporal-ui")"
-		cat >"${WORKTREE_ENV_FILE}" <<EOF
-# Generated unique ports for worktree ${COMPOSE_PROJECT_NAME} (branch ${branch})
-# Seeds from Worktrunk hash_port; collision walk applied. Edit freely; not overwritten.
-API_PORT=${API_PORT}
-UI_PORT=${UI_PORT}
-TEMPORAL_PORT=${TEMPORAL_PORT}
-TEMPORAL_UI_PORT=${TEMPORAL_UI_PORT}
-EOF
+		write_ports_file "# Generated unique ports for worktree ${COMPOSE_PROJECT_NAME} (branch ${branch})
+# Seeds from Worktrunk hash_port; collision walk applied. Edit freely; not overwritten."
 	fi
 	echo "wrote ${WORKTREE_ENV_FILE}"
 }
@@ -157,6 +183,8 @@ main() {
 	shift || true
 	case "${cmd}" in
 	print) cmd_print ;;
+	export) cmd_export ;;
+	project-name) cmd_project_name ;;
 	write) cmd_write "$@" ;;
 	sync-urls) cmd_sync_urls ;;
 	""|-h|--help) usage ;;
