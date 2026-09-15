@@ -1,3 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2025 Forkbomb BV
+SPDX-FileCopyrightText: 2025 The Forkbomb Company
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
 # Git worktree utilities for parallel local and agent workflows
 
 Research date: 15 September 2026. Repository activity and star counts are point-in-time
