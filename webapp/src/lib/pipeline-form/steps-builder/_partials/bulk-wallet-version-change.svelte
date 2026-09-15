@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	import type { StepsBuilder } from '$pipeline-form/steps-builder/steps-builder.svelte.js';
 	import type { WalletActionStepData } from '$pipeline-form/steps/wallet-action/types.js';
 
-	import { EllipsisIcon, ExternalLinkIcon, RefreshCcwIcon } from '@lucide/svelte';
+	import { ExternalLinkIcon } from '@lucide/svelte';
 	import AndroidLogo from '$lib/components/android-logo.svelte';
 	import AppleLogo from '$lib/components/apple-logo.svelte';
 	import { getHubItemData } from '$lib/hub';
@@ -22,8 +22,6 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	import type { WalletVersionsResponse } from '@/pocketbase/types';
 
 	import Dialog from '@/components/ui-custom/dialog.svelte';
-	import DropdownMenu from '@/components/ui-custom/dropdown-menu.svelte';
-	import IconButton from '@/components/ui-custom/iconButton.svelte';
 	import { Badge } from '@/components/ui/badge';
 	import { m } from '@/i18n';
 	import { pb } from '@/pocketbase/index.js';
@@ -32,9 +30,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 	type Props = {
 		builder: StepsBuilder;
+		open?: boolean;
 	};
 
-	let { builder }: Props = $props();
+	let { builder, open = $bindable(false) }: Props = $props();
 
 	const bulkContext = $derived(getBulkWalletVersionContext(builder.steps));
 
@@ -53,10 +52,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		return { isExternal: false, recordId: null };
 	});
 
-	let walletVersionDialogOpen = $state(false);
-
 	const walletVersions = resource(
-		() => (walletVersionDialogOpen && bulkContext ? bulkContext.wallet.id : null),
+		() => (open && bulkContext ? bulkContext.wallet.id : null),
 		async (walletId) => {
 			if (!walletId) return null;
 
@@ -85,24 +82,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	}
 </script>
 
-{#if bulkContext}
-	<DropdownMenu
-		items={[
-			{
-				label: m.Change_wallet_version(),
-				onclick: () => (walletVersionDialogOpen = true),
-				icon: RefreshCcwIcon
-			}
-		]}
-	>
-		{#snippet trigger({ props })}
-			<IconButton {...props} icon={EllipsisIcon} size="xs" variant="ghost" />
-		{/snippet}
-	</DropdownMenu>
-{/if}
-
 <Dialog
-	bind:open={walletVersionDialogOpen}
+	bind:open
 	hideTrigger
 	title={m.Change_wallet_version_modal_title()}
 	description={m.Change_wallet_version_modal_description()}
