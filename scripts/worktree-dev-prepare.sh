@@ -32,7 +32,7 @@ printf '%s\n' \
 printf '%s\n' \
 	"# Generated runtime Procfile for ${COMPOSE_PROJECT_NAME}; do not edit." \
 	"API: ./scripts/wait-for-it.sh -s -t 0 localhost:${TEMPORAL_PORT} && go tool gow run -tags=credimi_extra main.go serve --http=0.0.0.0:${API_PORT}" \
-	"UI: ./scripts/wait-for-it.sh -s -t 0 localhost:${API_PORT} && cd webapp && bun i && bun dev" \
+	"UI: ./scripts/wait-for-it.sh -s -t 0 localhost:${API_PORT} && cd webapp && bun i && PORT=${UI_PORT} bun dev" \
 	>"${PROCFILE_RUNTIME}"
 
 cat <<EOF

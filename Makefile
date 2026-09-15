@@ -107,8 +107,10 @@ dev: $(WEBENV) tools devtools submodules $(BIN) $(DATA) ## 🚀 run in watch mod
 	$(call require_tools,$(DEPS) $(DEV_DEPS))
 	@bash -c 'set -euo pipefail; \
 		_user_internal="$${CREDIMI_INTERNAL_APP_URL-}"; \
-		set -a; eval "$$(./scripts/worktree-env.sh print | sed "s/^/export /")"; set +a; \
+		ports="$$(./scripts/worktree-env.sh print)"; \
+		set -a; eval "$$(printf "%s\n" "$$ports" | sed "s/^/export /")"; set +a; \
 		if [ -n "$${_user_internal}" ]; then export CREDIMI_INTERNAL_APP_URL="$${_user_internal}"; fi; \
+		unset PORT; \
 		export COMPOSE_DEV_OVERRIDE_FILE="/tmp/$${COMPOSE_PROJECT_NAME}-docker-compose.dev.yaml"; \
 		export PROCFILE_RUNTIME="/tmp/$${COMPOSE_PROJECT_NAME}-Procfile.dev"; \
 		./scripts/worktree-dev-prepare.sh; \
@@ -118,7 +120,7 @@ dev: $(WEBENV) tools devtools submodules $(BIN) $(DATA) ## 🚀 run in watch mod
 		trap "docker compose -f docker-compose.yaml -f $${COMPOSE_DEV_OVERRIDE_FILE} stop elasticsearch postgresql temporal temporal_ui" EXIT; \
 		POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 \
 			docker compose -f docker-compose.yaml -f "$${COMPOSE_DEV_OVERRIDE_FILE}" up --build -d elasticsearch postgresql temporal temporal_ui temporal_setup; \
-		DEBUG=1 $(GOTOOL) hivemind -T -l API,UI "$${PROCFILE_RUNTIME}"'
+		DEBUG=1 $(GOTOOL) hivemind -T -l API,UI -d "$(ROOT_DIR)" "$${PROCFILE_RUNTIME}"'
 
 dev.noworkers: ## 🚀 run in watch mode without Temporal workers
 	CREDIMI_TEMPORAL_WORKERS_DISABLED=1 $(MAKE) dev
