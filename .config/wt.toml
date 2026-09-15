@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2025 Forkbomb BV
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Optional Worktrunk project config.
+# Install: brew install worktrunk && wt config shell install
+# Credimi also works with plain `git worktree` + `make worktree-bootstrap`.
+# Do not enable Worktrunk commit/merge automation for Credimi agent workflows.
+
+[[pre-start]]
+bootstrap = "make worktree-bootstrap"
+
+[pre-remove]
+compose = "make worktree-down"

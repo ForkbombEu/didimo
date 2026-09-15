@@ -7,6 +7,10 @@ ORGANIZATION 	?= forkbombeu
 ROOT_DIR		?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 COMPOSE_PROJECT_NAME ?= $(shell basename "$(ROOT_DIR)" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$$//')
 COMPOSE_DEV_OVERRIDE_FILE ?= /tmp/$(COMPOSE_PROJECT_NAME)-docker-compose.dev.yaml
+PROCFILE_DEV ?= $(ROOT_DIR)/Procfile.dev
+PROCFILE_RUNTIME ?= /tmp/$(COMPOSE_PROJECT_NAME)-Procfile.dev
+WORKTREE_ENV_FILE ?= $(ROOT_DIR)/.env.worktree
+DEV_PORTS_DEFAULTS ?= $(ROOT_DIR)/scripts/dev-ports.env
 BINARY_NAME 	?= $(PROJECT_NAME)
 CLI_NAME		?= $(PROJECT_NAME)-cli
 SUBDIRS			?= ./...
@@ -58,20 +62,12 @@ define require_tools
 	fi
 endef
 
-define write_compose_dev_override
-	@printf '%s\n' \
-	'services:' \
-	'  elasticsearch:' \
-	'    container_name: $(COMPOSE_PROJECT_NAME)-temporal-elasticsearch' \
-	'  postgresql:' \
-	'    container_name: $(COMPOSE_PROJECT_NAME)-temporal-postgresql' \
-	'  temporal_ui:' \
-	'    container_name: $(COMPOSE_PROJECT_NAME)-temporal-ui' \
-	> $(COMPOSE_DEV_OVERRIDE_FILE)
-endef
+# scripts/dev-ports.env is the single source of truth for classic ports.
+# Optional .env.worktree overrides them for parallel worktrees.
+# Runtime Compose/Procfile files are written by scripts/worktree-dev-prepare.sh.
 
 all: help
-.PHONY: submodules version dev dev.noworkers test test.all lint tidy purge build docker docker-tunnel doc clean tools help w devtools coverage-check fcaf-run fcaf-sync
+.PHONY: submodules version dev dev.noworkers worktree-bootstrap worktree-down test test.all lint tidy purge build docker docker-tunnel doc clean tools help w devtools coverage-check fcaf-run fcaf-sync
 
 $(BIN):
 	@mkdir -p $@
@@ -109,11 +105,34 @@ $(DATA):
 
 dev: $(WEBENV) tools devtools submodules $(BIN) $(DATA) ## 🚀 run in watch mode
 	$(call require_tools,$(DEPS) $(DEV_DEPS))
-	$(call write_compose_dev_override)
-	COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) COMPOSE_DEV_OVERRIDE_FILE=$(COMPOSE_DEV_OVERRIDE_FILE) bash -c 'export CREDIMI_ELASTIC_PASSWORD=$${CREDIMI_ELASTIC_PASSWORD:-devpassword} CREDIMI_INTERNAL_APP_URL=$${CREDIMI_INTERNAL_APP_URL:-http://localhost:8090} PUBLIC_TURNSTILE_SITE_KEY=$${PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA} TURNSTILE_SECRET_KEY=$${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}; trap "docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} stop elasticsearch postgresql temporal temporal_ui" EXIT; POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 docker compose -f docker-compose.yaml $${COMPOSE_DEV_OVERRIDE_FILE:+-f $${COMPOSE_DEV_OVERRIDE_FILE}} up --build -d elasticsearch postgresql temporal temporal_ui temporal_setup; DEBUG=1 $(GOTOOL) hivemind -T -l API,UI Procfile.dev'
+	@bash -c 'set -euo pipefail; \
+		_user_internal="$${CREDIMI_INTERNAL_APP_URL-}"; \
+		set -a; eval "$$(./scripts/worktree-env.sh print | sed "s/^/export /")"; set +a; \
+		if [ -n "$${_user_internal}" ]; then export CREDIMI_INTERNAL_APP_URL="$${_user_internal}"; fi; \
+		export COMPOSE_DEV_OVERRIDE_FILE="/tmp/$${COMPOSE_PROJECT_NAME}-docker-compose.dev.yaml"; \
+		export PROCFILE_RUNTIME="/tmp/$${COMPOSE_PROJECT_NAME}-Procfile.dev"; \
+		./scripts/worktree-dev-prepare.sh; \
+		export CREDIMI_ELASTIC_PASSWORD="$${CREDIMI_ELASTIC_PASSWORD:-devpassword}"; \
+		export PUBLIC_TURNSTILE_SITE_KEY="$${PUBLIC_TURNSTILE_SITE_KEY:-1x00000000000000000000AA}"; \
+		export TURNSTILE_SECRET_KEY="$${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}"; \
+		trap "docker compose -f docker-compose.yaml -f $${COMPOSE_DEV_OVERRIDE_FILE} stop elasticsearch postgresql temporal temporal_ui" EXIT; \
+		POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 TEMPORAL_ADMIN_TOOLS_VERSION=1.29.1-tctl-1.18.4-cli-1.5.0 \
+			docker compose -f docker-compose.yaml -f "$${COMPOSE_DEV_OVERRIDE_FILE}" up --build -d elasticsearch postgresql temporal temporal_ui temporal_setup; \
+		DEBUG=1 $(GOTOOL) hivemind -T -l API,UI "$${PROCFILE_RUNTIME}"'
 
 dev.noworkers: ## 🚀 run in watch mode without Temporal workers
 	CREDIMI_TEMPORAL_WORKERS_DISABLED=1 $(MAKE) dev
+
+worktree-bootstrap: ## 🌳 copy allowlisted ignored files + write .env.worktree ports
+	bash ./scripts/worktree-bootstrap.sh
+
+worktree-down: ## 🌳 stop this worktree Compose project
+	@bash -c 'set -euo pipefail; \
+		set -a; eval "$$(./scripts/worktree-env.sh print | sed "s/^/export /")"; set +a; \
+		export COMPOSE_DEV_OVERRIDE_FILE="/tmp/$${COMPOSE_PROJECT_NAME}-docker-compose.dev.yaml"; \
+		./scripts/worktree-dev-prepare.sh >/dev/null; \
+		POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 \
+			docker compose -f docker-compose.yaml -f "$${COMPOSE_DEV_OVERRIDE_FILE}" down --remove-orphans'
 
 test: ## 🧪 run tests
 	$(call require_tools,$(TEST_DEPS))
@@ -183,8 +202,12 @@ tidy: $(GOMOD_FILES)
 
 purge: ## ⛔ Purge the database
 	@echo "⛔ Purge the database"
-	$(call write_compose_dev_override)
-	@COMPOSE_PROJECT_NAME=$(COMPOSE_PROJECT_NAME) COMPOSE_DEV_OVERRIDE_FILE=$(COMPOSE_DEV_OVERRIDE_FILE) POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 docker compose -f docker-compose.yaml -f $(COMPOSE_DEV_OVERRIDE_FILE) down -v --remove-orphans
+	@bash -c 'set -euo pipefail; \
+		set -a; eval "$$(./scripts/worktree-env.sh print | sed "s/^/export /")"; set +a; \
+		export COMPOSE_DEV_OVERRIDE_FILE="/tmp/$${COMPOSE_PROJECT_NAME}-docker-compose.dev.yaml"; \
+		./scripts/worktree-dev-prepare.sh >/dev/null; \
+		POSTGRESQL_VERSION=16 ELASTICSEARCH_VERSION=7.17.27 TEMPORAL_VERSION=1.29.1 TEMPORAL_UI_VERSION=2.52.1 \
+			docker compose -f docker-compose.yaml -f "$${COMPOSE_DEV_OVERRIDE_FILE}" down -v --remove-orphans'
 	@rm -rf $(DATA)
 	@mkdir $(DATA)
 
@@ -271,9 +294,10 @@ help: ## Show this help.
 		else if (/^## .*$$/) {printf "  ${CYAN}%s${RESET}\n", substr($$1,4)} \
 		}' $(MAKEFILE_LIST)
 
-kill-pocketbase: ## 🔪 Kill any running PocketBase instance
-	@echo "Killing any existing PocketBase instance..."
-	@-lsof -ti:8090 -sTCP:LISTEN | xargs kill -9 2>/dev/null || true
-
+kill-pocketbase: ## 🔪 Kill any running PocketBase instance for this worktree API_PORT
+	@bash -c 'set -euo pipefail; \
+		set -a; eval "$$(./scripts/worktree-env.sh print | sed "s/^/export /")"; set +a; \
+		echo "Killing PocketBase on :$${API_PORT}..."; \
+		lsof -ti:"$${API_PORT}" -sTCP:LISTEN | xargs kill -9 2>/dev/null || true'
 seed: ## 🌱 Seed the database
 	@$(GOCMD) run main.go migrate up && $(GOCMD) run cmd/seeds/seed.go 
