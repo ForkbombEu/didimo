@@ -76,7 +76,7 @@ make dev
 For a faster API/UI boot that skips Temporal worker registration (pipelines and workflows will not run):
 
 ```bash
-make dev.slim
+make dev.noworkers
 ```
 
 This sets `CREDIMI_TEMPORAL_WORKERS_DISABLED=1`. Temporal Docker still starts because `Procfile.dev` waits on `:7233`.
