@@ -69,6 +69,9 @@ steps:
   with:
     test_ids:
       - WS_RP_MS_ProtocolMessages__127
+      - WS_RP_MS_ProtocolMessages__127a
+      - WS_RP_MS_ProtocolMessages__127b
+      - WS_RP_MS_ProtocolMessages__127c
     suite: wallet_solution/relying_party
     pipeline_outputs:
       pipeline.dcql.protocol-messages-127:

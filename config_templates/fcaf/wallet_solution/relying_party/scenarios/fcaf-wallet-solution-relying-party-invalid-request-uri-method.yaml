@@ -12,7 +12,7 @@ steps:
       expected_status: 201
       headers: { Content-Type: application/json }
       body:
-        scheme: haip-vp://
+        scheme: openid4vp://
         request_uri_method: DELETE
         request_delivery: by_reference
         response_type: vp_token
@@ -98,11 +98,14 @@ steps:
     with:
       test_ids:
         - WS_RP_MS_ProtocolMessages__152
+        - WS_RP_IA_ProtocolFlow__002e_UF
       suite: wallet_solution/relying_party
       pipeline_outputs:
         pipeline.oid4vp.invalid-request-uri-method:
           output:
             dcql_exchange: ${{ fetch-result.outputs.body }}
+            capture_session: ${{ fetch-result.outputs.body }}
+            presentation_request: ${{ create-presentation.outputs.body }}
             wallet_response: ${{ fetch-result.outputs.body }}
             visual_evidence: ${{ reject-invalid-request-uri-method.outputs.flow_output.maestro_screenshot_urls }}
             create-presentation: ${{ create-presentation.outputs }}

@@ -10569,9 +10569,9 @@ steps:
                 nonce: session-encryption
             request_delivery: by_reference
             request_uri_method: post
-            response_mode: direct_post
+            response_mode: direct_post.jwt
             response_type: vp_token
-            scheme: haip-vp://
+            scheme: openid4vp://
         expected_status: 201
         headers:
             Content-Type: application/json
@@ -12432,7 +12432,7 @@ steps:
             request_uri_method: DELETE
             response_mode: direct_post
             response_type: vp_token
-            scheme: haip-vp://
+            scheme: openid4vp://
         expected_status: 201
         headers:
             Content-Type: application/json
@@ -12865,6 +12865,70 @@ steps:
         method: GET
         url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ request-object-by-value-f1c94061-create-presentation.outputs.body.session_id }}
     - continue_on_error: true
+      id: request-uri-method-default-9bc74bd3-create-presentation
+      use: http-request
+      with:
+        body:
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - given_name
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - family_name
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-request-uri-method-default
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: openid4vp://
+        expected_status: 201
+        headers:
+            Content-Type: application/json
+        method: POST
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
+    - continue_on_error: true
+      id: request-uri-method-default-9bc74bd3-submit-request-uri-method-default
+      use: mobile-automation
+      with:
+        action_code: |
+            appId: eu.europa.ec.euidi
+            ---
+            - stopApp
+            - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
+            - waitForAnimationToEnd: { timeout: 5000 }
+            - tapOn: { text: "EUDI Wallet", optional: true }
+            - tapOn: { text: "Just once", optional: true }
+            - extendedWaitUntil: { visible: "Welcome back|Share|Cancel|Close", timeout: 100000 }
+            - runFlow:
+                when: { visible: "Welcome back" }
+                commands:
+                  - tapOn: { point: "11%,40%" }
+                  - inputText: "123456"
+            - extendedWaitUntil: { visible: "Share", timeout: 30000 }
+            - tapOn: { text: "Share", enabled: true }
+            - extendedWaitUntil: { visible: "verify your identity|PIN", timeout: 30000 }
+            - inputText: "123456"
+            - extendedWaitUntil: { visible: "Close", timeout: 30000 }
+            - assertVisible: "Close"
+            - takeScreenshot: fcaf-request-uri-method-default-submitted
+        parameters:
+            DEEPLINK: ${{ request-uri-method-default-9bc74bd3-create-presentation.outputs.body.deeplink }}
+        version_id: installed_from_external_source
+    - continue_on_error: true
+      id: request-uri-method-default-9bc74bd3-get-presentation-result
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ request-uri-method-default-9bc74bd3-create-presentation.outputs.body.session_id }}
+    - continue_on_error: true
       id: request-uri-method-get-91ef716c-create-presentation
       use: http-request
       with:
@@ -12888,7 +12952,7 @@ steps:
             request_uri_method: get
             response_mode: direct_post
             response_type: vp_token
-            scheme: haip-vp://
+            scheme: openid4vp://
         expected_status: 201
         headers:
             Content-Type: application/json
@@ -12970,7 +13034,7 @@ steps:
             request_uri_method: post
             response_mode: direct_post
             response_type: vp_token
-            scheme: haip-vp://
+            scheme: openid4vp://
         expected_status: 201
         headers:
             Content-Type: application/json
@@ -14280,6 +14344,8 @@ steps:
             pipeline.dcql.session-encryption:
                 output:
                     dcql_exchange: ${{ dcql-session-encryption-210827bd-fetch-capture-session.outputs.body | optional }}
+                    encrypted_response: ${{ dcql-session-encryption-210827bd-fetch-capture-session.outputs.body.raw.presentation_response | optional }}
+                    session_checks: ${{ dcql-session-encryption-210827bd-fetch-capture-session.outputs.body.checks | optional }}
                     visual_evidence: ${{ dcql-session-encryption-210827bd-exercise-wallet.outputs.flow_output.maestro_screenshot_urls | optional }}
             pipeline.dcql.standard-all:
                 output:
@@ -14459,9 +14525,11 @@ steps:
                     visual_evidence: ${{ mdoc-absent-namespace-8c8f84c8-exercise-wallet.outputs.flow_output.maestro_screenshot_urls | optional }}
             pipeline.oid4vp.invalid-request-uri-method:
                 output:
+                    capture_session: ${{ invalid-request-uri-method-f8c49ad9-fetch-result.outputs.body | optional }}
                     create-presentation: ${{ invalid-request-uri-method-f8c49ad9-create-presentation.outputs | optional }}
                     dcql_exchange: ${{ invalid-request-uri-method-f8c49ad9-fetch-result.outputs.body | optional }}
                     fetch-result: ${{ invalid-request-uri-method-f8c49ad9-fetch-result.outputs | optional }}
+                    presentation_request: ${{ invalid-request-uri-method-f8c49ad9-create-presentation.outputs.body | optional }}
                     reject-invalid-request-uri-method: ${{ invalid-request-uri-method-f8c49ad9-reject-invalid-request-uri-method.outputs | optional }}
                     visual_evidence: ${{ invalid-request-uri-method-f8c49ad9-reject-invalid-request-uri-method.outputs.flow_output.maestro_screenshot_urls | optional }}
                     wallet_response: ${{ invalid-request-uri-method-f8c49ad9-fetch-result.outputs.body | optional }}
@@ -14515,23 +14583,38 @@ steps:
                     submit-request-object-by-value: ${{ request-object-by-value-f1c94061-submit-request-object-by-value.outputs | optional }}
                     visual_evidence: ${{ request-object-by-value-f1c94061-submit-request-object-by-value.outputs.flow_output.maestro_screenshot_urls | optional }}
                     wallet_response: ${{ request-object-by-value-f1c94061-get-presentation-result.outputs.body | optional }}
+            pipeline.wallet.protocol.request-uri-method-default:
+                output:
+                    capture_session: ${{ request-uri-method-default-9bc74bd3-get-presentation-result.outputs.body | optional }}
+                    create-presentation: ${{ request-uri-method-default-9bc74bd3-create-presentation.outputs | optional }}
+                    get-presentation-result: ${{ request-uri-method-default-9bc74bd3-get-presentation-result.outputs | optional }}
+                    session_checks: ${{ request-uri-method-default-9bc74bd3-get-presentation-result.outputs.body.checks | optional }}
+                    signed_request_object: ${{ request-uri-method-default-9bc74bd3-get-presentation-result.outputs.body.raw.authorization_request_jwt | optional }}
+                    submit-request-uri-method-default: ${{ request-uri-method-default-9bc74bd3-submit-request-uri-method-default.outputs | optional }}
+                    visual_evidence: ${{ request-uri-method-default-9bc74bd3-submit-request-uri-method-default.outputs.flow_output.maestro_screenshot_urls | optional }}
             pipeline.wallet.protocol.request-uri-method-get:
                 output:
+                    capture_session: ${{ request-uri-method-get-91ef716c-get-presentation-result.outputs.body | optional }}
                     create-presentation: ${{ request-uri-method-get-91ef716c-create-presentation.outputs | optional }}
                     dcql_exchange: ${{ request-uri-method-get-91ef716c-get-presentation-result.outputs.body | optional }}
                     get-presentation-result: ${{ request-uri-method-get-91ef716c-get-presentation-result.outputs | optional }}
                     presentation_request: ${{ request-uri-method-get-91ef716c-create-presentation.outputs.body | optional }}
+                    session_checks: ${{ request-uri-method-get-91ef716c-get-presentation-result.outputs.body.checks | optional }}
+                    signed_request_object: ${{ request-uri-method-get-91ef716c-get-presentation-result.outputs.body.raw.authorization_request_jwt | optional }}
                     submit-request-uri-method-get: ${{ request-uri-method-get-91ef716c-submit-request-uri-method-get.outputs | optional }}
                     visual_evidence: ${{ request-uri-method-get-91ef716c-submit-request-uri-method-get.outputs.flow_output.maestro_screenshot_urls | optional }}
                     wallet_response: ${{ request-uri-method-get-91ef716c-get-presentation-result.outputs.body | optional }}
             pipeline.wallet.protocol.request-uri-method-post:
                 output:
+                    capture_session: ${{ request-uri-method-post-11b1acd0-get-presentation-result.outputs.body | optional }}
                     create-presentation: ${{ request-uri-method-post-11b1acd0-create-presentation.outputs | optional }}
                     dcql_exchange: ${{ request-uri-method-post-11b1acd0-get-presentation-result.outputs.body | optional }}
                     get-presentation-result: ${{ request-uri-method-post-11b1acd0-get-presentation-result.outputs | optional }}
                     presentation_request: ${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body | optional }}
                     request_object: ${{ request-uri-method-post-11b1acd0-create-presentation.outputs.body.request | optional }}
                     request_uri_payload: ${{ request-uri-method-post-11b1acd0-get-presentation-result.outputs.body.request_uri_payload | optional }}
+                    session_checks: ${{ request-uri-method-post-11b1acd0-get-presentation-result.outputs.body.checks | optional }}
+                    signed_request_object: ${{ request-uri-method-post-11b1acd0-get-presentation-result.outputs.body.raw.authorization_request_jwt | optional }}
                     submit-request-uri-method-post: ${{ request-uri-method-post-11b1acd0-submit-request-uri-method-post.outputs | optional }}
                     visual_evidence: ${{ request-uri-method-post-11b1acd0-submit-request-uri-method-post.outputs.flow_output.maestro_screenshot_urls | optional }}
                     wallet_response: ${{ request-uri-method-post-11b1acd0-get-presentation-result.outputs.body | optional }}
@@ -14701,6 +14784,7 @@ steps:
             - WS_RP_DM_IdentifyingData_Sex_PID_ISO-mdoc_002
             - WS_RP_DM_IdentifyingData_Sex_PID_ISO-mdoc_003
             - WS_RP_IA_Engagement__001
+            - WS_RP_IA_Engagement__001a
             - WS_RP_IA_Engagement__002
             - WS_RP_IA_MainInteraction__003
             - WS_RP_IA_MainInteraction__004
@@ -14710,6 +14794,8 @@ steps:
             - WS_RP_IA_MainInteraction__008
             - WS_RP_IA_MainInteraction__010
             - WS_RP_IA_MainInteraction__012
+            - WS_RP_IA_MainInteraction__012a
+            - WS_RP_IA_MainInteraction__012b
             - WS_RP_IA_MainInteraction__013
             - WS_RP_IA_MainInteraction__014
             - WS_RP_IA_MainInteraction__015
@@ -14767,6 +14853,10 @@ steps:
             - WS_RP_IA_Metadata__017
             - WS_RP_IA_ProtocolFlow__001
             - WS_RP_IA_ProtocolFlow__002
+            - WS_RP_IA_ProtocolFlow__002a
+            - WS_RP_IA_ProtocolFlow__002b
+            - WS_RP_IA_ProtocolFlow__002c
+            - WS_RP_IA_ProtocolFlow__002e_UF
             - WS_RP_IA_Supportive__001
             - WS_RP_IA_Supportive__002
             - WS_RP_IA_Supportive__006
@@ -14786,6 +14876,10 @@ steps:
             - WS_RP_MS_CredentialFormats__041
             - WS_RP_MS_CredentialFormats__044
             - WS_RP_MS_CredentialFormats__045
+            - WS_RP_MS_CredentialFormats__045a
+            - WS_RP_MS_CredentialFormats__045b
+            - WS_RP_MS_CredentialFormats__045c
+            - WS_RP_MS_CredentialFormats__045d
             - WS_RP_MS_CredentialFormats__046
             - WS_RP_MS_CredentialFormats__048
             - WS_RP_MS_Metadata__081
@@ -14975,6 +15069,10 @@ steps:
             - WS_RP_MS_ProtocolMessages__125
             - WS_RP_MS_ProtocolMessages__126
             - WS_RP_MS_ProtocolMessages__127
+            - WS_RP_MS_ProtocolMessages__127a
+            - WS_RP_MS_ProtocolMessages__127b
+            - WS_RP_MS_ProtocolMessages__127c
+            - WS_RP_MS_ProtocolMessages__127d
             - WS_RP_MS_ProtocolMessages__128
             - WS_RP_MS_ProtocolMessages__129
             - WS_RP_MS_ProtocolMessages__130
@@ -15047,6 +15145,9 @@ steps:
             - WS_RP_SM_DeviceBinding__010
             - WS_RP_SM_DeviceBinding__011
             - WS_RP_SM_DeviceBinding__012
+            - WS_RP_SM_DeviceBinding__012a
+            - WS_RP_SM_DeviceBinding__012b
+            - WS_RP_SM_DeviceBinding__012c
             - WS_RP_SM_IssuerIntegrity__012
             - WS_RP_SM_IssuerIntegrity__013
             - WS_RP_SM_IssuerIntegrity__014
@@ -15066,6 +15167,7 @@ steps:
             - WS_RP_SM_RpIntegrity__011
             - WS_RP_SM_RpIntegrity__012
             - WS_RP_SM_RpIntegrity__013
+            - WS_RP_SM_RpIntegrity__013a
             - WS_RP_SM_RpIntegrity__014
             - WS_RP_SM_RpIntegrity__015
             - WS_RP_SM_RpIntegrity__016
@@ -15091,6 +15193,11 @@ steps:
             - WS_RP_SM_SessionBinding__002
             - WS_RP_SM_SessionBinding__003
             - WS_RP_SM_SessionEncryption__001
+            - WS_RP_SM_SessionEncryption__001a
+            - WS_RP_SM_SessionEncryption__001b
+            - WS_RP_SM_SessionEncryption__001c
+            - WS_RP_SM_SessionEncryption__001d
+            - WS_RP_SM_SessionEncryption__001e
             - WS_RP_SM_SessionEncryption__002
             - WS_RP_SM_SessionEncryption__003
             - WS_RP_SM_SessionEncryption__005
@@ -15101,6 +15208,7 @@ steps:
             - WS_RP_SM_SessionEncryption__010
             - WS_RP_SM_SessionEncryption__011
             - WS_RP_SM_SessionEncryption__012
+            - WS_RP_SM_SessionEncryption__013
             - WS_RP_SM_TrustMechanisms__002
             - WS_RP_SM_TrustMechanisms__003
             - WS_RP_SM_TrustMechanisms__004

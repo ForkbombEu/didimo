@@ -179,7 +179,7 @@ session `13aa1df4-e5b8-432f-b208-5454d71bbea0`).
 
 | Endpoint | Capability | Status |
 | --- | --- | --- |
-| `GET /openid4vp/sessions/{sessionId}` | Current presentation capture with `authorization_request`, `observed`, `checks`, and `events`. | Supported |
+| `GET /openid4vp/sessions/{sessionId}` | Current presentation capture with `authorization_request`, `observed`, `checks`, `events`, and raw protocol evidence. | Supported |
 | `GET /openid4vp/sessions/{sessionId}/deeplink` | Returned deeplink and decoded `authorization_request`. | Supported |
 | `GET /openid4vp/sessions/{sessionId}/request` | Retrieves the signed request object as `application/oauth-authz-req+jwt` and marks it as retrieved. | Supported |
 | `POST /openid4vp/sessions/{sessionId}/request` | Retrieves the signed request when `request_uri_method: post`; accepts form `wallet_nonce` and additional fields. | Supported |
@@ -188,7 +188,20 @@ session `13aa1df4-e5b8-432f-b208-5454d71bbea0`).
 | `GET /openid4vp/sessions/{sessionId}/events` | Chronological protocol capture events. | Supported |
 | `GET /openid4vp/did.json` | Verifier `did:web` Document used by `client_id_scheme: "decentralized_identifier"`. | Supported |
 
-The direct-post endpoints return `200` only when the presentation was captured and verified. A failed verifier check and a Wallet's decision to send no response are distinct outcomes. The session's `raw.presentation_response_http` and `raw.presentation_response_verifier_http` provide machine-readable, sensitive-value-redacted HTTP evidence for valid and invalid responses; the former retains the exact received body. Inspect the session record and events; never substitute a screenshot for the missing callback.
+The session's `raw` object provides the protocol-evidence surface required for
+assertions. `raw.authorization_request_jwt` is the exact signed Request Object
+returned to the Wallet. `raw.request_uri_http` records the Wallet retrieval
+method and redacted headers, and adds `body` only when a body was received.
+The capture is attached to the session-specific `/request` endpoint; the
+published schema does not expose a separate raw request-target or query field.
+
+The direct-post endpoints return `200` only when the presentation was captured
+and verified. A failed verifier check and a Wallet's decision to send no
+response are distinct outcomes. `raw.presentation_response_http` and
+`raw.presentation_response_verifier_http` provide machine-readable,
+sensitive-value-redacted HTTP evidence for valid and invalid responses; the
+former retains the exact received body. Inspect the session record and events;
+never substitute a screenshot for missing callback evidence.
 
 ## Known local limitations
 

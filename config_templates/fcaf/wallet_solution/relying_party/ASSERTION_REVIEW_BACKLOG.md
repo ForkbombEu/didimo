@@ -17,12 +17,13 @@ Review baseline: the local source mirror under
 against upstream `submitted` commit `2b223b56be0d0a073ee0cdc9db1d7fd31d9529a1`
 (13/08/2026), and the Capture Wallet contract in
 `pkg/fcaf/CAPTURE_WALLET_API.md`. The source mirror has 621 distinct
-`WS_RP_*` files and Credimi has 559 matching test definitions. The 62-file
+`WS_RP_*` files and Credimi has 584 matching test definitions. The remaining
+source-test difference
 difference is listed below; it is deliberately separate from assertion work
 that is incomplete or incorrect.
 
-Total: 377 source/backlog items (62 unimplemented source tests, 45 newly
-pending, 8 pending, 190 blocked, and 72 done).
+The lists below are the active review state; test-definition totals are kept in
+the baseline above and validated by the FCAF catalog loader.
 
 ## Unimplemented source tests
 
@@ -31,68 +32,9 @@ These source test files have no matching file in
 scenario, evidence binding, or assertion is claimed for them. `_UF` is retained
 where it is part of the upstream source-test identifier.
 
-- [ ] `WS_RP_IA_Engagement__001a`
-- [ ] `WS_RP_IA_Engagement__001b`
-- [ ] `WS_RP_IA_MainInteraction__012a`
-- [ ] `WS_RP_IA_MainInteraction__012b`
-- [ ] `WS_RP_IA_MainInteraction__012c_UF`
-- [ ] `WS_RP_IA_MainInteraction__012d_UF`
-- [ ] `WS_RP_IA_MainInteraction__034a`
-- [ ] `WS_RP_IA_MainInteraction__034b`
-- [ ] `WS_RP_IA_MainInteraction__034c`
-- [ ] `WS_RP_IA_MainInteraction__034d`
-- [ ] `WS_RP_IA_MainInteraction__034e`
-- [ ] `WS_RP_IA_MainInteraction__034f`
-- [ ] `WS_RP_IA_MainInteraction__034g`
-- [ ] `WS_RP_IA_MainInteraction__034h_UF`
-- [ ] `WS_RP_IA_MainInteraction__034i_UF`
-- [ ] `WS_RP_IA_ProtocolFlow__002a`
-- [ ] `WS_RP_IA_ProtocolFlow__002b`
-- [ ] `WS_RP_IA_ProtocolFlow__002c`
-- [ ] `WS_RP_IA_ProtocolFlow__002d`
-- [ ] `WS_RP_IA_ProtocolFlow__002e_UF`
-- [ ] `WS_RP_IA_ProtocolFlow__003a`
-- [ ] `WS_RP_IA_ProtocolFlow__003b_UF`
-- [ ] `WS_RP_MS_CredentialFormats__029a`
-- [ ] `WS_RP_MS_CredentialFormats__029b`
-- [ ] `WS_RP_MS_CredentialFormats__029c`
-- [ ] `WS_RP_MS_CredentialFormats__029d`
-- [ ] `WS_RP_MS_CredentialFormats__029e`
-- [ ] `WS_RP_MS_CredentialFormats__029f`
-- [ ] `WS_RP_MS_CredentialFormats__029g`
-- [ ] `WS_RP_MS_CredentialFormats__033a`
-- [ ] `WS_RP_MS_CredentialFormats__033b`
-- [ ] `WS_RP_MS_CredentialFormats__033c`
-- [ ] `WS_RP_MS_CredentialFormats__033d`
-- [ ] `WS_RP_MS_CredentialFormats__033e`
-- [ ] `WS_RP_MS_CredentialFormats__033f`
-- [ ] `WS_RP_MS_CredentialFormats__033g`
-- [ ] `WS_RP_MS_CredentialFormats__033h`
-- [ ] `WS_RP_MS_CredentialFormats__045a`
-- [ ] `WS_RP_MS_CredentialFormats__045b`
-- [ ] `WS_RP_MS_CredentialFormats__045c`
-- [ ] `WS_RP_MS_CredentialFormats__045d`
-- [ ] `WS_RP_MS_ProtocolMessages__003_UF`
-- [ ] `WS_RP_MS_ProtocolMessages__127a`
-- [ ] `WS_RP_MS_ProtocolMessages__127b`
-- [ ] `WS_RP_MS_ProtocolMessages__127c`
-- [ ] `WS_RP_MS_ProtocolMessages__127d`
-- [ ] `WS_RP_SM_DeviceBinding__012a`
-- [ ] `WS_RP_SM_DeviceBinding__012b`
-- [ ] `WS_RP_SM_DeviceBinding__012c`
-- [ ] `WS_RP_SM_RpIntegrity__013a`
-- [ ] `WS_RP_SM_RpIntegrity__013b_UF`
-- [ ] `WS_RP_SM_RpIntegrity__013c_UF`
-- [ ] `WS_RP_SM_SessionEncryption__001a`
-- [ ] `WS_RP_SM_SessionEncryption__001b`
-- [ ] `WS_RP_SM_SessionEncryption__001c`
-- [ ] `WS_RP_SM_SessionEncryption__001d`
-- [ ] `WS_RP_SM_SessionEncryption__001e`
-- [ ] `WS_RP_SM_SessionEncryption__001f`
-- [ ] `WS_RP_SM_SessionEncryption__013`
-- [ ] `WS_RP_SM_TrustMechanisms__101`
-- [ ] `WS_RP_SM_TrustMechanisms__101b_UF`
-- [ ] `WS_RP_SM_TrustMechanisms__101c_UF`
+
+All formerly unimplemented source tests are now either represented by an exact
+definition or listed under `Blocked` with the missing evidence control.
 
 ## New pending
 
@@ -187,6 +129,51 @@ Wallet capability.
 The beta contract supplies only the capabilities documented in
 `CAPTURE_WALLET_API.md`. These items require an input, credential fixture,
 transport capture, Wallet profile, or verifier behavior that remains absent.
+
+### Missing controls for source tests without a Credimi definition
+
+- [ ] `WS_RP_IA_Engagement__001b` (the beta Capture service can generate an
+  `eu-eaap://` deeplink, but the reference Android Wallet has no registered
+  handler for that scheme, so invocation cannot be evidenced)
+- [ ] `WS_RP_IA_MainInteraction__012c_UF`,
+  `WS_RP_IA_MainInteraction__012d_UF`, and
+  `WS_RP_IA_MainInteraction__034a` through `034i_UF` (the public beta
+  service has no documented, deterministic `default_credential_A` fixture
+  with the required absent claims and selectively disclosable array/object
+  members; generic PID presentations cannot prove these exact selections or
+  non-selections)
+- [ ] `WS_RP_MS_CredentialFormats__029a` through `029g` and
+  `WS_RP_MS_CredentialFormats__033a` through `033h` (beta accepts
+  `status_list_enabled: true`, but does not expose an issued status-bearing
+  SD-JWT or mdoc MSO as a reusable Capture artifact. A test would require an
+  unverified Wallet issuance-and-presentation fixture rather than direct
+  protocol evidence)
+
+- [ ] `WS_RP_SM_SessionEncryption__001f` (requires the decrypted
+  Authorization Response as the exact unsigned JWT; beta exposes the encrypted
+  JWE and verification outcome but not that plaintext JWT artifact)
+
+- [ ] `WS_RP_IA_ProtocolFlow__002d` (requires a reference Wallet profile that
+  does not support `request_uri_method=post`; beta has only the post-supporting
+  reference Wallet)
+- [ ] `WS_RP_IA_ProtocolFlow__003a` (Digital Credentials API flow; beta
+  Capture exposes only redirect-based OpenID4VP delivery)
+- [ ] `WS_RP_IA_ProtocolFlow__003b_UF` (Digital Credentials API flow; beta
+  Capture exposes only redirect-based OpenID4VP delivery)
+- [ ] `WS_RP_MS_ProtocolMessages__003_UF` (requires a signed Request Object
+  whose JOSE `typ` is controllably invalid; beta only produces its fixed signed
+  request type)
+- [ ] `WS_RP_SM_RpIntegrity__013b_UF` (requires a Request Object with a
+  controlled invalid JWS signature)
+- [ ] `WS_RP_SM_RpIntegrity__013c_UF` (requires a Request Object signed with a
+  controlled unacceptable algorithm)
+- [ ] `WS_RP_SM_TrustMechanisms__101` (requires a Wallet Relying Party
+  Registration Certificate fixture; beta's normal X.509 verifier certificate
+  is not an exposed WRPAC fixture)
+- [ ] `WS_RP_SM_TrustMechanisms__101b_UF` (requires an invalid-signature WRPAC
+  fixture)
+- [ ] `WS_RP_SM_TrustMechanisms__101c_UF` (requires two WRPAC fixtures with a
+  controlled organization mismatch)
 
 ### Reclassified from pending
 

@@ -20,7 +20,7 @@ steps:
       headers:
         Content-Type: application/json
       body:
-        scheme: haip-vp://
+        scheme: openid4vp://
         request_uri_method: post
         request_delivery: by_reference
         response_type: vp_token
@@ -102,11 +102,16 @@ steps:
         - WS_RP_MS_ProtocolMessages__005
         - WS_RP_MS_ProtocolMessages__023
         - WS_RP_MS_ProtocolMessages__031
+        - WS_RP_IA_ProtocolFlow__002b
+        - WS_RP_SM_RpIntegrity__013a
       suite: wallet_solution/relying_party
       pipeline_outputs:
         pipeline.wallet.protocol.request-uri-method-post:
           output:
             dcql_exchange: ${{ get-presentation-result.outputs.body }}
+            capture_session: ${{ get-presentation-result.outputs.body }}
+            signed_request_object: ${{ get-presentation-result.outputs.body.raw.authorization_request_jwt }}
+            session_checks: ${{ get-presentation-result.outputs.body.checks }}
             presentation_request: ${{ create-presentation.outputs.body }}
             request_object: ${{ create-presentation.outputs.body.request }}
             request_uri_payload: ${{ get-presentation-result.outputs.body.request_uri_payload }}

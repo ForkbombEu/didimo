@@ -1420,9 +1420,9 @@ steps:
                 nonce: session-encryption
             request_delivery: by_reference
             request_uri_method: post
-            response_mode: direct_post
+            response_mode: direct_post.jwt
             response_type: vp_token
-            scheme: haip-vp://
+            scheme: openid4vp://
         expected_status: 201
         headers:
             Content-Type: application/json
@@ -1921,6 +1921,8 @@ steps:
             pipeline.dcql.session-encryption:
                 output:
                     dcql_exchange: ${{ dcql-session-encryption-210827bd-fetch-capture-session.outputs.body | optional }}
+                    encrypted_response: ${{ dcql-session-encryption-210827bd-fetch-capture-session.outputs.body.raw.presentation_response | optional }}
+                    session_checks: ${{ dcql-session-encryption-210827bd-fetch-capture-session.outputs.body.checks | optional }}
                     visual_evidence: ${{ dcql-session-encryption-210827bd-exercise-wallet.outputs.flow_output.maestro_screenshot_urls | optional }}
             pipeline.dcql.trust-mechanisms:
                 output:
@@ -2116,8 +2118,10 @@ steps:
             - WS_RP_DM_IdentifyingData_Sex_PID_ISO-mdoc_002
             - WS_RP_DM_IdentifyingData_Sex_PID_ISO-mdoc_003
             - WS_RP_IA_Engagement__001
+            - WS_RP_IA_Engagement__001a
             - WS_RP_IA_MainInteraction__006
             - WS_RP_IA_MainInteraction__010
+            - WS_RP_IA_MainInteraction__012b
             - WS_RP_IA_MainInteraction__018
             - WS_RP_IA_MainInteraction__019
             - WS_RP_IA_MainInteraction__020
@@ -2177,6 +2181,10 @@ steps:
             - WS_RP_MS_CredentialFormats__041
             - WS_RP_MS_CredentialFormats__044
             - WS_RP_MS_CredentialFormats__045
+            - WS_RP_MS_CredentialFormats__045a
+            - WS_RP_MS_CredentialFormats__045b
+            - WS_RP_MS_CredentialFormats__045c
+            - WS_RP_MS_CredentialFormats__045d
             - WS_RP_MS_CredentialFormats__046
             - WS_RP_MS_CredentialFormats__048
             - WS_RP_MS_Metadata__081
@@ -2283,6 +2291,7 @@ steps:
             - WS_RP_MS_ProtocolMessages__070
             - WS_RP_MS_ProtocolMessages__095
             - WS_RP_MS_ProtocolMessages__105
+            - WS_RP_MS_ProtocolMessages__127d
             - WS_RP_SH_Cryptography_CryptographicHash_001
             - WS_RP_SH_Cryptography_CryptographicHash_002
             - WS_RP_SH_Cryptography_CryptographicHash_006
@@ -2301,6 +2310,9 @@ steps:
             - WS_RP_SM_DeviceBinding__010
             - WS_RP_SM_DeviceBinding__011
             - WS_RP_SM_DeviceBinding__012
+            - WS_RP_SM_DeviceBinding__012a
+            - WS_RP_SM_DeviceBinding__012b
+            - WS_RP_SM_DeviceBinding__012c
             - WS_RP_SM_IssuerIntegrity__013
             - WS_RP_SM_RpIntegrity_CryptographicSignature_002
             - WS_RP_SM_RpIntegrity_CryptographicSignature_003
@@ -2340,6 +2352,11 @@ steps:
             - WS_RP_SM_RpIntegrity__033
             - WS_RP_SM_RpIntegrity__034
             - WS_RP_SM_SessionEncryption__001
+            - WS_RP_SM_SessionEncryption__001a
+            - WS_RP_SM_SessionEncryption__001b
+            - WS_RP_SM_SessionEncryption__001c
+            - WS_RP_SM_SessionEncryption__001d
+            - WS_RP_SM_SessionEncryption__001e
             - WS_RP_SM_SessionEncryption__002
             - WS_RP_SM_SessionEncryption__003
             - WS_RP_SM_SessionEncryption__005
@@ -2350,6 +2367,7 @@ steps:
             - WS_RP_SM_SessionEncryption__010
             - WS_RP_SM_SessionEncryption__011
             - WS_RP_SM_SessionEncryption__012
+            - WS_RP_SM_SessionEncryption__013
             - WS_RP_SM_TrustMechanisms__002
             - WS_RP_SM_TrustMechanisms__003
             - WS_RP_SM_TrustMechanisms__004

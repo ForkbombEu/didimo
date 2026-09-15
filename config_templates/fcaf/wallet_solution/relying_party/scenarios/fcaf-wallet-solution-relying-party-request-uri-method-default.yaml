@@ -1,4 +1,4 @@
-name: FCAF wallet relying-party Request URI method GET
+name: FCAF wallet relying-party Request URI method omitted
 runtime:
   fixture:
     verifier_url: https://beta-capture-wallet.credimi.io
@@ -9,7 +9,6 @@ runtime:
       start_to_close_timeout: 50m
       retry_policy:
         maximum_attempts: 1
-
 steps:
   - id: create-presentation
     use: http-request
@@ -21,12 +20,11 @@ steps:
         Content-Type: application/json
       body:
         scheme: openid4vp://
-        request_uri_method: get
         request_delivery: by_reference
         response_type: vp_token
         response_mode: direct_post
         presentation_request:
-          nonce: fcaf-request-uri-method-get
+          nonce: fcaf-request-uri-method-default
           dcql_query:
             credentials:
               - id: pid_mdoc
@@ -34,14 +32,10 @@ steps:
                 meta:
                   doctype_value: eu.europa.ec.eudi.pid.1
                 claims:
-                  - path:
-                      - eu.europa.ec.eudi.pid.1
-                      - given_name
-                  - path:
-                      - eu.europa.ec.eudi.pid.1
-                      - family_name
+                  - path: [eu.europa.ec.eudi.pid.1, given_name]
+                  - path: [eu.europa.ec.eudi.pid.1, family_name]
 
-  - id: submit-request-uri-method-get
+  - id: submit-request-uri-method-default
     use: mobile-automation
     with:
       version_id: installed_from_external_source
@@ -51,40 +45,23 @@ steps:
         appId: eu.europa.ec.euidi
         ---
         - stopApp
-                - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
-        - waitForAnimationToEnd:
-            timeout: 5000
-        - tapOn:
-            text: "EUDI Wallet"
-            optional: true
-        - tapOn:
-            text: "Just once"
-            optional: true
-        - extendedWaitUntil:
-            visible: "Welcome back|Share|Cancel|Close"
-            timeout: 100000
+        - openLink: { link: ${env.DEEPLINK}, autoVerify: false, browser: false }
+        - waitForAnimationToEnd: { timeout: 5000 }
+        - tapOn: { text: "EUDI Wallet", optional: true }
+        - tapOn: { text: "Just once", optional: true }
+        - extendedWaitUntil: { visible: "Welcome back|Share|Cancel|Close", timeout: 100000 }
         - runFlow:
-            when:
-              visible: "Welcome back"
+            when: { visible: "Welcome back" }
             commands:
-              - tapOn:
-                  point: "11%,40%"
+              - tapOn: { point: "11%,40%" }
               - inputText: "123456"
-        - extendedWaitUntil:
-            visible: "Share"
-            timeout: 30000
-        - tapOn:
-            text: "Share"
-            enabled: true
-        - extendedWaitUntil:
-            visible: "verify your identity|PIN"
-            timeout: 30000
+        - extendedWaitUntil: { visible: "Share", timeout: 30000 }
+        - tapOn: { text: "Share", enabled: true }
+        - extendedWaitUntil: { visible: "verify your identity|PIN", timeout: 30000 }
         - inputText: "123456"
-        - extendedWaitUntil:
-            visible: "Close"
-            timeout: 30000
+        - extendedWaitUntil: { visible: "Close", timeout: 30000 }
         - assertVisible: "Close"
-        - takeScreenshot: fcaf-request-uri-method-get-submitted
+        - takeScreenshot: fcaf-request-uri-method-default-submitted
 
   - id: get-presentation-result
     use: http-request
@@ -97,19 +74,15 @@ steps:
     use: fcaf-validation
     with:
       test_ids:
-        - WS_RP_MS_ProtocolMessages__022
-        - WS_RP_IA_ProtocolFlow__002a
+        - WS_RP_IA_ProtocolFlow__002c
       suite: wallet_solution/relying_party
       pipeline_outputs:
-        pipeline.wallet.protocol.request-uri-method-get:
+        pipeline.wallet.protocol.request-uri-method-default:
           output:
-            dcql_exchange: ${{ get-presentation-result.outputs.body }}
             capture_session: ${{ get-presentation-result.outputs.body }}
             signed_request_object: ${{ get-presentation-result.outputs.body.raw.authorization_request_jwt }}
             session_checks: ${{ get-presentation-result.outputs.body.checks }}
-            presentation_request: ${{ create-presentation.outputs.body }}
-            wallet_response: ${{ get-presentation-result.outputs.body }}
-            visual_evidence: ${{ submit-request-uri-method-get.outputs.flow_output.maestro_screenshot_urls }}
+            visual_evidence: ${{ submit-request-uri-method-default.outputs.flow_output.maestro_screenshot_urls }}
             create-presentation: ${{ create-presentation.outputs }}
-            submit-request-uri-method-get: ${{ submit-request-uri-method-get.outputs }}
+            submit-request-uri-method-default: ${{ submit-request-uri-method-default.outputs }}
             get-presentation-result: ${{ get-presentation-result.outputs }}
