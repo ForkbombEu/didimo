@@ -411,6 +411,27 @@ func TestStartAllWorkersByNamespaceDefault(t *testing.T) {
 	require.False(t, ok)
 }
 
+func TestStartAllWorkersByNamespaceSkipsWhenTemporalWorkersDisabled(t *testing.T) {
+	t.Setenv(TemporalWorkersDisabledEnv, "1")
+	workerCancels = sync.Map{}
+
+	originalGetTemporalClient := getTemporalClient
+	t.Cleanup(func() {
+		getTemporalClient = originalGetTemporalClient
+		workerCancels = sync.Map{}
+	})
+
+	getTemporalClient = func(_ string) (client.Client, error) {
+		require.Fail(t, "getTemporalClient should not be called")
+		return nil, nil
+	}
+
+	StartAllWorkersByNamespace("default")
+
+	_, ok := workerCancels.Load("default")
+	require.False(t, ok)
+}
+
 func TestStartAllWorkersByNamespaceOrg(t *testing.T) {
 	workerCancels = sync.Map{}
 
@@ -916,5 +937,32 @@ func TestStartWorkerManagerWorkflowInvokesExecute(t *testing.T) {
 	case <-called:
 	case <-time.After(time.Second):
 		t.Fatal("timeout waiting for worker manager workflow")
+	}
+}
+
+func TestStartWorkerManagerWorkflowSkipsWhenTemporalWorkersDisabled(t *testing.T) {
+	t.Setenv(TemporalWorkersDisabledEnv, "1")
+
+	app, err := tests.NewTestApp(testDataDir)
+	require.NoError(t, err)
+	defer app.Cleanup()
+
+	origExec := executeWorkerManagerWorkflowFn
+	t.Cleanup(func() {
+		executeWorkerManagerWorkflowFn = origExec
+	})
+
+	called := make(chan struct{}, 1)
+	executeWorkerManagerWorkflowFn = func(_, _, _ string, _ []string) error {
+		called <- struct{}{}
+		return nil
+	}
+
+	StartWorkerManagerWorkflow(app, "org-1", "", []string{"https://runner-1"})
+
+	select {
+	case <-called:
+		t.Fatal("worker manager workflow should not be executed")
+	case <-time.After(100 * time.Millisecond):
 	}
 }

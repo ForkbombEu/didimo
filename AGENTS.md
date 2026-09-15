@@ -178,7 +178,7 @@ Key environment variables:
 
 - `TEMPORAL_ADDRESS`: Temporal host and port.
 - `ADDRESS_UI`: UI reverse proxy target.
-- `CREDIMI_TEMPORAL_WORKERS_DISABLED`: when `1`/`true`/`yes`, skips Temporal worker registration and org-driven worker starts (used by `make dev.noworkers`).
+- `CREDIMI_TEMPORAL_WORKERS_DISABLED`: when `1`/`true`/`yes`, skips Temporal namespace creation, worker registration and worker-manager workflow starts (used by `make dev.noworkers`).
 - `MOBILE_RUNNER_SEMAPHORE_DISABLED`: disables the mobile-runner semaphore path when configured.
 - `MOBILE_RUNNER_SEMAPHORE_WAIT_TIMEOUT`: mobile-runner queue wait timeout.
 - `CREDIMI_INTERNAL_ADMIN_KEY`: plaintext runtime key for trusted internal HTTP activities and internal result posting.

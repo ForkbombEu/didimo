@@ -75,10 +75,6 @@ func registerOrganizationNamespaceHooks(app core.App) {
 	})
 
 	app.OnRecordAfterCreateSuccess("organizations").BindFunc(func(e *core.RecordEvent) error {
-		if hooks.TemporalWorkersDisabled() {
-			return e.Next()
-		}
-
 		orgName := e.Record.GetString("canonified_name")
 		if orgName != "" {
 			ensureNamespaceAndWorkersFn(orgName)
@@ -93,10 +89,6 @@ func registerOrganizationNamespaceHooks(app core.App) {
 	})
 
 	app.OnRecordAfterUpdateSuccess("organizations").BindFunc(func(e *core.RecordEvent) error {
-		if hooks.TemporalWorkersDisabled() {
-			return e.Next()
-		}
-
 		oldName := e.Record.Original().GetString("canonified_name")
 		newName := e.Record.GetString("canonified_name")
 
@@ -306,6 +298,15 @@ func organizationPublicationCollectionByName(
 // If not, it creates it.
 // It then starts all workers for that namespace in a goroutine.
 func ensureNamespaceAndWorkers(namespace string) {
+	if hooks.TemporalWorkersDisabled() {
+		log.Printf(
+			"Skipping namespace %s (%s is set)",
+			namespace,
+			hooks.TemporalWorkersDisabledEnv,
+		)
+		return
+	}
+
 	hostPort := utils.GetEnvironmentVariable("TEMPORAL_ADDRESS", client.DefaultHostPort)
 	c, err := newNamespaceClient(client.Options{
 		HostPort: hostPort,
