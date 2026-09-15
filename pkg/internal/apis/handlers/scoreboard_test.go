@@ -971,13 +971,14 @@ func ensureScoreboardDeviceRelation(t testing.TB, app *tests.TestApp) {
 	}
 }
 
-func createWalletRecord(t testing.TB, app *tests.TestApp, orgID, name string) {
+func createWalletRecord(t testing.TB, app *tests.TestApp, orgID, name string) *core.Record {
 	walletsColl, err := app.FindCollectionByNameOrId("wallets")
 	require.NoError(t, err)
 
 	wallet := core.NewRecord(walletsColl)
 	wallet.Set("owner", orgID)
 	wallet.Set("name", name)
+	wallet.Set("published", true)
 	require.NoError(t, app.Save(wallet))
 
 	walletVersionColl, err := app.FindCollectionByNameOrId("wallet_versions")
@@ -1000,6 +1001,7 @@ func createWalletRecord(t testing.TB, app *tests.TestApp, orgID, name string) {
 	actionRecord.Set("code", "my-code")
 	require.NoError(t, app.Save(actionRecord))
 	require.NoError(t, app.Save(versionRecord))
+	return wallet
 }
 
 func createVerifierRecord(t testing.TB, app *tests.TestApp, orgID, name string) {
@@ -1009,6 +1011,7 @@ func createVerifierRecord(t testing.TB, app *tests.TestApp, orgID, name string) 
 	verifier := core.NewRecord(verifiersColl)
 	verifier.Set("owner", orgID)
 	verifier.Set("name", name)
+	verifier.Set("published", true)
 	verifier.Set("url", "https://verifier.example")
 	verifier.Set("standard_and_version", "testsuite/draft-01")
 	verifier.Set("format", []string{"SD-JWT"})
@@ -1022,6 +1025,7 @@ func createVerifierRecord(t testing.TB, app *tests.TestApp, orgID, name string) 
 	record := core.NewRecord(coll)
 	record.Set("name", "usecase123")
 	record.Set("owner", orgID)
+	record.Set("published", true)
 	record.Set("verifier", verifier.Id)
 	record.Set("yaml", "example code")
 	require.NoError(t, app.Save(record))
@@ -1030,11 +1034,11 @@ func createVerifierRecord(t testing.TB, app *tests.TestApp, orgID, name string) 
 func createIssuerRecord(t testing.TB, app *tests.TestApp, orgID, name string) {
 	issuersColl, err := app.FindCollectionByNameOrId("credential_issuers")
 	require.NoError(t, err)
-
 	issuer := core.NewRecord(issuersColl)
 	issuer.Set("url", "https://test-issuer.example.com")
 	issuer.Set("name", name)
 	issuer.Set("owner", orgID)
+	issuer.Set("published", true)
 	issuer.Set("imported", true)
 	require.NoError(t, app.Save(issuer))
 
@@ -1047,17 +1051,18 @@ func createIssuerRecord(t testing.TB, app *tests.TestApp, orgID, name string) {
 	cred.Set("logo_url", "https://old.logo")
 	cred.Set("json", `not-json`)
 	cred.Set("owner", orgID)
+	cred.Set("published", true)
 	require.NoError(t, app.Save(cred))
 }
 
 func createCustomCheckRecord(t testing.TB, app *tests.TestApp, orgID, name string) {
 	customChecksColl, err := app.FindCollectionByNameOrId("custom_checks")
 	require.NoError(t, err)
-
 	check := core.NewRecord(customChecksColl)
 	check.Set("name", name)
 	check.Set("yaml", "example code")
 	check.Set("owner", orgID)
+	check.Set("published", true)
 	require.NoError(t, app.Save(check))
 }
 func TestSaveScoreboardResults(t *testing.T) {
@@ -1075,7 +1080,10 @@ func TestSaveScoreboardResults(t *testing.T) {
 	runner := createRunnerRecord(t, app, orgID, "test-runner")
 	createDeviceRecord(t, app, orgID, runner.Id, "test-device")
 	createPipelineResult(t, app, orgID, pipeline.Id, "wf-new", "run-new")
-	createWalletRecord(t, app, orgID, "my-wallet")
+	publicWallet := createWalletRecord(t, app, orgID, "my-wallet")
+	privateWallet := createWalletRecord(t, app, orgID, "private-wallet")
+	privateWallet.Set("published", false)
+	require.NoError(t, app.Save(privateWallet))
 	createVerifierRecord(t, app, orgID, "my-verifier")
 	createIssuerRecord(t, app, orgID, "my-issuer-1")
 	createIssuerRecord(t, app, orgID, "my-issuer-2")
@@ -1101,14 +1109,20 @@ func TestSaveScoreboardResults(t *testing.T) {
 					PipelineName: "Test Pipeline",
 					WorkflowID:   "wf-new",
 					RunID:        "run-new",
-					WalletUsed:   []string{"usera-s-organization/my-wallet"},
-					Verifiers:    []string{"usera-s-organization/my-verifier"},
+					WalletUsed: []string{
+						"usera-s-organization/my-wallet",
+						"usera-s-organization/private-wallet",
+					},
+					Verifiers: []string{"usera-s-organization/my-verifier"},
 					Issuers: []string{
 						"usera-s-organization/my-issuer-1",
 						"usera-s-organization/my-issuer-2",
 					},
-					WalletVersionUsed: []string{"installed_from_external_source",
-						"usera-s-organization/my-wallet/1-0-0"},
+					WalletVersionUsed: []string{
+						"installed_from_external_source",
+						"usera-s-organization/my-wallet/1-0-0",
+						"usera-s-organization/private-wallet/1-0-0",
+					},
 					MaestroScripts:       []string{"usera-s-organization/my-wallet/my-action"},
 					Credentials:          []string{"usera-s-organization/my-issuer-1/cred-3"},
 					UseCaseVerifications: []string{"usera-s-organization/my-verifier/usecase123"},
@@ -1175,6 +1189,9 @@ func TestSaveScoreboardResults(t *testing.T) {
 		require.NoError(t, json.Unmarshal([]byte(record.GetString("expanded_data")), &expandedData))
 		require.NotNil(t, expandedData.Pipeline)
 		require.Equal(t, pipeline.Id, expandedData.Pipeline.ID)
+		require.Len(t, expandedData.Wallets, 1)
+		require.Equal(t, publicWallet.Id, expandedData.Wallets[0].ID)
+		require.NotEqual(t, privateWallet.Id, expandedData.Wallets[0].ID)
 		require.Len(t, expandedData.MobileDevices, 1)
 		require.Equal(t, deviceIDs[0], expandedData.MobileDevices[0].ID)
 		require.Equal(
@@ -1184,6 +1201,8 @@ func TestSaveScoreboardResults(t *testing.T) {
 		)
 		require.Equal(t, "test-runner", expandedData.MobileDevices[0].RunnerName)
 		require.NotNil(t, expandedData.LatestExecution)
+		require.Len(t, expandedData.WalletVersions, 1)
+		require.Equal(t, publicWallet.Id, expandedData.WalletVersions[0].Wallet)
 
 		latestExecutionID := record.GetString("latest_execution")
 		require.NotEmpty(t, latestExecutionID, "latest_execution should not be empty")

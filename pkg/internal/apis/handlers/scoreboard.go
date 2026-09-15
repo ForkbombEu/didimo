@@ -1259,6 +1259,17 @@ func scoreboardExpandedRecord(
 	if err != nil {
 		return nil, fmt.Errorf("find %s %s: %w", collection, id, err)
 	}
+	isPublished := record.GetBool("published")
+	if collection == "wallet_versions" {
+		wallet, err := app.FindRecordById("wallets", record.GetString("wallet"))
+		if err != nil {
+			return nil, fmt.Errorf("find wallet for wallet version %s: %w", id, err)
+		}
+		isPublished = wallet.GetBool("published")
+	}
+	if !isPublished {
+		return nil, nil
+	}
 	template, ok := canonify.CanonifyPaths[collection]
 	if !ok {
 		return nil, fmt.Errorf("missing canonify path for collection %s", collection)
