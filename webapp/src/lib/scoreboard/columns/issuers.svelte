@@ -15,11 +15,28 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	import EntityHeader from './headers/entity-header.svelte';
 
 	export const column = Column.define({
-		fn: (row) =>
-			EntityDisplay.fromPocketbaseEntities(
-				row.expanded_data?.issuers ?? [],
-				entities.credential_issuers
-			),
+		fn: (row) => {
+			const issuers = row.expanded_data?.issuers ?? [];
+			const credentials = row.expanded_data?.credentials ?? [];
+
+			return issuers.map((issuer) => {
+				const children = credentials
+					.filter((credential) => credential.credential_issuer === issuer.id)
+					.map((credential) => {
+						const entityItem = EntityDisplay.fromPocketbaseEntity(credential);
+						return {
+							label: entityItem.name,
+							href: entityItem.href,
+							avatar: entityItem.avatar
+						};
+					});
+
+				return {
+					...EntityDisplay.fromPocketbaseEntity(issuer, entities.credential_issuers),
+					children: children.length > 0 ? children : undefined
+				};
+			});
+		},
 		id: 'issuers',
 		header: renderComponent(EntityHeader, {
 			label: m.Issuance(),
