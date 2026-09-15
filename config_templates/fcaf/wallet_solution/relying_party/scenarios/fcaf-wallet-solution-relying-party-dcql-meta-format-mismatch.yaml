@@ -5,7 +5,7 @@ steps:
   use: http-request
   with:
     method: POST
-    url: https://capture-wallet.credimi.io/openid4vp/sessions
+    url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
     expected_status: 201
     headers: { Content-Type: application/json }
     body:
@@ -42,10 +42,10 @@ steps:
       - takeScreenshot: protocol-messages-074
 - id: session
   use: http-request
-  with: { method: GET, url: 'https://capture-wallet.credimi.io/openid4vp/sessions/${{ create.outputs.body.session_id }}', expected_status: 200 }
+  with: { method: GET, url: 'https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ create.outputs.body.session_id }}', expected_status: 200 }
 - id: request
   use: http-request
-  with: { method: GET, url: 'https://capture-wallet.credimi.io/openid4vp/sessions/${{ create.outputs.body.session_id }}/request', expected_status: 200 }
+  with: { method: GET, url: 'https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ create.outputs.body.session_id }}/request', expected_status: 200 }
 - id: run-fcaf-validators
   use: fcaf-validation
   with:

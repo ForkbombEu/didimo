@@ -244,6 +244,23 @@ discontinuation.
 
 ## Next candidate
 
+## Pending assertion review (15/09/2026)
+
+`WS_RP_SH_Encoding_TextualEncoding_018` through `020` now have isolated mdoc
+Capture scenarios. Their `mdoc_claim_path_error` assertion proves the exact
+one-component, non-string-component, or absent-element path; it also requires
+a captured Wallet error and rejects any `vp_token`. The paths use the actual
+Capture PID namespace `eu.europa.ec.eudi.pid.1`, so 020 isolates a missing data
+element instead of accidentally testing a missing namespace.
+
+`008`, `011`, `017`, `021`, and `IssuerIntegrity__014` were moved to Blocked:
+the public beta service cannot provision the source `degrees` fixture or the
+positive `org.iso.18013.5.1.first_name` mdoc fixture, and exposes no
+independently identified trust-anchor certificate needed to prove its absence
+from `x5c`. The signed-request probe `c12f2511-84cf-40db-8212-d6e0b1284fae`
+did confirm that Capture preserves the relevant request paths; it does not
+create the missing Wallet fixture or response evidence.
+
 `WS_RP_SM_DeviceBinding__008` is the next runnable mandatory candidate. Case
 119 duplicates case 114; cases 124-146 and 153-159 are intentionally skipped
 where the required raw request, transaction-data fixture, or configurable
@@ -714,3 +731,15 @@ The ~90 fragmented one-test DCQL scenarios in the complete-validation
 aggregate still use inline `action_code` and remain flagged in the editor;
 converting them needs their distinct mock-deeplink flow templates extracted
 first (see scenario sources under `scenarios/fcaf-wallet-solution-relying-party-dcql-*`).
+
+## Response transport evidence definitions
+
+`WS_RP_MS_ProtocolMessages__047`, `129`–`131`, `133`, `134`, and
+`WS_RP_IA_MainInteraction__049`, `052`, `054` now use raw Capture session
+evidence. The definitions remain verifier-blocked in the implementation
+inventory pending a live reference-Wallet run: this environment has no
+`INSTANCE`, `API_KEY`, or `FCAF_DEVICE_ID`, so no session or JWE evidence was
+observed. Do not substitute screenshots or decrypted results. The next live
+run must inspect `raw.request_uri_http` for 047 and
+`raw.presentation_response_http.body` for all direct_post.jwt cases; 129–131
+must validate the original compact JWE against delivered client metadata.
