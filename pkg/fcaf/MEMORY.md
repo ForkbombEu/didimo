@@ -731,3 +731,15 @@ The ~90 fragmented one-test DCQL scenarios in the complete-validation
 aggregate still use inline `action_code` and remain flagged in the editor;
 converting them needs their distinct mock-deeplink flow templates extracted
 first (see scenario sources under `scenarios/fcaf-wallet-solution-relying-party-dcql-*`).
+
+## Response transport evidence definitions
+
+`WS_RP_MS_ProtocolMessages__047`, `129`–`131`, `133`, `134`, and
+`WS_RP_IA_MainInteraction__049`, `052`, `054` now use raw Capture session
+evidence. The definitions remain verifier-blocked in the implementation
+inventory pending a live reference-Wallet run: this environment has no
+`INSTANCE`, `API_KEY`, or `FCAF_DEVICE_ID`, so no session or JWE evidence was
+observed. Do not substitute screenshots or decrypted results. The next live
+run must inspect `raw.request_uri_http` for 047 and
+`raw.presentation_response_http.body` for all direct_post.jwt cases; 129–131
+must validate the original compact JWE against delivered client metadata.

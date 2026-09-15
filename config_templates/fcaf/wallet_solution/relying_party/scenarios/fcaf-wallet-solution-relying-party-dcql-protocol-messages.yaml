@@ -38,6 +38,12 @@ steps:
             claims:
             - path:
               - given_name
+- id: probe-request-uri-response
+  use: http-request
+  with:
+    method: POST
+    url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ create-capture-session.outputs.body.session_id }}/request
+    expected_status: 200
 - id: exercise-wallet
   use: mobile-automation
   with:
@@ -103,6 +109,9 @@ steps:
             deeplink: ${{ create-capture-session.outputs.body.deeplink }}
             request_object: ${{ fetch-signed-request-object.outputs.body }}
           dcql_exchange: ${{ fetch-capture-session.outputs.body }}
+          request_uri_response: ${{ probe-request-uri-response.outputs }}
+          request_object: ${{ fetch-capture-session.outputs.body.raw.authorization_request_jwt }}
+          capture_session: ${{ fetch-capture-session.outputs.body }}
           visual_evidence: ${{ exercise-wallet.outputs.flow_output.maestro_screenshot_urls }}
           wallet_nonce_evidence:
             request_object: ${{ fetch-signed-request-object.outputs.body }}

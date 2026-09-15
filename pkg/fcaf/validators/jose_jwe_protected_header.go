@@ -6,8 +6,6 @@ package validators
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -35,17 +33,9 @@ func (JOSEJWEProtectedHeaderValidator) Validate(_ context.Context, input Input) 
 	if !ok {
 		return Result{Status: StatusFail, Message: fmt.Sprintf("input is %T, expected compact JWE", input.Value)}
 	}
-	parts := strings.Split(compact, ".")
-	if len(parts) != 5 {
-		return Result{Status: StatusFail, Message: "input is not a compact JWE"}
-	}
-	headerBytes, err := base64.RawURLEncoding.DecodeString(parts[0])
+	header, err := compactJWEProtectedHeader(compact)
 	if err != nil {
-		return Result{Status: StatusFail, Message: "JWE protected header is not valid base64url"}
-	}
-	header := map[string]any{}
-	if err := json.Unmarshal(headerBytes, &header); err != nil {
-		return Result{Status: StatusFail, Message: "JWE protected header is not valid JSON"}
+		return Result{Status: StatusFail, Message: err.Error()}
 	}
 	value, found := nestedJWEHeaderValue(header, params.Field)
 	if params.Present != nil {
