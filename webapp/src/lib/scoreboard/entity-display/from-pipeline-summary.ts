@@ -2,13 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { entities } from '$lib/global';
-
 import type { ScoreboardRow } from '../types';
-import type { ChildLink, Item } from './types';
+import type { Item } from './types';
 
 import { fromConformancePaths } from './from-conformance';
-import { fromPocketbaseEntity } from './from-pocketbase';
+import { fromIssuanceItems, fromPresentationSummaryItems } from './from-issuance';
 import { fromWalletRows } from './from-wallets';
 
 //
@@ -28,43 +26,10 @@ export function buildPipelineSummaryItems(row: ScoreboardRow): Item[] {
 		}))
 	);
 
-	const issuerItems: Item[] = issuers.map((issuer) => {
-		const children: ChildLink[] = credentials
-			.filter((credential) => credential.credential_issuer === issuer.id)
-			.map((credential) => {
-				const entityItem = fromPocketbaseEntity(credential);
-				return {
-					label: entityItem.name,
-					href: entityItem.href,
-					avatar: entityItem.avatar
-				};
-			});
-
-		return {
-			...fromPocketbaseEntity(issuer, entities.credential_issuers),
-			children: children.length > 0 ? children : undefined
-		};
-	});
-
-	const verifierItems: Item[] = verifiers.map((verifier) => {
-		const children: ChildLink[] = useCaseVerifications
-			.filter((verification) => verification.verifier === verifier.id)
-			.map((verification) => {
-				const entityItem = fromPocketbaseEntity(verification);
-				return {
-					label: entityItem.name,
-					href: entityItem.href,
-					avatar: entityItem.avatar
-				};
-			});
-
-		return {
-			...fromPocketbaseEntity(verifier, entities.verifiers),
-			children: children.length > 0 ? children : undefined
-		};
-	});
-
-	const conformanceItems = fromConformancePaths(row.conformance_checks ?? []);
-
-	return [...walletItems, ...issuerItems, ...verifierItems, ...conformanceItems];
+	return [
+		...walletItems,
+		...fromIssuanceItems(issuers, credentials),
+		...fromPresentationSummaryItems(verifiers, useCaseVerifications),
+		...fromConformancePaths(row.conformance_checks ?? [])
+	];
 }

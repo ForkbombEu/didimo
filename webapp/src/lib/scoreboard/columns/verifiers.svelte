@@ -14,6 +14,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	import * as EntityDisplay from '../entity-display';
 	import EntityHeader from './headers/entity-header.svelte';
 
+	// Presentations column: verifier logos only. Use-case nesting belongs in
+	// card/summary via fromPresentationSummaryItems, not this table column.
 	export const column = Column.define({
 		fn: (row) =>
 			EntityDisplay.fromPocketbaseEntities(

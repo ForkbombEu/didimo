@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 	export const column = Column.define({
 		fn: (row) => row.expanded_data?.mobile_devices ?? [],
-		id: 'runners',
+		id: 'devices',
 		header: renderComponent(EntityHeader, {
 			label: m.Devices()
 		})
@@ -34,21 +34,21 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 	let { value }: Column.Props<typeof column> = $props();
 
-	type Runner = (typeof value)[number];
-	type Platform = { key: string; label: string; icon: IconComponent; runners: Runner[] };
+	type Device = (typeof value)[number];
+	type Platform = { key: string; label: string; icon: IconComponent; devices: Device[] };
 
 	const platforms = $derived.by(() => {
 		const groups = new SvelteMap<string, Platform>();
-		for (const runner of value) {
-			const isIos = Boolean(runner.type?.startsWith('ios'));
+		for (const device of value) {
+			const isIos = Boolean(device.type?.startsWith('ios'));
 			const key = isIos ? 'ios' : 'android';
 			const platform: Platform = groups.get(key) ?? {
 				key,
 				label: isIos ? 'iOS' : 'Android',
 				icon: isIos ? AppleIcon : SmartphoneIcon,
-				runners: []
+				devices: []
 			};
-			platform.runners.push(runner);
+			platform.devices.push(device);
 			groups.set(key, platform);
 		}
 		return [...groups.values()];
@@ -65,12 +65,12 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 					class="inline-flex min-w-5 items-center justify-center gap-0.5 rounded-full bg-secondary px-1.5 py-0.5 text-[10px] leading-none font-semibold text-secondary-foreground tabular-nums"
 				>
 					<platform.icon class="size-3" />
-					{platform.runners.length}
+					{platform.devices.length}
 				</span>
 				{#snippet content()}
 					<ul class="flex flex-col gap-1">
-						{#each platform.runners as runner (runner)}
-							<li class="text-xs">{runner.name.trim()}</li>
+						{#each platform.devices as device (device)}
+							<li class="text-xs">{device.name.trim()}</li>
 						{/each}
 					</ul>
 				{/snippet}
