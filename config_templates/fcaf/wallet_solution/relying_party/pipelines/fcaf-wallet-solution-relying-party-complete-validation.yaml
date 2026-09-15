@@ -12607,6 +12607,185 @@ steps:
         method: GET
         url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ mdoc-absent-namespace-8c8f84c8-create-capture-session.outputs.body.session_id }}
     - continue_on_error: true
+      id: mdoc-claim-path-absent-element-492e5a68-onboard-reference-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/onboarding-1
+        version_id: forkbomb-bv-andrea/eudiw-beta-wallet/2026-06-38-demo
+    - continue_on_error: true
+      id: mdoc-claim-path-absent-element-492e5a68-create-pid-mdoc-offer
+      use: credential-offer
+      with:
+        credential_id: /forkbomb-bv-andrea/misc-issuer-integration-demo/capture-issuer-pid-mdoc
+    - continue_on_error: true
+      id: mdoc-claim-path-absent-element-492e5a68-obtain-pid-mdoc
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/getcredential-generic-credential-without-authentication
+        parameters:
+            deeplink: ${{ mdoc-claim-path-absent-element-492e5a68-create-pid-mdoc-offer.outputs }}
+        version_id: forkbomb-bv-andrea/eudiw-beta-wallet/2026-06-38-demo
+    - continue_on_error: true
+      id: mdoc-claim-path-absent-element-492e5a68-create-capture-session
+      use: http-request
+      with:
+        body:
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - Bob
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-textual-encoding-020
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: openid4vp://
+        expected_status: 201
+        headers:
+            Content-Type: application/json
+        method: POST
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
+    - continue_on_error: true
+      id: mdoc-claim-path-absent-element-492e5a68-exercise-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-exercise-wallet-generic
+        parameters:
+            deeplink: ${{ mdoc-claim-path-absent-element-492e5a68-create-capture-session.outputs.body.deeplink }}
+        version_id: installed_from_external_source
+    - continue_on_error: true
+      id: mdoc-claim-path-absent-element-492e5a68-fetch-capture-session
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ mdoc-claim-path-absent-element-492e5a68-create-capture-session.outputs.body.session_id }}
+    - continue_on_error: true
+      id: mdoc-claim-path-component-count-b56f251e-onboard-reference-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/onboarding-1
+        version_id: forkbomb-bv-andrea/eudiw-beta-wallet/2026-06-38-demo
+    - continue_on_error: true
+      id: mdoc-claim-path-component-count-b56f251e-create-pid-mdoc-offer
+      use: credential-offer
+      with:
+        credential_id: /forkbomb-bv-andrea/misc-issuer-integration-demo/capture-issuer-pid-mdoc
+    - continue_on_error: true
+      id: mdoc-claim-path-component-count-b56f251e-obtain-pid-mdoc
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/getcredential-generic-credential-without-authentication
+        parameters:
+            deeplink: ${{ mdoc-claim-path-component-count-b56f251e-create-pid-mdoc-offer.outputs }}
+        version_id: forkbomb-bv-andrea/eudiw-beta-wallet/2026-06-38-demo
+    - continue_on_error: true
+      id: mdoc-claim-path-component-count-b56f251e-create-capture-session
+      use: http-request
+      with:
+        body:
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-textual-encoding-018
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: openid4vp://
+        expected_status: 201
+        headers:
+            Content-Type: application/json
+        method: POST
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
+    - continue_on_error: true
+      id: mdoc-claim-path-component-count-b56f251e-exercise-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-exercise-wallet-generic
+        parameters:
+            deeplink: ${{ mdoc-claim-path-component-count-b56f251e-create-capture-session.outputs.body.deeplink }}
+        version_id: installed_from_external_source
+    - continue_on_error: true
+      id: mdoc-claim-path-component-count-b56f251e-fetch-capture-session
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ mdoc-claim-path-component-count-b56f251e-create-capture-session.outputs.body.session_id }}
+    - continue_on_error: true
+      id: mdoc-claim-path-non-string-61ff9b89-onboard-reference-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/onboarding-1
+        version_id: forkbomb-bv-andrea/eudiw-beta-wallet/2026-06-38-demo
+    - continue_on_error: true
+      id: mdoc-claim-path-non-string-61ff9b89-create-pid-mdoc-offer
+      use: credential-offer
+      with:
+        credential_id: /forkbomb-bv-andrea/misc-issuer-integration-demo/capture-issuer-pid-mdoc
+    - continue_on_error: true
+      id: mdoc-claim-path-non-string-61ff9b89-obtain-pid-mdoc
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/getcredential-generic-credential-without-authentication
+        parameters:
+            deeplink: ${{ mdoc-claim-path-non-string-61ff9b89-create-pid-mdoc-offer.outputs }}
+        version_id: forkbomb-bv-andrea/eudiw-beta-wallet/2026-06-38-demo
+    - continue_on_error: true
+      id: mdoc-claim-path-non-string-61ff9b89-create-capture-session
+      use: http-request
+      with:
+        body:
+            presentation_request:
+                dcql_query:
+                    credentials:
+                        - claims:
+                            - path:
+                                - eu.europa.ec.eudi.pid.1
+                                - 123
+                          format: mso_mdoc
+                          id: pid_mdoc
+                          meta:
+                            doctype_value: eu.europa.ec.eudi.pid.1
+                nonce: fcaf-textual-encoding-019
+            request_delivery: by_reference
+            response_mode: direct_post
+            response_type: vp_token
+            scheme: openid4vp://
+        expected_status: 201
+        headers:
+            Content-Type: application/json
+        method: POST
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions
+    - continue_on_error: true
+      id: mdoc-claim-path-non-string-61ff9b89-exercise-wallet
+      use: mobile-automation
+      with:
+        action_id: forkbomb-bv-andrea/eudiw-beta-wallet/fcaf-exercise-wallet-generic
+        parameters:
+            deeplink: ${{ mdoc-claim-path-non-string-61ff9b89-create-capture-session.outputs.body.deeplink }}
+        version_id: installed_from_external_source
+    - continue_on_error: true
+      id: mdoc-claim-path-non-string-61ff9b89-fetch-capture-session
+      use: http-request
+      with:
+        expected_status: 200
+        method: GET
+        url: https://beta-capture-wallet.credimi.io/openid4vp/sessions/${{ mdoc-claim-path-non-string-61ff9b89-create-capture-session.outputs.body.session_id }}
+    - continue_on_error: true
       id: metadata-direct-post-jwt-bf077ae9-create-presentation
       use: http-request
       with:
@@ -14523,6 +14702,15 @@ steps:
                 output:
                     dcql_exchange: ${{ mdoc-absent-namespace-8c8f84c8-fetch-capture-session.outputs.body | optional }}
                     visual_evidence: ${{ mdoc-absent-namespace-8c8f84c8-exercise-wallet.outputs.flow_output.maestro_screenshot_urls | optional }}
+            pipeline.mdoc.claim-path-absent-element:
+                output:
+                    dcql_exchange: ${{ mdoc-claim-path-absent-element-492e5a68-fetch-capture-session.outputs.body | optional }}
+            pipeline.mdoc.claim-path-component-count:
+                output:
+                    dcql_exchange: ${{ mdoc-claim-path-component-count-b56f251e-fetch-capture-session.outputs.body | optional }}
+            pipeline.mdoc.claim-path-non-string:
+                output:
+                    dcql_exchange: ${{ mdoc-claim-path-non-string-61ff9b89-fetch-capture-session.outputs.body | optional }}
             pipeline.oid4vp.invalid-request-uri-method:
                 output:
                     capture_session: ${{ invalid-request-uri-method-f8c49ad9-fetch-result.outputs.body | optional }}
@@ -15119,20 +15307,16 @@ steps:
             - WS_RP_SH_Encoding_TextualEncoding_005
             - WS_RP_SH_Encoding_TextualEncoding_006
             - WS_RP_SH_Encoding_TextualEncoding_007
-            - WS_RP_SH_Encoding_TextualEncoding_008
             - WS_RP_SH_Encoding_TextualEncoding_009
             - WS_RP_SH_Encoding_TextualEncoding_010
-            - WS_RP_SH_Encoding_TextualEncoding_011
             - WS_RP_SH_Encoding_TextualEncoding_012
             - WS_RP_SH_Encoding_TextualEncoding_013
             - WS_RP_SH_Encoding_TextualEncoding_014
             - WS_RP_SH_Encoding_TextualEncoding_015
             - WS_RP_SH_Encoding_TextualEncoding_016
-            - WS_RP_SH_Encoding_TextualEncoding_017
             - WS_RP_SH_Encoding_TextualEncoding_018
             - WS_RP_SH_Encoding_TextualEncoding_019
             - WS_RP_SH_Encoding_TextualEncoding_020
-            - WS_RP_SH_Encoding_TextualEncoding_021
             - WS_RP_SH_Encoding_TextualEncoding_022
             - WS_RP_SM_DeviceBinding__002
             - WS_RP_SM_DeviceBinding__003
@@ -15150,7 +15334,6 @@ steps:
             - WS_RP_SM_DeviceBinding__012c
             - WS_RP_SM_IssuerIntegrity__012
             - WS_RP_SM_IssuerIntegrity__013
-            - WS_RP_SM_IssuerIntegrity__014
             - WS_RP_SM_RpIntegrity_CryptographicSignature_002
             - WS_RP_SM_RpIntegrity_CryptographicSignature_003
             - WS_RP_SM_RpIntegrity_CryptographicSignature_004

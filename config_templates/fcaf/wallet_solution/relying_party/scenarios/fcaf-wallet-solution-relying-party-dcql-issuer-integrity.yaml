@@ -72,7 +72,6 @@ steps:
   with:
     test_ids:
       - WS_RP_SM_IssuerIntegrity__012
-      - WS_RP_SM_IssuerIntegrity__014
     suite: wallet_solution/relying_party
     pipeline_outputs:
       pipeline.dcql.issuer-integrity:

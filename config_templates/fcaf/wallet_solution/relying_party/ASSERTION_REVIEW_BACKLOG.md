@@ -111,18 +111,9 @@ confirm the exact resulting Request Object before an assertion is implemented.
 
 ## Pending
 
-These tests have the necessary service boundary, but their scenario and
-assertion design still need review. They are not blocked by a missing Capture
-Wallet capability.
-
-- [ ] `WS_RP_SH_Encoding_TextualEncoding_008`
-- [ ] `WS_RP_SH_Encoding_TextualEncoding_011`
-- [ ] `WS_RP_SH_Encoding_TextualEncoding_017`
-- [ ] `WS_RP_SH_Encoding_TextualEncoding_018`
-- [ ] `WS_RP_SH_Encoding_TextualEncoding_019`
-- [ ] `WS_RP_SH_Encoding_TextualEncoding_020`
-- [ ] `WS_RP_SH_Encoding_TextualEncoding_021`
-- [ ] `WS_RP_SM_IssuerIntegrity__014`
+No cases remain pending assertion review. TextualEncoding 018-020 now own
+source-specific mdoc Capture sessions and require the exact malformed path, a
+captured Wallet error, and no `vp_token`.
 
 ## Blocked
 
@@ -176,6 +167,21 @@ transport capture, Wallet profile, or verifier behavior that remains absent.
   controlled organization mismatch)
 
 ### Reclassified from pending
+
+- [ ] `WS_RP_SH_Encoding_TextualEncoding_008` and
+  `WS_RP_SH_Encoding_TextualEncoding_011` (the public beta issuer exposes
+  fixed PID configurations only and has no documented way to provision the
+  source-required heterogeneous `degrees` arrays; a generic `given_name`
+  presentation cannot prove element filtering or out-of-range index removal)
+- [ ] `WS_RP_SH_Encoding_TextualEncoding_017` and
+  `WS_RP_SH_Encoding_TextualEncoding_021` (the available Capture PID mdoc
+  fixture uses `eu.europa.ec.eudi.pid.1`; it cannot produce the source-required
+  positive `org.iso.18013.5.1.first_name` element, so an absent-namespace
+  request would test rejection rather than the required successful selection)
+- [ ] `WS_RP_SM_IssuerIntegrity__014` (Capture exposes the presented SD-JWT
+  `x5c` header but no independently published trust-anchor certificate or
+  fingerprint; chain position or self-signing cannot prove that the trust
+  anchor was excluded)
 
 - [ ] `WS_RP_IA_MainInteraction__024` (requires an encrypted request that remains deliverable and user-confirmable; Capture does not publish encrypted Request Object delivery)
 - [ ] `WS_RP_IA_MainInteraction__040` (requires two same-type credentials with distinct values; no such issuer fixture is published)
