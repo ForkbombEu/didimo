@@ -15,4 +15,3 @@ pre-commit = "latest"
 
 [tools."github:temporalio/cli"]
 version = "1.8.1"
-
