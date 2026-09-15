@@ -10,7 +10,6 @@ import (
 	"crypto/elliptic"
 	"encoding/base64"
 	"fmt"
-	"math/big"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -37,11 +36,11 @@ func (OID4VPDIDSignedRequestValidator) Validate(_ context.Context, input Input) 
 	_, err := jwt.Parse(request, func(token *jwt.Token) (any, error) {
 		kid, ok := token.Header["kid"].(string)
 		if !ok {
-			return nil, fmt.Errorf("Request Object kid is missing")
+			return nil, fmt.Errorf("request object kid is missing")
 		}
 		methods, ok := document["verificationMethod"].([]any)
 		if !ok {
-			return nil, fmt.Errorf("DID verificationMethod is missing")
+			return nil, fmt.Errorf("did verificationMethod is missing")
 		}
 		for _, method := range methods {
 			method, ok := normalizeJSONObject(method)
@@ -50,15 +49,15 @@ func (OID4VPDIDSignedRequestValidator) Validate(_ context.Context, input Input) 
 			}
 			jwk, ok := normalizeJSONObject(method["publicKeyJwk"])
 			if !ok {
-				return nil, fmt.Errorf("DID method JWK is missing")
+				return nil, fmt.Errorf("did method JWK is missing")
 			}
 			if jwk["kty"] != "EC" || jwk["crv"] != "P-256" {
-				return nil, fmt.Errorf("DID method is not P-256 EC")
+				return nil, fmt.Errorf("did method is not P-256 EC")
 			}
 			x, xok := jwk["x"].(string)
 			y, yok := jwk["y"].(string)
 			if !xok || !yok {
-				return nil, fmt.Errorf("DID method EC coordinates are missing")
+				return nil, fmt.Errorf("did method EC coordinates are missing")
 			}
 			xb, err := base64.RawURLEncoding.DecodeString(x)
 			if err != nil {
@@ -68,13 +67,17 @@ func (OID4VPDIDSignedRequestValidator) Validate(_ context.Context, input Input) 
 			if err != nil {
 				return nil, fmt.Errorf("decode DID y coordinate: %w", err)
 			}
-			key := &ecdsa.PublicKey{Curve: elliptic.P256(), X: new(big.Int).SetBytes(xb), Y: new(big.Int).SetBytes(yb)}
-			if !key.Curve.IsOnCurve(key.X, key.Y) {
-				return nil, fmt.Errorf("DID method EC key is invalid")
+			encoded := make([]byte, 1, 1+len(xb)+len(yb))
+			encoded[0] = 4
+			encoded = append(encoded, xb...)
+			encoded = append(encoded, yb...)
+			key, err := ecdsa.ParseUncompressedPublicKey(elliptic.P256(), encoded)
+			if err != nil {
+				return nil, fmt.Errorf("parse DID method EC key: %w", err)
 			}
 			return key, nil
 		}
-		return nil, fmt.Errorf("Request Object kid is not published by DID document")
+		return nil, fmt.Errorf("request object kid is not published by DID document")
 	})
 	if err != nil {
 		return Result{Status: StatusFail, Message: fmt.Sprintf("DID Request Object verification failed: %v", err)}

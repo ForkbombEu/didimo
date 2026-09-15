@@ -35,8 +35,8 @@ func TestHTTPResponseMediaTypeValidator(t *testing.T) {
 
 func TestOID4VPPresentationResponseHTTPValidator(t *testing.T) {
 	validator := OID4VPPresentationResponseHTTPValidator{}
-	valid := testPresentationSession("POST", "application/x-www-form-urlencoded; charset=utf-8", "response=compact")
-	invalidUTF8 := testPresentationSession("POST", "application/x-www-form-urlencoded", "response=%FF")
+	valid := testPresentationSession("application/x-www-form-urlencoded; charset=utf-8", "response=compact")
+	invalidUTF8 := testPresentationSession("application/x-www-form-urlencoded", "response=%FF")
 	for _, tt := range []struct {
 		name   string
 		value  any
@@ -46,8 +46,8 @@ func TestOID4VPPresentationResponseHTTPValidator(t *testing.T) {
 		{"method", valid, map[string]any{"method": "POST"}, StatusPass},
 		{"media type and response", valid, map[string]any{"media_type": "application/x-www-form-urlencoded", "require_response_parameter": true}, StatusPass},
 		{"response only", valid, map[string]any{"response_only": true, "require_response_parameter": true}, StatusPass},
-		{"extra form key", testPresentationSession("POST", "application/x-www-form-urlencoded", "response=compact&state=x"), map[string]any{"response_only": true}, StatusFail},
-		{"duplicate response", testPresentationSession("POST", "application/x-www-form-urlencoded", "response=a&response=b"), map[string]any{"require_response_parameter": true}, StatusFail},
+		{"extra form key", testPresentationSession("application/x-www-form-urlencoded", "response=compact&state=x"), map[string]any{"response_only": true}, StatusFail},
+		{"duplicate response", testPresentationSession("application/x-www-form-urlencoded", "response=a&response=b"), map[string]any{"require_response_parameter": true}, StatusFail},
 		{"wrong method", valid, map[string]any{"method": "GET"}, StatusFail},
 		{"invalid UTF8", invalidUTF8, map[string]any{"form_utf8": true}, StatusFail},
 		{"missing raw capture", map[string]any{"raw": map[string]any{}}, map[string]any{"method": "POST"}, StatusFail},
@@ -92,8 +92,8 @@ func TestOID4VPResponseEncryptionValidator(t *testing.T) {
 	}
 }
 
-func testPresentationSession(method, contentType, body string) map[string]any {
-	return map[string]any{"raw": map[string]any{"presentation_response_http": map[string]any{"method": method, "headers": map[string]any{"Content-Type": contentType}, "body": body}}}
+func testPresentationSession(contentType, body string) map[string]any {
+	return map[string]any{"raw": map[string]any{"presentation_response_http": map[string]any{"method": "POST", "headers": map[string]any{"Content-Type": contentType}, "body": body}}}
 }
 
 func testSignedRequest(t *testing.T, metadata map[string]any) string {
